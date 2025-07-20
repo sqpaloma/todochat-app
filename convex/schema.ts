@@ -1,0 +1,32 @@
+import { defineSchema, defineTable } from "convex/server"
+import { v } from "convex/values"
+
+export default defineSchema({
+  messages: defineTable({
+    content: v.string(),
+    authorId: v.string(),
+    authorName: v.string(),
+    teamId: v.string(),
+    timestamp: v.number(),
+  }),
+
+  tasks: defineTable({
+    title: v.string(),
+    description: v.string(),
+    status: v.union(v.literal("todo"), v.literal("in-progress"), v.literal("done")),
+    assigneeId: v.string(),
+    assigneeName: v.string(),
+    createdBy: v.string(),
+    createdAt: v.number(),
+    dueDate: v.optional(v.number()),
+    originalMessage: v.optional(v.string()),
+    teamId: v.string(),
+    priority: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+  }),
+
+  teams: defineTable({
+    name: v.string(),
+    members: v.array(v.string()),
+    createdAt: v.number(),
+  }),
+})
