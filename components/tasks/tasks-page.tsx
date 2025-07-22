@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Header } from "@/components/header";
+
 import { TaskColumn } from "./task-column";
 import { TaskCalendar } from "./task-calendar";
 import { CreateManualTaskDialog } from "./create-manual-task-dialog";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Calendar } from "lucide-react";
 
 interface TaskType {
   _id: string;
@@ -24,6 +24,7 @@ interface TaskType {
 export function TasksPage() {
   const [selectedTeam] = useState("team-1");
   const [showManualTaskDialog, setShowManualTaskDialog] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const tasks = useQuery(api.tasks.getTasks, { teamId: selectedTeam });
   const teamMembers = useQuery(api.teams.getTeamMembers, {
@@ -57,30 +58,41 @@ export function TasksPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header activeView="tasks" />
+    <div className="h-full p-4 sm:p-6 lg:p-8 overflow-hidden">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            Task Board
+          </h1>
+          <p className="text-sm sm:text-base text-gray-600">
+            Organize e acompanhe o progresso das tarefas
+          </p>
+        </div>
 
-      <div className="h-[calc(100vh-4rem)] p-8 overflow-hidden">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Task Board</h1>
-            <p className="text-gray-600">
-              Organize e acompanhe o progresso das tarefas
-            </p>
-          </div>
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <Button
+            onClick={() => setShowCalendar(!showCalendar)}
+            variant="outline"
+            className="w-full sm:w-auto lg:hidden rounded-2xl font-semibold px-4 py-2.5"
+          >
+            <Calendar className="w-4 h-4 mr-2" />
+            {showCalendar ? "Ocultar" : "Mostrar"} Calendário
+          </Button>
 
           <Button
             onClick={() => setShowManualTaskDialog(true)}
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-2xl font-semibold px-6 py-3"
+            className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-2xl font-semibold px-4 sm:px-6 py-2.5 sm:py-3"
           >
-            <Plus className="w-5 h-5 mr-2" />
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
             Nova Tarefa
           </Button>
         </div>
+      </div>
 
-        <div className="flex gap-8">
-          {/* Task Board */}
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 h-full">
+        {/* Task Board */}
+        <div className="flex-1 min-h-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 h-full">
             {statusConfig.map((config) => (
               <TaskColumn
                 key={config.status}
@@ -91,20 +103,27 @@ export function TasksPage() {
               />
             ))}
           </div>
-
-          {/* Calendar Sidebar */}
-          <div className="w-80">
-            <TaskCalendar tasks={tasks || []} />
-          </div>
         </div>
 
-        <CreateManualTaskDialog
-          open={showManualTaskDialog}
-          onOpenChange={setShowManualTaskDialog}
-          teamMembers={teamMembers || []}
-          teamId={selectedTeam}
-        />
+        {/* Calendar Sidebar - Desktop */}
+        <div className="hidden lg:block lg:w-80 lg:min-h-0">
+          <TaskCalendar tasks={tasks || []} />
+        </div>
+
+        {/* Calendar Mobile Toggle */}
+        {showCalendar && (
+          <div className="lg:hidden mt-4">
+            <TaskCalendar tasks={tasks || []} />
+          </div>
+        )}
       </div>
+
+      <CreateManualTaskDialog
+        open={showManualTaskDialog}
+        onOpenChange={setShowManualTaskDialog}
+        teamMembers={teamMembers || []}
+        teamId={selectedTeam}
+      />
     </div>
   );
 }
