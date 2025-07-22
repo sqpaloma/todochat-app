@@ -80,10 +80,10 @@ export function HomePage() {
   ];
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
         {/* Hero Section */}
-        <div className="text-center mb-12 sm:mb-16 lg:mb-20">
+        <div className="text-center mb-12 sm:mb-16 lg:mb-20 pt-8 sm:pt-12 lg:pt-0">
           <div className="inline-flex items-center px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-full text-xs sm:text-sm font-semibold mb-6 sm:mb-8 border border-purple-200">
             <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
             Sobre o Chat do
@@ -154,7 +154,7 @@ export function HomePage() {
         </div>
 
         {/* Call to Action */}
-        <div className="text-center px-4">
+        <div className="text-center px-4 pb-8 sm:pb-12">
           <div className="bg-white/50 backdrop-blur-sm border border-white/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 shadow-xl">
             <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
               Pronto para começar a{" "}
