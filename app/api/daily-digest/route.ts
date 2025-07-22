@@ -1,15 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
-// Initialize Resend only if API key is available
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
-
 export async function POST(request: NextRequest) {
   try {
     // Check if Resend is properly configured
-    if (!resend) {
+    if (!process.env.RESEND_API_KEY) {
       return NextResponse.json(
         {
           error:
@@ -18,6 +13,9 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Initialize Resend only when needed and API key is available
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     // This would be called by a cron job or Convex scheduled function
     const { teamId, tasks, members } = await request.json();
