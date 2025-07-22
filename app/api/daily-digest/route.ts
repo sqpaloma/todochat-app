@@ -1,20 +1,36 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { Resend } from "resend"
+import { type NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Initialize Resend only if API key is available
+const resend = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
 
 export async function POST(request: NextRequest) {
   try {
-    // This would be called by a cron job or Convex scheduled function
-    const { teamId, tasks, members } = await request.json()
+    // Check if Resend is properly configured
+    if (!resend) {
+      return NextResponse.json(
+        {
+          error:
+            "Email service not configured. Please set RESEND_API_KEY environment variable.",
+        },
+        { status: 500 }
+      );
+    }
 
-    const pendingTasks = tasks.filter((task: any) => task.status !== "done")
-    const completedTasks = tasks.filter((task: any) => task.status === "done")
+    // This would be called by a cron job or Convex scheduled function
+    const { teamId, tasks, members } = await request.json();
+
+    const pendingTasks = tasks.filter((task: any) => task.status !== "done");
+    const completedTasks = tasks.filter((task: any) => task.status === "done");
 
     for (const member of members) {
-      const memberTasks = pendingTasks.filter((task: any) => task.assigneeId === member._id)
+      const memberTasks = pendingTasks.filter(
+        (task: any) => task.assigneeId === member._id
+      );
 
-      if (memberTasks.length === 0) continue
+      if (memberTasks.length === 0) continue;
 
       const { data, error } = await resend.emails.send({
         from: "TodoChat Daily <digest@todochat.com>",
@@ -35,7 +51,7 @@ export async function POST(request: NextRequest) {
                     <strong>${task.title}</strong>
                     ${task.dueDate ? `<br><small>Vence em: ${new Date(task.dueDate).toLocaleDateString("pt-BR")}</small>` : ""}
                   </li>
-                `,
+                `
                   )
                   .join("")}
               </ul>
@@ -47,22 +63,25 @@ export async function POST(request: NextRequest) {
             </div>
 
             <div style="margin: 20px 0; padding: 20px; background-color: #f3f4f6; border-radius: 8px;">
-              <a href="${process.env.NEXT_PUBLIC_APP_URL}" 
+              <a href="${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}" 
                  style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
                 Abrir TodoChat
               </a>
             </div>
           </div>
         `,
-      })
+      });
 
       if (error) {
-        console.error("Error sending digest to", member.email, error)
+        console.error("Error sending digest to", member.email, error);
       }
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to send daily digest" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Failed to send daily digest" },
+      { status: 500 }
+    );
   }
 }
