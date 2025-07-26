@@ -15,8 +15,12 @@ function HomeLayoutContent({ children }: HomeLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Sidebar for all screen sizes */}
-      <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+      {/* Sidebar - Only show on mobile when opened */}
+      <div className="lg:hidden">
+        <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+      </div>
+
+      {/* Mobile Menu Button - Only visible on mobile */}
       <MobileMenuButton />
 
       {/* Header only for desktop (hidden on mobile) */}
@@ -24,7 +28,7 @@ function HomeLayoutContent({ children }: HomeLayoutProps) {
         <Header activeView="home" />
       </div>
 
-      {/* Content Area - Full height on mobile, with header space on desktop */}
+      {/* Content Area - Full width on desktop, full height on mobile, with header space on desktop */}
       <main className="min-h-screen lg:min-h-[calc(100vh-4rem)]">
         {children}
       </main>
