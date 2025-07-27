@@ -1,19 +1,21 @@
 "use client";
 
+import { useDroppable } from "@dnd-kit/core";
 import { Task } from "./task";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface TaskType {
-  _id: string;
+  _id: Id<"tasks">;
   title: string;
   description: string;
   status: "todo" | "in-progress" | "done";
-  assigneeId: string;
+  assigneeId: Id<"users">;
   assigneeName: string;
-  createdBy: string;
+  createdBy: Id<"users">;
   createdAt: number;
   dueDate?: number;
   originalMessage?: string;
-  teamId: string;
+  teamId: Id<"teams">;
 }
 
 interface TaskColumnProps {
@@ -24,6 +26,10 @@ interface TaskColumnProps {
 }
 
 export function TaskColumn({ title, count, tasks, status }: TaskColumnProps) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: status,
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -33,7 +39,12 @@ export function TaskColumn({ title, count, tasks, status }: TaskColumnProps) {
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div
+        ref={setNodeRef}
+        className={`space-y-4 min-h-[200px] p-2 rounded-lg transition-colors ${
+          isOver ? "bg-blue-50 border-2 border-blue-200 border-dashed" : ""
+        }`}
+      >
         {tasks.map((task) => (
           <Task key={task._id} task={task} />
         ))}

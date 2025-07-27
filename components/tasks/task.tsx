@@ -7,6 +7,7 @@ import { Clock, MessageSquare } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { useDraggable } from "@dnd-kit/core";
 
 interface TaskType {
   _id: Id<"tasks">;
@@ -29,6 +30,11 @@ interface TaskProps {
 export function Task({ task }: TaskProps) {
   const updateTaskStatus = useMutation(api.tasks.updateTaskStatus);
 
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: task._id,
+    });
+
   const handleStatusChange = async (
     newStatus: "todo" | "in-progress" | "done"
   ) => {
@@ -40,7 +46,19 @@ export function Task({ task }: TaskProps) {
   };
 
   return (
-    <Card className="border-0 shadow-sm hover:shadow-md transition-all duration-200">
+    <Card
+      ref={setNodeRef}
+      className={`border-0 shadow-sm hover:shadow-md transition-all duration-200 cursor-grab active:cursor-grabbing ${
+        isDragging ? "opacity-50 rotate-3 scale-105" : ""
+      }`}
+      {...listeners}
+      {...attributes}
+      style={{
+        transform: transform
+          ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+          : undefined,
+      }}
+    >
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
           <h4 className="text-sm font-semibold text-gray-900 leading-tight pr-2">
