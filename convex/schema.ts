@@ -8,6 +8,15 @@ export default defineSchema({
     authorName: v.string(),
     teamId: v.string(),
     timestamp: v.number(),
+    messageType: v.optional(
+      v.union(
+        v.literal("general"),
+        v.literal("announcement"),
+        v.literal("direct")
+      )
+    ),
+    recipientId: v.optional(v.string()), // Para mensagens diretas
+    recipientName: v.optional(v.string()), // Para mensagens diretas
     reactions: v.optional(
       v.array(
         v.object({

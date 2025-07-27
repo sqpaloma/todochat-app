@@ -3,13 +3,148 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 
 export const getMessages = query({
-  args: { teamId: v.string() },
+  args: {
+    teamId: v.string(),
+    messageType: v.optional(
+      v.union(
+        v.literal("general"),
+        v.literal("announcement"),
+        v.literal("direct")
+      )
+    ),
+    recipientId: v.optional(v.string()),
+    currentUserId: v.optional(v.string()),
+  },
   handler: async (ctx, args) => {
-    return await ctx.db
+    let query = ctx.db
       .query("messages")
-      .filter((q) => q.eq(q.field("teamId"), args.teamId))
-      .order("desc")
-      .take(100);
+      .filter((q) => q.eq(q.field("teamId"), args.teamId));
+
+    if (args.messageType) {
+      if (
+        args.messageType === "direct" &&
+        args.recipientId &&
+        args.currentUserId
+      ) {
+        // Mensagens diretas: buscar conversas entre dois usuários específicos
+        query = query.filter((q) =>
+          q.and(
+            q.eq(q.field("messageType"), "direct"),
+            q.or(
+              q.and(
+                q.eq(q.field("authorId"), args.currentUserId),
+                q.eq(q.field("recipientId"), args.recipientId)
+              ),
+              q.and(
+                q.eq(q.field("authorId"), args.recipientId),
+                q.eq(q.field("recipientId"), args.currentUserId)
+              )
+            )
+          )
+        );
+      } else {
+        query = query.filter((q) =>
+          q.eq(q.field("messageType"), args.messageType)
+        );
+      }
+    } else {
+      // Compatibilidade: se não especificar tipo, buscar mensagens gerais ou sem tipo
+      query = query.filter((q) =>
+        q.or(
+          q.eq(q.field("messageType"), "general"),
+          q.eq(q.field("messageType"), undefined)
+        )
+      );
+    }
+
+    return await query.order("desc").take(100);
+  },
+});
+
+export const searchMessages = query({
+  args: {
+    teamId: v.string(),
+    searchTerm: v.string(),
+    messageType: v.optional(
+      v.union(
+        v.literal("general"),
+        v.literal("announcement"),
+        v.literal("direct")
+      )
+    ),
+  },
+  handler: async (ctx, args) => {
+    if (!args.searchTerm.trim()) {
+      return [];
+    }
+
+    let query = ctx.db
+      .query("messages")
+      .filter((q) => q.eq(q.field("teamId"), args.teamId));
+
+    if (args.messageType) {
+      query = query.filter((q) =>
+        q.eq(q.field("messageType"), args.messageType)
+      );
+    }
+
+    const messages = await query.collect();
+
+    // Filtro de busca simples por conteúdo
+    return messages
+      .filter(
+        (message) =>
+          message.content
+            .toLowerCase()
+            .includes(args.searchTerm.toLowerCase()) ||
+          message.authorName
+            .toLowerCase()
+            .includes(args.searchTerm.toLowerCase())
+      )
+      .slice(0, 50);
+  },
+});
+
+export const getDirectMessageContacts = query({
+  args: { teamId: v.string(), currentUserId: v.string() },
+  handler: async (ctx, args) => {
+    const directMessages = await ctx.db
+      .query("messages")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("teamId"), args.teamId),
+          q.eq(q.field("messageType"), "direct"),
+          q.or(
+            q.eq(q.field("authorId"), args.currentUserId),
+            q.eq(q.field("recipientId"), args.currentUserId)
+          )
+        )
+      )
+      .collect();
+
+    // Extrair contatos únicos
+    const contactsMap = new Map();
+    directMessages.forEach((msg) => {
+      const contactId =
+        msg.authorId === args.currentUserId ? msg.recipientId : msg.authorId;
+      const contactName =
+        msg.authorId === args.currentUserId
+          ? msg.recipientName
+          : msg.authorName;
+
+      if (contactId && contactName && !contactsMap.has(contactId)) {
+        contactsMap.set(contactId, {
+          userId: contactId,
+          userName: contactName,
+          lastMessage: msg.content,
+          timestamp: msg.timestamp,
+        });
+      }
+    });
+
+    return Array.from(contactsMap.values()).sort(
+      (a, b) => b.timestamp - a.timestamp
+    );
   },
 });
 
@@ -19,6 +154,15 @@ export const sendMessage = mutation({
     teamId: v.string(),
     authorId: v.string(),
     authorName: v.string(),
+    messageType: v.optional(
+      v.union(
+        v.literal("general"),
+        v.literal("announcement"),
+        v.literal("direct")
+      )
+    ),
+    recipientId: v.optional(v.string()),
+    recipientName: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const messageId = await ctx.db.insert("messages", {
@@ -27,6 +171,9 @@ export const sendMessage = mutation({
       authorId: args.authorId,
       authorName: args.authorName,
       timestamp: Date.now(),
+      messageType: args.messageType || "general",
+      recipientId: args.recipientId,
+      recipientName: args.recipientName,
       reactions: [], // Initialize with empty reactions array
     });
     return messageId;
@@ -48,6 +195,15 @@ export const sendFile = mutation({
     teamId: v.string(),
     authorId: v.string(),
     authorName: v.string(),
+    messageType: v.optional(
+      v.union(
+        v.literal("general"),
+        v.literal("announcement"),
+        v.literal("direct")
+      )
+    ),
+    recipientId: v.optional(v.string()),
+    recipientName: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const messageId = await ctx.db.insert("messages", {
@@ -56,6 +212,9 @@ export const sendFile = mutation({
       authorId: args.authorId,
       authorName: args.authorName,
       timestamp: Date.now(),
+      messageType: args.messageType || "general",
+      recipientId: args.recipientId,
+      recipientName: args.recipientName,
       reactions: [],
       fileId: args.fileId,
       fileName: args.fileName,

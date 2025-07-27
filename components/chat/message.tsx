@@ -14,6 +14,9 @@ import {
   Image,
   Video,
   Music,
+  Users,
+  Megaphone,
+  MessageCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { useMutation, useQuery } from "convex/react";
@@ -26,6 +29,9 @@ interface MessageType {
   authorName: string;
   timestamp: number;
   teamId: string;
+  messageType?: "general" | "announcement" | "direct";
+  recipientId?: string;
+  recipientName?: string;
   reactions?: Array<{
     emoji: string;
     users: Array<{ userId: string; userName: string; timestamp: number }>;
@@ -52,11 +58,11 @@ export function Message({
   onCreateTask,
 }: MessageProps) {
   const [showReactions, setShowReactions] = useState(false);
+  const [showNudgeConfirm, setShowNudgeConfirm] = useState(false);
   const [isNudging, setIsNudging] = useState(false);
+
   const addReaction = useMutation(api.messages.addReaction);
   const nudgeUser = useMutation(api.messages.nudgeUser);
-
-  // Get file URL if this message has a file
   const fileUrl = useQuery(
     api.messages.getFileUrl,
     message.fileId ? { fileId: message.fileId as any } : "skip"
@@ -87,8 +93,39 @@ export function Message({
   };
 
   const isCurrentUser = message.authorId === currentUserId;
-  const isImageFile = message.fileType?.startsWith("image/");
   const hasFile = !!message.fileId;
+  const isImageFile = message.fileType?.startsWith("image/");
+
+  // Função para obter configuração do tipo de mensagem
+  const getMessageTypeConfig = () => {
+    switch (message.messageType) {
+      case "announcement":
+        return {
+          icon: Megaphone,
+          color: "text-orange-600",
+          bgColor: "bg-orange-100",
+          label: "Comunicado",
+        };
+      case "direct":
+        return {
+          icon: MessageCircle,
+          color: "text-green-600",
+          bgColor: "bg-green-100",
+          label: "Privada",
+        };
+      case "general":
+      default:
+        return {
+          icon: Users,
+          color: "text-blue-600",
+          bgColor: "bg-blue-100",
+          label: "Geral",
+        };
+    }
+  };
+
+  const typeConfig = getMessageTypeConfig();
+  const TypeIcon = typeConfig.icon;
 
   const handleReaction = async (emoji: string) => {
     try {
@@ -289,6 +326,24 @@ export function Message({
                 }
               `}
             >
+              {/* Indicador do tipo de mensagem */}
+              {!isGrouped &&
+                message.messageType &&
+                message.messageType !== "general" && (
+                  <div
+                    className={`flex items-center space-x-1 mb-2 text-xs ${typeConfig.bgColor} px-2 py-1 rounded-full w-fit`}
+                  >
+                    <TypeIcon className={`w-3 h-3 ${typeConfig.color}`} />
+                    <span className={typeConfig.color}>{typeConfig.label}</span>
+                    {message.messageType === "direct" &&
+                      message.recipientName && (
+                        <span className="text-gray-500">
+                          → {message.recipientName}
+                        </span>
+                      )}
+                  </div>
+                )}
+
               {!hasFile && (
                 <p className="text-sm leading-relaxed break-words">
                   {message.content}
@@ -453,6 +508,25 @@ export function Message({
                   {message.authorName}
                 </p>
               )}
+
+              {/* Indicador do tipo de mensagem */}
+              {!isGrouped &&
+                message.messageType &&
+                message.messageType !== "general" && (
+                  <div
+                    className={`flex items-center space-x-1 mb-2 text-xs ${typeConfig.bgColor} px-2 py-1 rounded-full w-fit`}
+                  >
+                    <TypeIcon className={`w-3 h-3 ${typeConfig.color}`} />
+                    <span className={typeConfig.color}>{typeConfig.label}</span>
+                    {message.messageType === "direct" &&
+                      message.recipientName && (
+                        <span className="text-gray-500">
+                          → {message.recipientName}
+                        </span>
+                      )}
+                  </div>
+                )}
+
               {!hasFile && (
                 <p className="text-sm text-gray-800 leading-relaxed break-words">
                   {message.content}
