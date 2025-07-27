@@ -33,6 +33,8 @@ import {
   UserButton,
   SignOutButton,
 } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -40,50 +42,29 @@ interface SidebarProps {
 }
 
 interface TeamMember {
-  id: string;
+  _id: string;
   name: string;
   email: string;
-  avatar: string;
   status: "online" | "offline" | "away";
   role: string;
+  joinDate: number;
+  phone?: string;
+  location?: string;
+  imageUrl?: string;
 }
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTeam, setActiveTeam] = useState("Main Team");
+  const [activeTeam, setActiveTeam] = useState("Minha Equipe");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
   const [showTeamDropdown, setShowTeamDropdown] = useState(false);
   const [activeMemberMenu, setActiveMemberMenu] = useState<string | null>(null);
 
-  // Sample team members data
-  const teamMembers: TeamMember[] = [
-    {
-      id: "1",
-      name: "Pedro Costa",
-      email: "pedro@example.com",
-      avatar: "PC",
-      status: "online",
-      role: "Developer",
-    },
-    {
-      id: "2",
-      name: "Maria Santos",
-      email: "maria@example.com",
-      avatar: "MS",
-      status: "online",
-      role: "Designer",
-    },
-    {
-      id: "3",
-      name: "João Silva",
-      email: "joao@example.com",
-      avatar: "JS",
-      status: "away",
-      role: "Manager",
-    },
-  ];
+  // Buscar membros reais da equipe do Convex
+  const teamMembers =
+    useQuery(api.teams.getTeamMembers, { teamId: "main-team" }) || [];
 
   // Handle window resize
   useEffect(() => {
@@ -284,7 +265,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <p className="text-sm font-semibold text-gray-900">
                     {activeTeam}
                   </p>
-                  <p className="text-xs text-gray-500">3 members online</p>
+                  <p className="text-xs text-gray-500">
+                    {teamMembers.filter((m) => m.status === "online").length}{" "}
+                    members online
+                  </p>
                 </div>
               </div>
               <ChevronDown
@@ -296,13 +280,25 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             {showTeamDropdown && (
               <div className="mt-2 space-y-1">
                 {teamMembers.map((member) => (
-                  <div key={member.id} className="relative">
+                  <div key={member._id} className="relative">
                     <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 group">
                       <div className="flex items-center space-x-3">
                         <div className="relative">
-                          <div className="w-8 h-8 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">
-                            {member.avatar}
-                          </div>
+                          {member.imageUrl ? (
+                            <img
+                              src={member.imageUrl}
+                              alt={member.name}
+                              className="w-8 h-8 rounded-full"
+                            />
+                          ) : (
+                            <div className="w-8 h-8 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                              {member.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                                .toUpperCase()}
+                            </div>
+                          )}
                           <div
                             className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 ${getStatusColor(member.status)} rounded-full border-2 border-white`}
                           ></div>
@@ -318,14 +314,14 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                         variant="ghost"
                         size="sm"
                         className="opacity-0 group-hover:opacity-100 transition-opacity p-1"
-                        onClick={() => toggleMemberMenu(member.id)}
+                        onClick={() => toggleMemberMenu(member._id)}
                       >
                         <MoreHorizontal className="w-4 h-4 text-gray-400" />
                       </Button>
                     </div>
 
                     {/* Member Actions Menu */}
-                    {activeMemberMenu === member.id && (
+                    {activeMemberMenu === member._id && (
                       <div className="absolute right-0 top-full mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                         <button
                           className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"

@@ -1,61 +1,57 @@
 import { mutation, query, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
+import { getCurrentUserOrThrow } from "./users";
 
 export const getTeamMembers = query({
   args: { teamId: v.string() },
   handler: async (ctx, args) => {
-    // Mock data for demo - in real app, this would come from database
-    return [
-      {
-        _id: "user-1",
-        name: "João Silva",
-        email: "joao@empresa.com",
-        status: "online" as const,
-        role: "admin",
-        joinDate: Date.now() - 86400000 * 30, // 30 days ago
-        phone: "(11) 99999-1111",
-        location: "São Paulo, SP",
-      },
-      {
-        _id: "user-2",
-        name: "Maria Santos",
-        email: "maria@empresa.com",
-        status: "online" as const,
-        role: "manager",
-        joinDate: Date.now() - 86400000 * 15, // 15 days ago
-        phone: "(11) 99999-2222",
-        location: "Rio de Janeiro, RJ",
-      },
-      {
-        _id: "user-3",
-        name: "Pedro Costa",
-        email: "pedro@empresa.com",
-        status: "offline" as const,
-        role: "member",
-        joinDate: Date.now() - 86400000 * 7, // 7 days ago
-        location: "Belo Horizonte, MG",
-      },
-    ];
+    // Buscar todos os usuários cadastrados no sistema
+    const users = await ctx.db.query("users").collect();
+
+    // Retornar usuários formatados para o componente de equipe
+    return users.map((user) => ({
+      _id: user._id,
+      name:
+        `${user.firstName || ""} ${user.lastName || ""}`.trim() || "Usuário",
+      email: user.email,
+      status: "online" as const, // Em uma implementação real, isso viria de um sistema de presença
+      role: "member", // Em uma implementação real, isso viria da relação team-user
+      joinDate: user._creationTime,
+      phone: undefined, // Campo não existe na estrutura atual de usuários
+      location: undefined, // Campo não existe na estrutura atual de usuários
+      imageUrl: user.imageUrl,
+    }));
   },
 });
 
 export const addMember = mutation({
   args: {
     teamId: v.string(),
-    name: v.string(),
     email: v.string(),
-    role: v.string(),
-    phone: v.optional(v.string()),
-    location: v.optional(v.string()),
+    role: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    // In real app, this would add to database and send invitation email
-    console.log("👥 New member added:", args.name);
-    console.log("📧 Invitation sent to:", args.email);
+    // Verificar se o usuário atual tem permissão (deve estar autenticado)
+    const currentUser = await getCurrentUserOrThrow(ctx);
 
+    // Buscar usuário pelo email
+    const existingUser = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("email"), args.email))
+      .unique();
+
+    if (!existingUser) {
+      return {
+        success: false,
+        message: `Usuário com email ${args.email} não encontrado. O usuário precisa estar cadastrado no sistema.`,
+      };
+    }
+
+    // Em uma implementação completa, aqui criaria uma relação team-member
+    // Por enquanto, retornamos sucesso já que o usuário existe
     return {
       success: true,
-      message: `Convite enviado para ${args.email}`,
+      message: `Usuário ${existingUser.firstName || existingUser.email} encontrado no sistema`,
     };
   },
 });
@@ -66,24 +62,8 @@ export const sendDailyDigestToTeam = internalMutation({
     teamId: v.string(),
   },
   handler: async (ctx, args) => {
-    // Buscar membros da equipe
-    const members = [
-      {
-        _id: "user-1",
-        name: "João Silva",
-        email: "joao@empresa.com",
-      },
-      {
-        _id: "user-2",
-        name: "Maria Santos",
-        email: "maria@empresa.com",
-      },
-      {
-        _id: "user-3",
-        name: "Pedro Costa",
-        email: "pedro@empresa.com",
-      },
-    ];
+    // Buscar todos os usuários cadastrados (em uma implementação real, apenas os da equipe)
+    const members = await ctx.db.query("users").collect();
 
     // Buscar todas as tarefas da equipe
     const allTasks = await ctx.db
@@ -95,7 +75,7 @@ export const sendDailyDigestToTeam = internalMutation({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const completedToday = allTasks.filter(
-      (task) => task.status === "done" && task.createdAt >= today.getTime()
+      (task) => task.status === "done" && task._creationTime >= today.getTime()
     );
 
     // Enviar resumo para cada membro
@@ -107,7 +87,9 @@ export const sendDailyDigestToTeam = internalMutation({
       if (memberTasks.length > 0) {
         await ctx.scheduler.runAfter(0, "emails:sendDailyDigest" as any, {
           memberEmail: member.email,
-          memberName: member.name,
+          memberName:
+            `${member.firstName || ""} ${member.lastName || ""}`.trim() ||
+            "Usuário",
           memberTasks: memberTasks.map((task) => ({
             _id: task._id,
             title: task.title,
