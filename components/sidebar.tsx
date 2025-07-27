@@ -66,6 +66,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const teamMembers =
     useQuery(api.teams.getTeamMembers, { teamId: "main-team" }) || [];
 
+  // Fetch real tasks count
+  const tasks = useQuery(api.tasks.getTasks, { teamId: "main-team" }) || [];
+  const taskCount = tasks.length;
+
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {
@@ -137,7 +141,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       icon: CheckSquare,
       active: pathname === "/tasks",
       gradient: "from-blue-500 to-cyan-500",
-      badge: "3",
+      badge: taskCount > 0 ? taskCount.toString() : undefined,
     },
     {
       name: "Chat",

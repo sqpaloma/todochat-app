@@ -23,7 +23,7 @@ export const sendNudgeEmail = internalMutation({
 
     await resend.sendEmail(ctx, {
       from: "Acme <onboarding@resend.dev>",
-      to: "paloma.sq@hotmail.com", //args.to, refactor to use args.to after testing
+      to: args.to,
       subject: `🔔 ${args.fromName} is calling you on TodoChat`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
