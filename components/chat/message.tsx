@@ -69,7 +69,7 @@ export function Message({
   );
 
   const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleTimeString("pt-BR", {
+    return new Date(timestamp).toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -104,14 +104,14 @@ export function Message({
           icon: Megaphone,
           color: "text-orange-600",
           bgColor: "bg-orange-100",
-          label: "Comunicado",
+          label: "Announcement",
         };
       case "direct":
         return {
           icon: MessageCircle,
           color: "text-green-600",
           bgColor: "bg-green-100",
-          label: "Privada",
+          label: "Private",
         };
       case "general":
       default:
@@ -119,7 +119,7 @@ export function Message({
           icon: Users,
           color: "text-blue-600",
           bgColor: "bg-blue-100",
-          label: "Geral",
+          label: "General",
         };
     }
   };

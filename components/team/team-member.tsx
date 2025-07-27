@@ -110,12 +110,12 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
                   onClick={() => onEdit(member)}
                 >
                   <Edit className="w-4 h-4 mr-2" />
-                  Editar Membro
+                  Edit Member
                 </DropdownMenuItem>
               )}
               <DropdownMenuItem className="text-blue-600">
                 <MessageSquare className="w-4 h-4 mr-2" />
-                Enviar Mensagem
+                Send Message
               </DropdownMenuItem>
               {onViewProfile && (
                 <DropdownMenuItem
@@ -123,7 +123,7 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
                   onClick={() => onViewProfile(member)}
                 >
                   <UserCheck className="w-4 h-4 mr-2" />
-                  Ver Perfil
+                  View Profile
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>
@@ -159,7 +159,7 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
 
           <div className="flex items-center space-x-2">
             <Calendar className="w-4 h-4 text-orange-500" />
-            <span>Entrou em {formatJoinDate(member.joinDate)}</span>
+            <span>Joined in {formatJoinDate(member.joinDate)}</span>
           </div>
         </div>
       </CardContent>

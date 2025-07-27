@@ -80,15 +80,12 @@ export function EditMemberDialog({
       // In real app, this would be a separate updateMember mutation
       await updateMember({
         teamId,
-        name: name.trim(),
         email: email.trim(),
         role,
-        phone: phone.trim() || undefined,
-        location: location.trim() || undefined,
       });
 
       onOpenChange(false);
-      console.log("✅ Membro atualizado:", name);
+      console.log("✅ Member updated:", name);
     } catch (error) {
       console.error("Error updating member:", error);
     } finally {
@@ -100,11 +97,11 @@ export function EditMemberDialog({
     if (!member) return;
 
     const confirmed = window.confirm(
-      `Tem certeza que deseja remover ${member.name} da equipe? Esta ação não pode ser desfeita.`
+      `Are you sure you want to remove ${member.name} from the team? This action cannot be undone.`
     );
 
     if (confirmed) {
-      console.log("🗑️ Membro removido:", member.name);
+      console.log("🗑️ Member removed:", member.name);
       onOpenChange(false);
     }
   };
@@ -112,23 +109,23 @@ export function EditMemberDialog({
   const roles = [
     {
       value: "admin",
-      label: "Administrador",
-      description: "Acesso total ao projeto",
+      label: "Administrator",
+      description: "Full project access",
     },
     {
       value: "manager",
-      label: "Gerente",
-      description: "Pode gerenciar tarefas e membros",
+      label: "Manager",
+      description: "Can manage tasks and members",
     },
     {
       value: "member",
-      label: "Membro",
-      description: "Pode criar e editar tarefas",
+      label: "Member",
+      description: "Can create and edit tasks",
     },
     {
       value: "viewer",
-      label: "Visualizador",
-      description: "Apenas visualização",
+      label: "Viewer",
+      description: "View only access",
     },
   ];
 
@@ -146,7 +143,7 @@ export function EditMemberDialog({
           <DialogTitle className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Edit className="w-5 h-5 text-blue-500" />
-              <span>Editar Membro</span>
+              <span>Edit Member</span>
             </div>
             <Badge variant="outline" className="text-xs">
               ID: {member._id}
@@ -157,14 +154,14 @@ export function EditMemberDialog({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="name">Nome Completo *</Label>
+              <Label htmlFor="name">Full Name *</Label>
               <div className="relative">
                 <User className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                 <Input
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Ex: João Silva"
+                  placeholder="e.g. John Smith"
                   className="pl-10"
                   required
                 />
@@ -180,7 +177,7 @@ export function EditMemberDialog({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="joao@empresa.com"
+                  placeholder="john@company.com"
                   className="pl-10"
                   required
                 />
@@ -190,7 +187,7 @@ export function EditMemberDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Função na Equipe</Label>
+              <Label>Team Role</Label>
               <Select value={role} onValueChange={setRole}>
                 <SelectTrigger>
                   <SelectValue />
@@ -246,28 +243,28 @@ export function EditMemberDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="phone">Telefone</Label>
+              <Label htmlFor="phone">Phone</Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                 <Input
                   id="phone"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="(11) 99999-9999"
+                  placeholder="+1 (555) 123-4567"
                   className="pl-10"
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="location">Localização</Label>
+              <Label htmlFor="location">Location</Label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                 <Input
                   id="location"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="São Paulo, SP"
+                  placeholder="New York, NY"
                   className="pl-10"
                 />
               </div>
@@ -277,8 +274,8 @@ export function EditMemberDialog({
           {member.joinDate && (
             <div className="bg-gray-50 p-3 rounded-lg">
               <p className="text-sm text-gray-600">
-                <strong>Membro desde:</strong>{" "}
-                {new Date(member.joinDate).toLocaleDateString("pt-BR", {
+                <strong>Member since:</strong>{" "}
+                {new Date(member.joinDate).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -296,7 +293,7 @@ export function EditMemberDialog({
               className="flex items-center space-x-2"
             >
               <Trash2 className="w-4 h-4" />
-              <span>Remover</span>
+              <span>Remove</span>
             </Button>
 
             <div className="flex space-x-2">
@@ -305,13 +302,13 @@ export function EditMemberDialog({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
-                Cancelar
+                Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={isLoading || !name.trim() || !email.trim()}
               >
-                {isLoading ? "Salvando..." : "Salvar Alterações"}
+                {isLoading ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </div>

@@ -4,11 +4,11 @@ import { internalMutation, internalAction } from "./_generated/server";
 import { v } from "convex/values";
 
 export const resend: Resend = new Resend(components.resend, {
-  // Manter testMode como false para permitir envio para endereços reais
+  // Keep testMode as false to allow sending to real email addresses
   testMode: false,
 });
 
-// Função para enviar nudge por email
+// Function to send nudge email
 export const sendNudgeEmail = internalMutation({
   args: {
     to: v.string(),
@@ -24,50 +24,50 @@ export const sendNudgeEmail = internalMutation({
     await resend.sendEmail(ctx, {
       from: "Acme <onboarding@resend.dev>",
       to: "paloma.sq@hotmail.com", //args.to, refactor to use args.to after testing
-      subject: `🔔 ${args.fromName} está te chamando no TodoChat`,
+      subject: `🔔 ${args.fromName} is calling you on TodoChat`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="text-align: center; margin-bottom: 30px;">
             <h1 style="color: #7c3aed; margin: 0; font-size: 28px;">🔔</h1>
-            <h2 style="color: #7c3aed; margin: 10px 0;">Alguém está te chamando!</h2>
+            <h2 style="color: #7c3aed; margin: 10px 0;">Someone is calling you!</h2>
           </div>
           
           <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); padding: 20px; border-radius: 12px; margin: 20px 0;">
             <p style="color: white; margin: 0; text-align: center; font-size: 18px;">
-              <strong>${args.fromName}</strong> te cutucou em uma mensagem
+              <strong>${args.fromName}</strong> nudged you in a message
             </p>
           </div>
 
           <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; border-left: 4px solid #7c3aed; margin: 20px 0;">
-            <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 16px;">Mensagem:</h3>
+            <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 16px;">Message:</h3>
             <p style="margin: 0; color: #64748b; font-style: italic; font-size: 14px;">
               "${args.messageContent.length > 100 ? args.messageContent.substring(0, 100) + "..." : args.messageContent}"
             </p>
             ${
               args.teamName
                 ? `<p style="margin: 10px 0 0 0; color: #7c3aed; font-size: 12px;">
-              Em: ${args.teamName}
+              In: ${args.teamName}
             </p>`
                 : ""
             }
             <p style="margin: 10px 0 0 0; color: #7c3aed; font-size: 12px;">
-              Para: ${args.toName} (${args.to})
+              To: ${args.toName} (${args.to})
             </p>
           </div>
 
           <div style="text-align: center; margin: 30px 0;">
             <a href="${appUrl}/chat" 
                style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
-              Ver Mensagem
+              View Message
             </a>
           </div>
 
           <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
             <p style="color: #64748b; font-size: 12px; margin: 0;">
-              Você recebeu este email porque alguém te cutucou no TodoChat.
+              You received this email because someone nudged you on TodoChat.
             </p>
             <p style="color: #dc2626; font-size: 10px; margin: 5px 0 0 0;">
-              [TEST MODE] Este email foi enviado para delivered@resend.dev para testes
+              [TEST MODE] This email was sent to delivered@resend.dev for testing
             </p>
           </div>
         </div>
@@ -168,7 +168,7 @@ export const sendTeamInvitationEmail = internalMutation({
   },
 });
 
-// Função para enviar email de nova tarefa
+// Function to send new task notification email
 export const sendTaskNotificationEmail = internalMutation({
   args: {
     to: v.string(),
@@ -183,35 +183,35 @@ export const sendTaskNotificationEmail = internalMutation({
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
     const dueDateText = args.dueDate
-      ? `<br><small style="color: #dc2626;">Prazo: ${new Date(args.dueDate).toLocaleDateString("pt-BR")}</small>`
+      ? `<br><small style="color: #dc2626;">Due: ${new Date(args.dueDate).toLocaleDateString("en-US")}</small>`
       : "";
 
     await resend.sendEmail(ctx, {
       from: "TodoChat <noreply@todochat.com>",
       to: args.to,
-      subject: `Nova Tarefa Atribuída: ${args.taskTitle}`,
+      subject: `New Task Assigned: ${args.taskTitle}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #2563eb;">📋 Nova Tarefa Criada</h2>
-          <p>Olá ${args.assigneeName}!</p>
+          <h2 style="color: #2563eb;">📋 New Task Created</h2>
+          <p>Hello ${args.assigneeName}!</p>
           
           <div style="margin: 20px 0; padding: 20px; background-color: #f8fafc; border-left: 4px solid #2563eb; border-radius: 8px;">
             <h3 style="margin: 0 0 10px 0; color: #1e293b;">${args.taskTitle}</h3>
             ${args.description ? `<p style="margin: 10px 0; color: #64748b;">${args.description}</p>` : ""}
             ${dueDateText}
             <p style="margin: 10px 0 0 0; color: #64748b; font-size: 14px;">
-              Criada por: ${args.createdBy}
+              Created by: ${args.createdBy}
             </p>
           </div>
 
           <div style="margin: 20px 0; padding: 20px; background-color: #f3f4f6; border-radius: 8px;">
             <a href="${appUrl}/tasks/${args.taskId}" 
                style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-              Ver Tarefa
+              View Task
             </a>
             <a href="${appUrl}/api/tasks/${args.taskId}/complete" 
                style="background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; margin-left: 10px;">
-              Marcar como Concluída
+              Mark as Completed
             </a>
           </div>
         </div>
@@ -220,7 +220,7 @@ export const sendTaskNotificationEmail = internalMutation({
   },
 });
 
-// Função para enviar resumo diário
+// Function to send daily digest
 export const sendDailyDigest = internalMutation({
   args: {
     memberEmail: v.string(),
@@ -252,7 +252,7 @@ export const sendDailyDigest = internalMutation({
         }[task.priority || "medium"];
 
         const dueDateText = task.dueDate
-          ? `<br><small style="color: #dc2626;">Vence em: ${new Date(task.dueDate).toLocaleDateString("pt-BR")}</small>`
+          ? `<br><small style="color: #dc2626;">Due: ${new Date(task.dueDate).toLocaleDateString("en-US")}</small>`
           : "";
 
         return `
@@ -260,7 +260,7 @@ export const sendDailyDigest = internalMutation({
             <strong>${task.title}</strong>
             ${task.description ? `<br><span style="color: #64748b;">${task.description}</span>` : ""}
             ${dueDateText}
-            <br><small style="color: #6b7280;">Prioridade: ${(task.priority || "medium").toUpperCase()}</small>
+            <br><small style="color: #6b7280;">Priority: ${(task.priority || "medium").toUpperCase()}</small>
           </li>
         `;
       })
@@ -269,14 +269,14 @@ export const sendDailyDigest = internalMutation({
     await resend.sendEmail(ctx, {
       from: "TodoChat Daily <digest@todochat.com>",
       to: args.memberEmail,
-      subject: `📋 Resumo Diário - ${args.memberTasks.length} tarefas pendentes`,
+      subject: `📋 Daily Summary - ${args.memberTasks.length} pending tasks`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #2563eb;">📋 Resumo Diário - TodoChat</h2>
-          <p>Olá ${args.memberName}!</p>
+          <h2 style="color: #2563eb;">📋 Daily Summary - TodoChat</h2>
+          <p>Hello ${args.memberName}!</p>
           
           <div style="margin: 20px 0;">
-            <h3 style="color: #dc2626;">🔴 Tarefas Pendentes (${args.memberTasks.length})</h3>
+            <h3 style="color: #dc2626;">🔴 Pending Tasks (${args.memberTasks.length})</h3>
             <ul style="list-style: none; padding: 0;">
               ${tasksList}
             </ul>
@@ -286,8 +286,8 @@ export const sendDailyDigest = internalMutation({
             args.completedTasksCount > 0
               ? `
             <div style="margin: 20px 0; padding: 15px; background-color: #f0fdf4; border-radius: 8px;">
-              <h3 style="color: #16a34a; margin: 0 0 10px 0;">✅ Concluídas Hoje (${args.completedTasksCount})</h3>
-              <p style="color: #6b7280; margin: 0;">Parabéns pelo progresso! 🎉</p>
+              <h3 style="color: #16a34a; margin: 0 0 10px 0;">✅ Completed Today (${args.completedTasksCount})</h3>
+              <p style="color: #6b7280; margin: 0;">Congratulations on your progress! 🎉</p>
             </div>
           `
               : ""
@@ -296,12 +296,12 @@ export const sendDailyDigest = internalMutation({
           <div style="margin: 20px 0; padding: 20px; background-color: #f3f4f6; border-radius: 8px; text-align: center;">
             <a href="${appUrl}" 
                style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-              Abrir TodoChat
+              Open TodoChat
             </a>
           </div>
 
           <p style="color: #6b7280; font-size: 12px; text-align: center; margin-top: 20px;">
-            Este resumo é enviado automaticamente todos os dias. Para alterar suas preferências, acesse as configurações do TodoChat.
+            This summary is sent automatically every day. To change your preferences, access TodoChat settings.
           </p>
         </div>
       `,
@@ -309,7 +309,7 @@ export const sendDailyDigest = internalMutation({
   },
 });
 
-// Função para enviar email de tarefa concluída
+// Function to send task completion email
 export const sendTaskCompletionEmail = internalMutation({
   args: {
     taskId: v.id("tasks"),
@@ -320,27 +320,27 @@ export const sendTaskCompletionEmail = internalMutation({
   handler: async (ctx, args) => {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-    // Enviar para todos os membros da equipe
+    // Send to all team members
     for (const email of args.teamMemberEmails) {
       await resend.sendEmail(ctx, {
         from: "TodoChat <noreply@todochat.com>",
         to: email,
-        subject: `✅ Tarefa Concluída: ${args.taskTitle}`,
+        subject: `✅ Task Completed: ${args.taskTitle}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #16a34a;">✅ Tarefa Concluída</h2>
+            <h2 style="color: #16a34a;">✅ Task Completed</h2>
             
             <div style="margin: 20px 0; padding: 20px; background-color: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 8px;">
               <h3 style="margin: 0 0 10px 0; color: #15803d;">${args.taskTitle}</h3>
               <p style="margin: 10px 0 0 0; color: #16a34a; font-size: 14px;">
-                ✨ Concluída por: ${args.completedBy}
+                ✨ Completed by: ${args.completedBy}
               </p>
             </div>
 
             <div style="margin: 20px 0; padding: 20px; background-color: #f3f4f6; border-radius: 8px; text-align: center;">
               <a href="${appUrl}/tasks/${args.taskId}" 
                  style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-                Ver Detalhes
+                View Details
               </a>
             </div>
           </div>

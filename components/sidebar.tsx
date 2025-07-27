@@ -56,13 +56,13 @@ interface TeamMember {
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTeam, setActiveTeam] = useState("Minha Equipe");
+  const [activeTeam, setActiveTeam] = useState("My Team");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
   const [showTeamDropdown, setShowTeamDropdown] = useState(false);
   const [activeMemberMenu, setActiveMemberMenu] = useState<string | null>(null);
 
-  // Buscar membros reais da equipe do Convex
+  // Fetch real team members from Convex
   const teamMembers =
     useQuery(api.teams.getTeamMembers, { teamId: "main-team" }) || [];
 
@@ -188,7 +188,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               <Sparkles className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h2 className="font-bold text-lg gradient-text">Chat do ✨</h2>
+              <h2 className="font-bold text-lg gradient-text">✨ Chat do</h2>
               <p className="text-xs text-gray-500">Workspace</p>
             </div>
           </Link>

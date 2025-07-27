@@ -116,7 +116,7 @@ export function MemberDetailsDialog({
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
-            <span>Detalhes do Membro</span>
+            <span>Member Details</span>
             <Badge variant="outline" className="text-xs">
               ID: {member._id}
             </Badge>
@@ -179,7 +179,7 @@ export function MemberDetailsDialog({
               <CardContent className="p-4">
                 <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
                   <User className="w-4 h-4 mr-2 text-blue-500" />
-                  Informações Pessoais
+                  Personal Information
                 </h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-center space-x-2">
@@ -191,7 +191,7 @@ export function MemberDetailsDialog({
                   {member.phone && (
                     <div className="flex items-center space-x-2">
                       <Phone className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-600">Telefone:</span>
+                      <span className="text-gray-600">Phone:</span>
                       <span className="font-medium">{member.phone}</span>
                     </div>
                   )}
@@ -199,7 +199,7 @@ export function MemberDetailsDialog({
                   {member.location && (
                     <div className="flex items-center space-x-2">
                       <MapPin className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-600">Localização:</span>
+                      <span className="text-gray-600">Location:</span>
                       <span className="font-medium">{member.location}</span>
                     </div>
                   )}
@@ -211,15 +211,15 @@ export function MemberDetailsDialog({
               <CardContent className="p-4">
                 <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
                   <Shield className="w-4 h-4 mr-2 text-purple-500" />
-                  Informações Profissionais
+                  Professional Information
                 </h3>
                 <div className="space-y-3 text-sm">
                   <div>
-                    <span className="text-gray-600">Função:</span>
+                    <span className="text-gray-600">Role:</span>
                     <div className="flex items-center space-x-2 mt-1">
                       {getRoleIcon(member.role)}
                       <span className="font-medium capitalize">
-                        {member.role || "Não definida"}
+                        {member.role || "Not defined"}
                       </span>
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
@@ -229,7 +229,7 @@ export function MemberDetailsDialog({
 
                   <div className="flex items-center space-x-2">
                     <Calendar className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600">Membro desde:</span>
+                    <span className="text-gray-600">Member since:</span>
                   </div>
                   <div className="ml-6">
                     <span className="font-medium">
@@ -237,8 +237,8 @@ export function MemberDetailsDialog({
                     </span>
                     {daysSinceJoined > 0 && (
                       <p className="text-xs text-gray-500">
-                        {daysSinceJoined} dia{daysSinceJoined !== 1 ? "s" : ""}{" "}
-                        na equipe
+                        {daysSinceJoined} day{daysSinceJoined !== 1 ? "s" : ""}{" "}
+                        in the team
                       </p>
                     )}
                   </div>
@@ -252,26 +252,26 @@ export function MemberDetailsDialog({
             <CardContent className="p-4">
               <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
                 <Clock className="w-4 h-4 mr-2 text-orange-500" />
-                Estatísticas Rápidas
+                Quick Statistics
               </h3>
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
                   <div className="text-lg font-bold text-blue-600">
                     {daysSinceJoined}
                   </div>
-                  <div className="text-xs text-gray-600">Dias na equipe</div>
+                  <div className="text-xs text-gray-600">Days in team</div>
                 </div>
                 <div>
                   <div className="text-lg font-bold text-green-600">
-                    {member.status === "online" ? "Ativo" : "Inativo"}
+                    {member.status === "online" ? "Active" : "Inactive"}
                   </div>
-                  <div className="text-xs text-gray-600">Status atual</div>
+                  <div className="text-xs text-gray-600">Current status</div>
                 </div>
                 <div>
                   <div className="text-lg font-bold text-purple-600">
                     {member.role?.charAt(0).toUpperCase() || "N/A"}
                   </div>
-                  <div className="text-xs text-gray-600">Nível de acesso</div>
+                  <div className="text-xs text-gray-600">Access level</div>
                 </div>
               </div>
             </CardContent>
@@ -286,13 +286,13 @@ export function MemberDetailsDialog({
                 className="flex items-center space-x-2"
               >
                 <MessageSquare className="w-4 h-4" />
-                <span>Mensagem</span>
+                <span>Message</span>
               </Button>
             </div>
 
             <div className="flex space-x-2">
               <Button variant="outline" onClick={() => onOpenChange(false)}>
-                Fechar
+                Close
               </Button>
               {onEdit && (
                 <Button
@@ -303,7 +303,7 @@ export function MemberDetailsDialog({
                   className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
                 >
                   <Edit className="w-4 h-4 mr-2" />
-                  Editar
+                  Edit
                 </Button>
               )}
             </div>

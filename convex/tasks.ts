@@ -43,7 +43,7 @@ export const createTask = mutation({
       priority: args.priority || "medium",
     });
 
-    // Enviar email de notificação usando o componente Resend do Convex
+    // Send notification email using Convex Resend component
     await ctx.scheduler.runAfter(0, "emails:sendTaskNotificationEmail" as any, {
       to: args.assigneeEmail,
       taskId,
@@ -75,14 +75,14 @@ export const updateTaskStatus = mutation({
       status: args.status,
     });
 
-    // Enviar email quando tarefa é concluída
+    // Send email when task is completed
     if (args.status === "done") {
-      // Buscar membros da equipe para notificar
+      // Find team members to notify
       const teamMembers = [
         "joao@empresa.com",
         "maria@empresa.com",
         "pedro@empresa.com",
-      ]; // Em um app real, isso viria do banco de dados
+      ]; // In a real app, this would come from the database
 
       await ctx.scheduler.runAfter(0, "emails:sendTaskCompletionEmail" as any, {
         taskId: args.taskId,

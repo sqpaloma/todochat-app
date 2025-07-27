@@ -62,7 +62,7 @@ export function ChatPage() {
 
   const currentUser = useQuery(api.users.current);
 
-  // Buscar mensagens baseado na aba ativa
+  // Search messages based on active tab
   const messages = useQuery(api.messages.getMessages, {
     teamId: selectedTeam,
     messageType:
@@ -76,7 +76,7 @@ export function ChatPage() {
     currentUserId: currentUser?._id,
   });
 
-  // Buscar mensagens com termo de pesquisa
+  // Search messages with search term
   const searchResults = useQuery(
     api.messages.searchMessages,
     searchTerm.trim()
@@ -93,7 +93,7 @@ export function ChatPage() {
       : "skip"
   );
 
-  // Buscar contatos para mensagens diretas
+  // Search contacts for direct messages
   const directContacts = useQuery(
     api.messages.getDirectMessageContacts,
     currentUser
@@ -120,7 +120,7 @@ export function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  // Reset quando muda de aba
+  // Reset when changing tabs
   useEffect(() => {
     setSearchTerm("");
     setSelectedDirectContact(null);
@@ -131,9 +131,9 @@ export function ChatPage() {
     e.preventDefault();
     if (!newMessage.trim() || !currentUser) return;
 
-    // Validações específicas por tipo
+    // Specific validations by type
     if (activeTab === "direct" && !selectedDirectContact) {
-      alert("Selecione um contato para enviar mensagem direta");
+      alert("Select a contact to send direct message");
       return;
     }
 
@@ -185,9 +185,9 @@ export function ChatPage() {
   const handleFileUpload = async () => {
     if (!selectedFile || !currentUser) return;
 
-    // Validações específicas por tipo
+    // Specific validations by type
     if (activeTab === "direct" && !selectedDirectContact) {
-      alert("Selecione um contato para enviar arquivo");
+      alert("Select a contact to send file");
       return;
     }
 
@@ -270,8 +270,8 @@ export function ChatPage() {
       case "general":
         return {
           icon: Users,
-          label: "Chat Geral",
-          description: "Conversas da equipe",
+          label: "General Chat",
+          description: "Team conversations",
           color: "text-blue-600",
           bgColor: "bg-blue-50",
           borderColor: "border-blue-200",
@@ -279,8 +279,8 @@ export function ChatPage() {
       case "announcements":
         return {
           icon: Megaphone,
-          label: "Comunicados",
-          description: "Mensagens importantes",
+          label: "Announcements",
+          description: "Important messages",
           color: "text-orange-600",
           bgColor: "bg-orange-50",
           borderColor: "border-orange-200",
@@ -288,8 +288,8 @@ export function ChatPage() {
       case "direct":
         return {
           icon: MessageCircle,
-          label: "Mensagens Diretas",
-          description: "Conversas privadas",
+          label: "Direct Messages",
+          description: "Private conversations",
           color: "text-green-600",
           bgColor: "bg-green-50",
           borderColor: "border-green-200",
@@ -307,7 +307,7 @@ export function ChatPage() {
       <div className="flex items-center justify-center h-full bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Carregando...</p>
+          <p className="text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -319,9 +319,9 @@ export function ChatPage() {
         className="flex flex-col bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50"
         style={{ height: "calc(100vh - 120px)" }}
       >
-        {/* Header com abas */}
+        {/* Header with tabs */}
         <div className="bg-white/90 backdrop-blur-sm border-b border-purple-200 shadow-sm">
-          {/* Header principal */}
+          {/* Main header */}
           <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -331,18 +331,18 @@ export function ChatPage() {
                 <div className="flex-1">
                   <h1 className="text-lg font-semibold">TodoChat</h1>
                   <p className="text-xs text-purple-100">
-                    {teamMembers?.length || 0} membros online
+                    {teamMembers?.length || 0} members online
                   </p>
                 </div>
               </div>
 
-              {/* Campo de busca */}
+              {/* Search field */}
               <div className="relative w-64">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/70" />
                 <Input
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Buscar mensagens..."
+                  placeholder="Search messages..."
                   className="pl-10 bg-white/20 border-white/30 text-white placeholder-white/70 focus:bg-white/30 focus:border-white"
                 />
                 {searchTerm && (
@@ -359,7 +359,7 @@ export function ChatPage() {
             </div>
           </div>
 
-          {/* Abas */}
+          {/* Tabs */}
           <div className="px-4 py-3">
             <div className="flex space-x-1">
               {(["general", "announcements", "direct"] as ChatTab[]).map(
@@ -393,12 +393,12 @@ export function ChatPage() {
             </div>
           </div>
 
-          {/* Seletor de contato para mensagens diretas */}
+          {/* Contact selector for direct messages */}
           {activeTab === "direct" && (
             <div className="px-4 pb-3 border-t border-gray-200">
               <div className="flex items-center space-x-3 mt-3">
                 <span className="text-sm font-medium text-gray-700">
-                  Conversar com:
+                  Chat with:
                 </span>
                 {selectedDirectContact ? (
                   <div className="flex items-center space-x-2 bg-green-100 px-3 py-1 rounded-full">
@@ -426,23 +426,21 @@ export function ChatPage() {
                     className="flex items-center space-x-1"
                   >
                     <Plus className="w-4 h-4" />
-                    <span>Selecionar contato</span>
+                    <span>Select contact</span>
                   </Button>
                 )}
               </div>
 
-              {/* Lista de contatos */}
+              {/* Contact list */}
               {(showContactSelector ||
                 (!selectedDirectContact && directContacts?.length)) && (
                 <div className="mt-3 p-3 bg-gray-50 rounded-lg">
                   <div className="text-xs font-medium text-gray-500 mb-2">
-                    {showContactSelector
-                      ? "Todos os membros:"
-                      : "Conversas recentes:"}
+                    {showContactSelector ? "All members:" : "Recent chats:"}
                   </div>
                   <div className="space-y-1 max-h-32 overflow-y-auto">
                     {showContactSelector
-                      ? // Mostrar todos os membros da equipe
+                      ? // Show all team members
                         teamMembers
                           ?.filter((member) => member._id !== currentUser._id)
                           .map((member) => (
@@ -466,7 +464,7 @@ export function ChatPage() {
                               </div>
                             </Button>
                           ))
-                      : // Mostrar conversas recentes
+                      : // Show recent conversations
                         directContacts?.map((contact) => (
                           <Button
                             key={contact.userId}
@@ -494,7 +492,7 @@ export function ChatPage() {
                         onClick={() => setShowContactSelector(false)}
                         className="w-full text-center text-gray-500 mt-2"
                       >
-                        Fechar
+                        Close
                       </Button>
                     )}
                   </div>
@@ -512,22 +510,22 @@ export function ChatPage() {
             backgroundColor: "transparent",
           }}
         >
-          {/* Indicador de busca */}
+          {/* Search indicator */}
           {searchTerm.trim() && (
             <div className="mb-4 p-3 bg-white/70 backdrop-blur-sm rounded-lg border border-purple-200">
               <div className="flex items-center space-x-2">
                 <Search className="w-4 h-4 text-purple-600" />
                 <span className="text-sm text-gray-700">
-                  Resultados para: <strong>"{searchTerm}"</strong>
+                  Results for: <strong>"{searchTerm}"</strong>
                 </span>
                 <span className="text-xs text-gray-500">
-                  ({displayMessages.length} encontrados)
+                  ({displayMessages.length} found)
                 </span>
               </div>
             </div>
           )}
 
-          {/* Estado vazio para mensagens diretas */}
+          {/* Empty state for direct messages */}
           {activeTab === "direct" &&
             !selectedDirectContact &&
             !directContacts?.length && (
@@ -535,24 +533,23 @@ export function ChatPage() {
                 <div className="text-center">
                   <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-gray-600 mb-2">
-                    Nenhuma conversa ainda
+                    No conversations yet
                   </h3>
                   <p className="text-gray-500 mb-4">
-                    Selecione um membro da equipe para iniciar uma conversa
-                    privada
+                    Select a team member to start a private conversation
                   </p>
                   <Button
                     onClick={() => setShowContactSelector(true)}
                     className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Iniciar Conversa
+                    Start Conversation
                   </Button>
                 </div>
               </div>
             )}
 
-          {/* Mensagens */}
+          {/* Messages */}
           {displayMessages.length > 0 && (
             <div className="space-y-1">
               {displayMessages
@@ -585,7 +582,7 @@ export function ChatPage() {
             </div>
           )}
 
-          {/* Estado vazio quando não há mensagens */}
+          {/* Empty state when there are no messages */}
           {displayMessages.length === 0 &&
             !searchTerm.trim() &&
             selectedDirectContact && (
@@ -593,10 +590,10 @@ export function ChatPage() {
                 <div className="text-center">
                   <currentTabConfig.icon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-gray-600 mb-2">
-                    Nenhuma mensagem ainda
+                    No messages yet
                   </h3>
                   <p className="text-gray-500">
-                    Seja o primeiro a enviar uma mensagem!
+                    Be the first to send a message!
                   </p>
                 </div>
               </div>
@@ -647,7 +644,7 @@ export function ChatPage() {
 
         {/* Input Area */}
         <div className="bg-white/80 backdrop-blur-sm p-4 border-t border-purple-200">
-          {/* Indicador do tipo de mensagem ativa */}
+          {/* Active message type indicator */}
           <div className="flex items-center space-x-2 mb-3">
             <currentTabConfig.icon
               className={`w-4 h-4 ${currentTabConfig.color}`}
@@ -700,12 +697,12 @@ export function ChatPage() {
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder={
                   activeTab === "general"
-                    ? "Digite uma mensagem para a equipe..."
+                    ? "Type a message for the team..."
                     : activeTab === "announcements"
-                      ? "Digite um comunicado importante..."
+                      ? "Type an important announcement..."
                       : selectedDirectContact
-                        ? "Digite uma mensagem privada..."
-                        : "Selecione um contato primeiro..."
+                        ? "Type a private message..."
+                        : "Select a contact first..."
                 }
                 className="pr-12 py-3 rounded-3xl border-purple-200 focus:ring-purple-500 focus:border-purple-500 bg-white shadow-sm"
                 disabled={
@@ -737,10 +734,10 @@ export function ChatPage() {
             </Button>
           </form>
 
-          {/* Aviso para mensagens diretas */}
+          {/* Warning for direct messages */}
           {activeTab === "direct" && !selectedDirectContact && (
             <div className="mt-2 text-xs text-gray-500 text-center">
-              💡 Selecione um contato acima para enviar mensagens diretas
+              💡 Select a contact above to send direct messages
             </div>
           )}
         </div>

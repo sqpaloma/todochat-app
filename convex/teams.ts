@@ -6,20 +6,19 @@ import { internal } from "./_generated/api";
 export const getTeamMembers = query({
   args: { teamId: v.string() },
   handler: async (ctx, args) => {
-    // Buscar todos os usuários cadastrados no sistema
+    // Fetch all users registered in the system
     const users = await ctx.db.query("users").collect();
 
-    // Retornar usuários formatados para o componente de equipe
+    // Return formatted users for the team component
     return users.map((user) => ({
       _id: user._id,
-      name:
-        `${user.firstName || ""} ${user.lastName || ""}`.trim() || "Usuário",
+      name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "User",
       email: user.email,
-      status: "online" as const, // Em uma implementação real, isso viria de um sistema de presença
-      role: "member", // Em uma implementação real, isso viria da relação team-user
+      status: "online" as const, // In a real implementation, this would come from a presence system
+      role: "member", // In a real implementation, this would come from the team-user relationship
       joinDate: user._creationTime,
-      phone: undefined, // Campo não existe na estrutura atual de usuários
-      location: undefined, // Campo não existe na estrutura atual de usuários
+      phone: undefined, // Field doesn't exist in current user structure
+      location: undefined, // Field doesn't exist in current user structure
       imageUrl: user.imageUrl,
     }));
   },
@@ -56,29 +55,29 @@ export const addMember = mutation({
   },
 });
 
-// Função para enviar resumo diário para todos os membros da equipe
+// Function to send daily digest to all team members
 export const sendDailyDigestToTeam = internalMutation({
   args: {
     teamId: v.string(),
   },
   handler: async (ctx, args) => {
-    // Buscar todos os usuários cadastrados (em uma implementação real, apenas os da equipe)
+    // Fetch all registered users (in a real implementation, only team members)
     const members = await ctx.db.query("users").collect();
 
-    // Buscar todas as tarefas da equipe
+    // Fetch all team tasks
     const allTasks = await ctx.db
       .query("tasks")
       .filter((q) => q.eq(q.field("teamId"), args.teamId))
       .collect();
 
-    // Tarefas concluídas hoje
+    // Tasks completed today
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const completedToday = allTasks.filter(
       (task) => task.status === "done" && task._creationTime >= today.getTime()
     );
 
-    // Enviar resumo para cada membro
+    // Send digest to each member
     for (const member of members) {
       const memberTasks = allTasks.filter(
         (task) => task.assigneeId === member._id && task.status !== "done"
@@ -89,7 +88,7 @@ export const sendDailyDigestToTeam = internalMutation({
           memberEmail: member.email,
           memberName:
             `${member.firstName || ""} ${member.lastName || ""}`.trim() ||
-            "Usuário",
+            "User",
           memberTasks: memberTasks.map((task) => ({
             _id: task._id,
             title: task.title,
