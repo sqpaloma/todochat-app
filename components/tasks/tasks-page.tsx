@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import {
   DndContext,
   DragEndEvent,
@@ -21,14 +22,18 @@ import { Button } from "@/components/ui/button";
 import { Plus, Calendar } from "lucide-react";
 
 interface TaskType {
-  _id: string;
+  _id: Id<"tasks">;
   title: string;
-  description?: string;
+  description: string;
   status: "todo" | "in-progress" | "done";
-  priority?: "high" | "medium" | "low";
-  assigneeId?: string;
+  assigneeId: string;
+  assigneeName: string;
+  createdBy: string;
+  createdAt: number;
   dueDate?: number;
+  originalMessage?: string;
   teamId: string;
+  priority: "low" | "medium" | "high";
 }
 
 export function TasksPage() {

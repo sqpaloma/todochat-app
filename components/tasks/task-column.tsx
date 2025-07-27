@@ -9,13 +9,14 @@ interface TaskType {
   title: string;
   description: string;
   status: "todo" | "in-progress" | "done";
-  assigneeId: Id<"users">;
+  assigneeId: string;
   assigneeName: string;
-  createdBy: Id<"users">;
+  createdBy: string;
   createdAt: number;
   dueDate?: number;
   originalMessage?: string;
-  teamId: Id<"teams">;
+  teamId: string;
+  priority: "low" | "medium" | "high";
 }
 
 interface TaskColumnProps {
