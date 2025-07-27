@@ -105,20 +105,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       active: pathname === "/team",
       gradient: "from-orange-500 to-red-500",
     },
-    {
-      name: "Calendário",
-      href: "/calendar",
-      icon: Calendar,
-      active: pathname === "/calendar",
-      gradient: "from-indigo-500 to-purple-500",
-    },
-    {
-      name: "Relatórios",
-      href: "/reports",
-      icon: BarChart3,
-      active: pathname === "/reports",
-      gradient: "from-pink-500 to-rose-500",
-    },
   ];
 
   return (

@@ -12,6 +12,8 @@ import type * as crons from "../crons.js";
 import type * as emails from "../emails.js";
 import type * as http from "../http.js";
 import type * as messages from "../messages.js";
+import type * as presence from "../presence.js";
+import type * as sendEmails from "../sendEmails.js";
 import type * as tasks from "../tasks.js";
 import type * as teams from "../teams.js";
 import type * as users from "../users.js";
@@ -35,6 +37,8 @@ declare const fullApi: ApiFromModules<{
   emails: typeof emails;
   http: typeof http;
   messages: typeof messages;
+  presence: typeof presence;
+  sendEmails: typeof sendEmails;
   tasks: typeof tasks;
   teams: typeof teams;
   users: typeof users;
@@ -146,6 +150,57 @@ export declare const components: {
           to: string;
         },
         string
+      >;
+    };
+  };
+  presence: {
+    public: {
+      disconnect: FunctionReference<
+        "mutation",
+        "internal",
+        { sessionToken: string },
+        null
+      >;
+      heartbeat: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          interval?: number;
+          roomId: string;
+          sessionId: string;
+          userId: string;
+        },
+        { roomToken: string; sessionToken: string }
+      >;
+      list: FunctionReference<
+        "query",
+        "internal",
+        { limit?: number; roomToken: string },
+        Array<{ lastDisconnected: number; online: boolean; userId: string }>
+      >;
+      listRoom: FunctionReference<
+        "query",
+        "internal",
+        { limit?: number; onlineOnly?: boolean; roomId: string },
+        Array<{ lastDisconnected: number; online: boolean; userId: string }>
+      >;
+      listUser: FunctionReference<
+        "query",
+        "internal",
+        { limit?: number; onlineOnly?: boolean; userId: string },
+        Array<{ lastDisconnected: number; online: boolean; roomId: string }>
+      >;
+      removeRoom: FunctionReference<
+        "mutation",
+        "internal",
+        { roomId: string },
+        null
+      >;
+      removeRoomUser: FunctionReference<
+        "mutation",
+        "internal",
+        { roomId: string; userId: string },
+        null
       >;
     };
   };
