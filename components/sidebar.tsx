@@ -18,6 +18,10 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  MoreHorizontal,
+  UserPlus,
+  Edit,
+  Send,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,12 +39,51 @@ interface SidebarProps {
   onClose: () => void;
 }
 
+interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  status: "online" | "offline" | "away";
+  role: string;
+}
+
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTeam, setActiveTeam] = useState("Main Team");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
+  const [showTeamDropdown, setShowTeamDropdown] = useState(false);
+  const [activeMemberMenu, setActiveMemberMenu] = useState<string | null>(null);
+
+  // Sample team members data
+  const teamMembers: TeamMember[] = [
+    {
+      id: "1",
+      name: "Pedro Costa",
+      email: "pedro@example.com",
+      avatar: "PC",
+      status: "online",
+      role: "Developer",
+    },
+    {
+      id: "2",
+      name: "Maria Santos",
+      email: "maria@example.com",
+      avatar: "MS",
+      status: "online",
+      role: "Designer",
+    },
+    {
+      id: "3",
+      name: "João Silva",
+      email: "joao@example.com",
+      avatar: "JS",
+      status: "away",
+      role: "Manager",
+    },
+  ];
 
   // Handle window resize
   useEffect(() => {
@@ -76,6 +119,34 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  const toggleTeamDropdown = () => {
+    setShowTeamDropdown(!showTeamDropdown);
+    setActiveMemberMenu(null); // Close any open member menu
+  };
+
+  const toggleMemberMenu = (memberId: string) => {
+    setActiveMemberMenu(activeMemberMenu === memberId ? null : memberId);
+  };
+
+  const handleMemberAction = (action: string, memberName: string) => {
+    console.log(`${action} for ${memberName}`);
+    setActiveMemberMenu(null);
+    // Here you can implement the actual actions
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "online":
+        return "bg-green-400";
+      case "away":
+        return "bg-yellow-400";
+      case "offline":
+        return "bg-gray-400";
+      default:
+        return "bg-gray-400";
+    }
   };
 
   const navigationItems = [
@@ -203,6 +274,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             <Button
               variant="ghost"
               className="w-full justify-between p-3 h-auto rounded-xl hover:bg-gray-50"
+              onClick={toggleTeamDropdown}
             >
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
@@ -215,8 +287,79 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <p className="text-xs text-gray-500">3 members online</p>
                 </div>
               </div>
-              <ChevronDown className="w-4 h-4 text-gray-400" />
+              <ChevronDown
+                className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${showTeamDropdown ? "rotate-180" : ""}`}
+              />
             </Button>
+
+            {/* Team Members Dropdown */}
+            {showTeamDropdown && (
+              <div className="mt-2 space-y-1">
+                {teamMembers.map((member) => (
+                  <div key={member.id} className="relative">
+                    <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 group">
+                      <div className="flex items-center space-x-3">
+                        <div className="relative">
+                          <div className="w-8 h-8 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                            {member.avatar}
+                          </div>
+                          <div
+                            className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 ${getStatusColor(member.status)} rounded-full border-2 border-white`}
+                          ></div>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {member.name}
+                          </p>
+                          <p className="text-xs text-gray-500">{member.role}</p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                        onClick={() => toggleMemberMenu(member.id)}
+                      >
+                        <MoreHorizontal className="w-4 h-4 text-gray-400" />
+                      </Button>
+                    </div>
+
+                    {/* Member Actions Menu */}
+                    {activeMemberMenu === member.id && (
+                      <div className="absolute right-0 top-full mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                        <button
+                          className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
+                          onClick={() =>
+                            handleMemberAction("Add Task", member.name)
+                          }
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span>Add Task</span>
+                        </button>
+                        <button
+                          className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
+                          onClick={() =>
+                            handleMemberAction("Send Message", member.name)
+                          }
+                        >
+                          <Send className="w-4 h-4" />
+                          <span>Send Message</span>
+                        </button>
+                        <button
+                          className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
+                          onClick={() =>
+                            handleMemberAction("Edit", member.name)
+                          }
+                        >
+                          <Edit className="w-4 h-4" />
+                          <span>Edit</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
