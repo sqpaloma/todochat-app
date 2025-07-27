@@ -8,6 +8,24 @@ export default defineSchema({
     authorName: v.string(),
     teamId: v.string(),
     timestamp: v.number(),
+    reactions: v.optional(
+      v.array(
+        v.object({
+          emoji: v.string(),
+          users: v.array(
+            v.object({
+              userId: v.string(),
+              userName: v.string(),
+              timestamp: v.number(),
+            })
+          ),
+        })
+      )
+    ),
+    fileId: v.optional(v.id("_storage")),
+    fileName: v.optional(v.string()),
+    fileType: v.optional(v.string()),
+    fileSize: v.optional(v.number()),
   }),
 
   tasks: defineTable({

@@ -1,9 +1,23 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Plus, Clock } from "lucide-react";
+import {
+  Plus,
+  ThumbsUp,
+  ThumbsDown,
+  Heart,
+  Smile,
+  Zap,
+  Download,
+  FileText,
+  Image,
+  Video,
+  Music,
+} from "lucide-react";
+import { useState } from "react";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 interface MessageType {
   _id: string;
@@ -12,14 +26,40 @@ interface MessageType {
   authorName: string;
   timestamp: number;
   teamId: string;
+  reactions?: Array<{
+    emoji: string;
+    users: Array<{ userId: string; userName: string; timestamp: number }>;
+  }>;
+  fileId?: string;
+  fileName?: string;
+  fileType?: string;
+  fileSize?: number;
 }
 
 interface MessageProps {
   message: MessageType;
+  currentUserId: string;
+  currentUserName: string;
+  isGrouped: boolean;
   onCreateTask: () => void;
 }
 
-export function Message({ message, onCreateTask }: MessageProps) {
+export function Message({
+  message,
+  currentUserId,
+  currentUserName,
+  isGrouped,
+  onCreateTask,
+}: MessageProps) {
+  const [showReactions, setShowReactions] = useState(false);
+  const addReaction = useMutation(api.messages.addReaction);
+
+  // Get file URL if this message has a file
+  const fileUrl = useQuery(
+    api.messages.getFileUrl,
+    message.fileId ? { fileId: message.fileId as any } : "skip"
+  );
+
   const formatTime = (timestamp: number) => {
     return new Date(timestamp).toLocaleTimeString("pt-BR", {
       hour: "2-digit",
@@ -27,44 +67,398 @@ export function Message({ message, onCreateTask }: MessageProps) {
     });
   };
 
-  return (
-    <Card className="p-4 bg-white border-0 shadow-sm hover:shadow-md transition-all duration-200">
-      <div className="flex items-start space-x-4">
-        <Avatar className="w-10 h-10">
-          <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white font-semibold">
-            {message.authorName
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
-              .slice(0, 2)}
-          </AvatarFallback>
-        </Avatar>
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  };
 
-        <div className="flex-1">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center space-x-2">
-              <h4 className="font-semibold text-gray-900">
-                {message.authorName}
-              </h4>
-              <div className="flex items-center space-x-1 text-xs text-gray-500">
-                <Clock className="w-3 h-3" />
-                <span>{formatTime(message.timestamp)}</span>
-              </div>
-            </div>
+  const getFileIcon = (fileType?: string) => {
+    if (!fileType) return <FileText className="w-5 h-5" />;
 
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onCreateTask}
-              className="text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-full p-2"
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
+    if (fileType.startsWith("image/")) return <Image className="w-5 h-5" />;
+    if (fileType.startsWith("video/")) return <Video className="w-5 h-5" />;
+    if (fileType.startsWith("audio/")) return <Music className="w-5 h-5" />;
+    return <FileText className="w-5 h-5" />;
+  };
+
+  const isCurrentUser = message.authorId === currentUserId;
+  const isImageFile = message.fileType?.startsWith("image/");
+  const hasFile = !!message.fileId;
+
+  const handleReaction = async (emoji: string) => {
+    try {
+      await addReaction({
+        messageId: message._id as any,
+        emoji,
+        userId: currentUserId,
+        userName: currentUserName,
+      });
+      setShowReactions(false);
+    } catch (error) {
+      console.error("Error adding reaction:", error);
+    }
+  };
+
+  const handleNudge = () => {
+    // TODO: Implement nudge functionality
+    console.log("Nudging user:", message.authorName);
+  };
+
+  const handleFileDownload = () => {
+    if (fileUrl && message.fileName) {
+      const link = document.createElement("a");
+      link.href = fileUrl;
+      link.download = message.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  // Get reaction counts from the message
+  const getReactionCount = (emoji: string) => {
+    const reaction = message.reactions?.find((r) => r.emoji === emoji);
+    return reaction?.users.length || 0;
+  };
+
+  const renderFileContent = () => {
+    if (!hasFile || !fileUrl) return null;
+
+    if (isImageFile) {
+      return (
+        <div className="mt-2">
+          <img
+            src={fileUrl}
+            alt={message.fileName}
+            className="max-w-sm max-h-64 rounded-lg object-cover cursor-pointer hover:opacity-90 transition-opacity"
+            onClick={() => window.open(fileUrl, "_blank")}
+          />
+          {message.fileName && (
+            <p className="text-xs text-gray-500 mt-1">{message.fileName}</p>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="mt-2 bg-gray-50 rounded-lg p-3 border border-gray-200 max-w-sm">
+        <div className="flex items-center space-x-3">
+          <div className="text-purple-500">{getFileIcon(message.fileType)}</div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 truncate">
+              {message.fileName}
+            </p>
+            {message.fileSize && (
+              <p className="text-xs text-gray-500">
+                {formatFileSize(message.fileSize)}
+              </p>
+            )}
           </div>
-
-          <p className="text-gray-800 leading-relaxed">{message.content}</p>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleFileDownload}
+            className="p-1 text-purple-500 hover:bg-purple-100 rounded"
+          >
+            <Download className="w-4 h-4" />
+          </Button>
         </div>
       </div>
-    </Card>
+    );
+  };
+
+  if (isCurrentUser) {
+    // Current user's message - Right aligned
+    return (
+      <div
+        className={`flex justify-end items-end space-x-2 ${isGrouped ? "mt-1" : "mt-3"}`}
+      >
+        <div className="max-w-[75%] group relative">
+          {/* Reaction bar for current user */}
+          <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-full mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <div className="flex items-center space-x-1 bg-white rounded-full shadow-lg border border-gray-200 px-2 py-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowReactions(!showReactions)}
+                className="p-1 h-auto hover:bg-gray-100 rounded-full"
+              >
+                <Smile className="w-4 h-4 text-gray-600" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onCreateTask}
+                className="p-1 h-auto hover:bg-gray-100 rounded-full"
+              >
+                <Plus className="w-4 h-4 text-gray-600" />
+              </Button>
+            </div>
+
+            {/* Quick reaction popup */}
+            {showReactions && (
+              <div className="absolute top-full left-0 mt-1 bg-white rounded-full shadow-lg border border-gray-200 px-2 py-1 flex space-x-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleReaction("👍")}
+                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
+                >
+                  👍
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleReaction("❤️")}
+                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
+                >
+                  ❤️
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleReaction("😂")}
+                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
+                >
+                  😂
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleReaction("😮")}
+                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
+                >
+                  😮
+                </Button>
+              </div>
+            )}
+          </div>
+
+          <div className="relative">
+            {/* Tail for first message only */}
+            {!isGrouped && (
+              <div
+                className="absolute top-2 -right-2 w-0 h-0"
+                style={{
+                  borderStyle: "solid",
+                  borderWidth: "8px 0 8px 12px",
+                  borderColor: "transparent transparent transparent #ec4899",
+                }}
+              />
+            )}
+            <div
+              className={`
+                bg-gradient-to-r from-purple-500 to-pink-500 text-white 
+                px-3 py-2 shadow-sm relative
+                ${
+                  isGrouped
+                    ? "rounded-2xl rounded-br-lg"
+                    : "rounded-2xl rounded-br-md"
+                }
+              `}
+            >
+              {!hasFile && (
+                <p className="text-sm leading-relaxed break-words">
+                  {message.content}
+                </p>
+              )}
+              {hasFile && isImageFile && renderFileContent()}
+            </div>
+
+            {/* File content outside bubble for non-images */}
+            {hasFile && !isImageFile && (
+              <div className="mt-2">{renderFileContent()}</div>
+            )}
+
+            {/* Show reactions below message */}
+            {message.reactions && message.reactions.length > 0 && (
+              <div className="flex items-center space-x-1 mt-1 justify-end">
+                {message.reactions.map((reaction) => (
+                  <div
+                    key={reaction.emoji}
+                    className="bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 text-xs flex items-center space-x-1 shadow-sm border border-purple-200 cursor-pointer hover:bg-white"
+                    onClick={() => handleReaction(reaction.emoji)}
+                  >
+                    <span>{reaction.emoji}</span>
+                    <span className="text-purple-600 font-medium">
+                      {reaction.users.length}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Timestamp outside bubble */}
+        <span className="text-xs text-gray-400 flex-shrink-0 pb-1">
+          {formatTime(message.timestamp)}
+        </span>
+      </div>
+    );
+  }
+
+  // Other user's message - Left aligned
+  return (
+    <div
+      className={`flex items-start space-x-2 ${isGrouped ? "mt-1" : "mt-3"}`}
+    >
+      <div className="flex-shrink-0">
+        {!isGrouped ? (
+          <Avatar className="w-8 h-8">
+            <AvatarFallback className="bg-gradient-to-br from-purple-400 to-pink-500 text-white text-xs font-semibold">
+              {message.authorName
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .slice(0, 2)}
+            </AvatarFallback>
+          </Avatar>
+        ) : (
+          <div className="w-8 h-8" />
+        )}
+      </div>
+
+      <div className="flex items-end space-x-2 flex-1">
+        <div className="max-w-[75%] group relative">
+          {/* Reaction bar for other users */}
+          <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-full ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <div className="flex items-center space-x-1 bg-white rounded-full shadow-lg border border-gray-200 px-2 py-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowReactions(!showReactions)}
+                className="p-1 h-auto hover:bg-gray-100 rounded-full"
+              >
+                <Smile className="w-4 h-4 text-gray-600" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleNudge}
+                className="p-1 h-auto hover:bg-gray-100 rounded-full"
+                title="Nudge user"
+              >
+                <Zap className="w-4 h-4 text-amber-500" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onCreateTask}
+                className="p-1 h-auto hover:bg-gray-100 rounded-full"
+              >
+                <Plus className="w-4 h-4 text-gray-600" />
+              </Button>
+            </div>
+
+            {/* Quick reaction popup */}
+            {showReactions && (
+              <div className="absolute top-full right-0 mt-1 bg-white rounded-full shadow-lg border border-gray-200 px-2 py-1 flex space-x-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleReaction("👍")}
+                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
+                >
+                  👍
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleReaction("❤️")}
+                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
+                >
+                  ❤️
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleReaction("😂")}
+                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
+                >
+                  😂
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleReaction("😮")}
+                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
+                >
+                  😮
+                </Button>
+              </div>
+            )}
+          </div>
+
+          <div className="relative">
+            {/* Tail for first message only */}
+            {!isGrouped && (
+              <div
+                className="absolute top-2 -left-2 w-0 h-0"
+                style={{
+                  borderStyle: "solid",
+                  borderWidth: "8px 12px 8px 0",
+                  borderColor: "transparent white transparent transparent",
+                }}
+              />
+            )}
+            <div
+              className={`
+                bg-white border border-purple-100 
+                px-3 py-2 shadow-sm relative
+                ${
+                  isGrouped
+                    ? "rounded-2xl rounded-bl-lg"
+                    : "rounded-2xl rounded-bl-md"
+                }
+              `}
+            >
+              {!isGrouped && (
+                <p className="text-xs font-semibold text-purple-600 mb-1">
+                  {message.authorName}
+                </p>
+              )}
+              {!hasFile && (
+                <p className="text-sm text-gray-800 leading-relaxed break-words">
+                  {message.content}
+                </p>
+              )}
+              {hasFile && isImageFile && renderFileContent()}
+            </div>
+
+            {/* File content outside bubble for non-images */}
+            {hasFile && !isImageFile && (
+              <div className="mt-2">{renderFileContent()}</div>
+            )}
+
+            {/* Show reactions below message */}
+            {message.reactions && message.reactions.length > 0 && (
+              <div className="flex items-center space-x-1 mt-1">
+                {message.reactions.map((reaction) => (
+                  <div
+                    key={reaction.emoji}
+                    className="bg-purple-50 rounded-full px-2 py-1 text-xs flex items-center space-x-1 shadow-sm border border-purple-200 cursor-pointer hover:bg-purple-100"
+                    onClick={() => handleReaction(reaction.emoji)}
+                  >
+                    <span>{reaction.emoji}</span>
+                    <span className="text-purple-600 font-medium">
+                      {reaction.users.length}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Timestamp outside bubble */}
+        <span className="text-xs text-gray-400 flex-shrink-0 pb-1">
+          {formatTime(message.timestamp)}
+        </span>
+      </div>
+    </div>
   );
 }
