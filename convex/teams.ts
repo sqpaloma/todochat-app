@@ -1,6 +1,7 @@
 import { mutation, query, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { getCurrentUserOrThrow } from "./users";
+import { internal } from "./_generated/api";
 
 export const getTeamMembers = query({
   args: { teamId: v.string() },
@@ -29,32 +30,28 @@ export const addMember = mutation({
     teamId: v.string(),
     email: v.string(),
     role: v.optional(v.string()),
-    name: v.optional(v.string()),
-    phone: v.optional(v.string()),
-    location: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    // Verificar se o usuário atual tem permissão (deve estar autenticado)
+    // Verify that the current user has permission (must be authenticated)
     const currentUser = await getCurrentUserOrThrow(ctx);
 
-    // Buscar usuário pelo email
-    const existingUser = await ctx.db
-      .query("users")
-      .filter((q) => q.eq(q.field("email"), args.email))
-      .unique();
+    // Get inviter's name for the email
+    const inviterName =
+      `${currentUser.firstName || ""} ${currentUser.lastName || ""}`.trim() ||
+      currentUser.email;
 
-    if (!existingUser) {
-      return {
-        success: false,
-        message: `Usuário com email ${args.email} não encontrado. O usuário precisa estar cadastrado no sistema.`,
-      };
-    }
+    // Send invitation email - user doesn't need to exist in system yet
+    await ctx.scheduler.runAfter(0, internal.emails.sendTeamInvitationEmail, {
+      to: args.email,
+      inviteeName: args.email.split("@")[0], // Use email prefix as name placeholder
+      inviterName: inviterName,
+      teamName: "TodoChat Team", // You can make this dynamic later
+      teamId: args.teamId,
+    });
 
-    // Em uma implementação completa, aqui criaria uma relação team-member
-    // Por enquanto, retornamos sucesso já que o usuário existe
     return {
       success: true,
-      message: `Usuário ${existingUser.firstName || existingUser.email} encontrado no sistema`,
+      message: `Invitation sent successfully to ${args.email}. They will receive an email with instructions to join the team.`,
     };
   },
 });

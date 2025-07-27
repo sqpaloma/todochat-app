@@ -76,6 +76,98 @@ export const sendNudgeEmail = internalMutation({
   },
 });
 
+// Function to send team invitation email
+export const sendTeamInvitationEmail = internalMutation({
+  args: {
+    to: v.string(),
+    inviteeName: v.string(),
+    inviterName: v.string(),
+    teamName: v.optional(v.string()),
+    teamId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    console.log("🚀 sendTeamInvitationEmail called with:", {
+      to: args.to,
+      inviteeName: args.inviteeName,
+      inviterName: args.inviterName,
+      teamName: args.teamName,
+      teamId: args.teamId,
+    });
+
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const joinUrl = `${appUrl}/join?team=${args.teamId}&email=${encodeURIComponent(args.to)}`;
+
+    try {
+      await resend.sendEmail(ctx, {
+        from: "Acme <onboarding@resend.dev>", // Using verified Resend domain for testing
+        to: args.to,
+        subject: `🎉 You're invited to join ${args.teamName || "our team"} on TodoChat`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+            <div style="text-align: center; margin-bottom: 40px;">
+              <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                <span style="color: white; font-size: 36px; font-weight: bold;">👥</span>
+              </div>
+              <h1 style="color: #1e293b; margin: 0; font-size: 28px; font-weight: bold;">You're Invited!</h1>
+              <p style="color: #64748b; margin: 10px 0 0 0; font-size: 16px;">Join your team on TodoChat</p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); padding: 25px; border-radius: 16px; margin: 30px 0; text-align: center;">
+              <p style="color: white; margin: 0; font-size: 18px; line-height: 1.5;">
+                <strong>${args.inviterName}</strong> has invited you to join<br>
+                <span style="font-size: 20px; font-weight: bold;">${args.teamName || "the team"}</span>
+              </p>
+            </div>
+
+            <div style="background-color: #f8fafc; padding: 25px; border-radius: 12px; border-left: 4px solid #7c3aed; margin: 30px 0;">
+              <h3 style="margin: 0 0 15px 0; color: #1e293b; font-size: 18px;">Welcome to TodoChat!</h3>
+              <p style="margin: 0 0 15px 0; color: #64748b; font-size: 14px; line-height: 1.6;">
+                TodoChat is a collaborative platform where teams can chat, manage tasks, and stay organized. 
+                You'll be able to:
+              </p>
+              <ul style="margin: 0; padding-left: 20px; color: #64748b; font-size: 14px; line-height: 1.6;">
+                <li>Chat with your team members in real-time</li>
+                <li>Create and manage tasks collaboratively</li>
+                <li>Track project progress and deadlines</li>
+                <li>Get notified about important updates</li>
+              </ul>
+            </div>
+
+            <div style="text-align: center; margin: 40px 0;">
+              <a href="${joinUrl}" 
+                 style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 30px; display: inline-block; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);">
+                Join Team Now
+              </a>
+            </div>
+
+            <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 30px 0;">
+              <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.5;">
+                <strong>⏰ Getting Started:</strong><br>
+                Click the button above to create your account and join the team. 
+                If you already have an account, just sign in and you'll be automatically added to the team.
+              </p>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+              <p style="color: #64748b; font-size: 12px; margin: 0 0 5px 0;">
+                You received this invitation because ${args.inviterName} added your email to their TodoChat team.
+              </p>
+              <p style="color: #94a3b8; font-size: 11px; margin: 0;">
+                If you don't want to join this team, you can safely ignore this email.
+              </p>
+            </div>
+          </div>
+        `,
+      });
+
+      console.log("✅ Email sent successfully to:", args.to);
+    } catch (error) {
+      console.error("❌ Error sending email:", error);
+      throw error;
+    }
+  },
+});
+
 // Função para enviar email de nova tarefa
 export const sendTaskNotificationEmail = internalMutation({
   args: {
