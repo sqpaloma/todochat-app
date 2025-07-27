@@ -102,9 +102,9 @@ export function CreateManualTaskDialog({
   };
 
   const priorityLabels = {
-    low: "Baixa",
-    medium: "Média",
-    high: "Alta",
+    low: "Low",
+    medium: "Medium",
+    high: "High",
   };
 
   return (
@@ -142,10 +142,10 @@ export function CreateManualTaskDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Responsável *</Label>
+              <Label>Assignee *</Label>
               <Select value={assigneeId} onValueChange={setAssigneeId} required>
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecionar pessoa" />
+                  <SelectValue placeholder="Select person" />
                 </SelectTrigger>
                 <SelectContent>
                   {teamMembers.map((member) => (
@@ -158,7 +158,7 @@ export function CreateManualTaskDialog({
             </div>
 
             <div>
-              <Label>Prioridade</Label>
+              <Label>Priority</Label>
               <Select
                 value={priority}
                 onValueChange={(value: "low" | "medium" | "high") =>
@@ -173,21 +173,21 @@ export function CreateManualTaskDialog({
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${priorityColors.low}`}
                     >
-                      🟢 Baixa
+                      🟢 Low
                     </span>
                   </SelectItem>
                   <SelectItem value="medium">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${priorityColors.medium}`}
                     >
-                      🟡 Média
+                      🟡 Medium
                     </span>
                   </SelectItem>
                   <SelectItem value="high">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${priorityColors.high}`}
                     >
-                      🔴 Alta
+                      🔴 High
                     </span>
                   </SelectItem>
                 </SelectContent>
