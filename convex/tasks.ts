@@ -1,5 +1,6 @@
-import { mutation, query } from "./_generated/server"
-import { v } from "convex/values"
+import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
+import { v } from "convex/values";
 
 export const getTasks = query({
   args: { teamId: v.string() },
@@ -8,9 +9,9 @@ export const getTasks = query({
       .query("tasks")
       .filter((q) => q.eq(q.field("teamId"), args.teamId))
       .order("desc")
-      .collect()
+      .collect();
   },
-})
+});
 
 export const createTask = mutation({
   args: {
@@ -23,7 +24,9 @@ export const createTask = mutation({
     createdBy: v.string(),
     dueDate: v.optional(v.number()),
     originalMessage: v.optional(v.string()),
-    priority: v.optional(v.union(v.literal("low"), v.literal("medium"), v.literal("high"))),
+    priority: v.optional(
+      v.union(v.literal("low"), v.literal("medium"), v.literal("high"))
+    ),
   },
   handler: async (ctx, args) => {
     const taskId = await ctx.db.insert("tasks", {
@@ -38,31 +41,57 @@ export const createTask = mutation({
       originalMessage: args.originalMessage,
       teamId: args.teamId,
       priority: args.priority || "medium",
-    })
+    });
 
-    // Send email notification (in real app, this would call Resend API)
-    console.log("📧 Email sent to:", args.assigneeEmail)
-    console.log("Task created:", args.title)
+    // Enviar email de notificação usando o componente Resend do Convex
+    await ctx.scheduler.runAfter(0, "emails:sendTaskNotificationEmail" as any, {
+      to: args.assigneeEmail,
+      taskId,
+      taskTitle: args.title,
+      assigneeName: args.assigneeName,
+      createdBy: args.createdBy,
+      description: args.description,
+      dueDate: args.dueDate,
+    });
 
-    return taskId
+    return taskId;
   },
-})
+});
 
 export const updateTaskStatus = mutation({
   args: {
     taskId: v.id("tasks"),
-    status: v.union(v.literal("todo"), v.literal("in-progress"), v.literal("done")),
+    status: v.union(
+      v.literal("todo"),
+      v.literal("in-progress"),
+      v.literal("done")
+    ),
   },
   handler: async (ctx, args) => {
+    const task = await ctx.db.get(args.taskId);
+    if (!task) throw new Error("Task not found");
+
     await ctx.db.patch(args.taskId, {
       status: args.status,
-    })
+    });
 
-    // Send email notification when task is completed
+    // Enviar email quando tarefa é concluída
     if (args.status === "done") {
-      console.log("📧 Task completion email sent")
+      // Buscar membros da equipe para notificar
+      const teamMembers = [
+        "joao@empresa.com",
+        "maria@empresa.com",
+        "pedro@empresa.com",
+      ]; // Em um app real, isso viria do banco de dados
+
+      await ctx.scheduler.runAfter(0, "emails:sendTaskCompletionEmail" as any, {
+        taskId: args.taskId,
+        taskTitle: task.title,
+        completedBy: task.assigneeName,
+        teamMemberEmails: teamMembers,
+      });
     }
 
-    return args.taskId
+    return args.taskId;
   },
-})
+});
