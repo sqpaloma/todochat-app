@@ -18,6 +18,7 @@ import {
   MoreVertical,
   UserCheck,
   MessageSquare,
+  Edit,
 } from "lucide-react";
 
 interface TeamMemberType {
@@ -33,9 +34,11 @@ interface TeamMemberType {
 
 interface TeamMemberProps {
   member: TeamMemberType;
+  onEdit?: (member: TeamMemberType) => void;
+  onViewProfile?: (member: TeamMemberType) => void;
 }
 
-export function TeamMember({ member }: TeamMemberProps) {
+export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
   const formatJoinDate = (timestamp?: number) => {
     if (!timestamp) return "Data não informada";
     return new Date(timestamp).toLocaleDateString("pt-BR", {
@@ -101,14 +104,28 @@ export function TeamMember({ member }: TeamMemberProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              {onEdit && (
+                <DropdownMenuItem
+                  className="text-orange-600"
+                  onClick={() => onEdit(member)}
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Editar Membro
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem className="text-blue-600">
                 <MessageSquare className="w-4 h-4 mr-2" />
                 Enviar Mensagem
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-green-600">
-                <UserCheck className="w-4 h-4 mr-2" />
-                Ver Perfil
-              </DropdownMenuItem>
+              {onViewProfile && (
+                <DropdownMenuItem
+                  className="text-green-600"
+                  onClick={() => onViewProfile(member)}
+                >
+                  <UserCheck className="w-4 h-4 mr-2" />
+                  Ver Perfil
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
