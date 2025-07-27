@@ -6,19 +6,20 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Clock, MessageSquare } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface TaskType {
-  _id: string;
+  _id: Id<"tasks">;
   title: string;
   description: string;
   status: "todo" | "in-progress" | "done";
-  assigneeId: string;
+  assigneeId: Id<"users">;
   assigneeName: string;
-  createdBy: string;
+  createdBy: Id<"users">;
   createdAt: number;
   dueDate?: number;
   originalMessage?: string;
-  teamId: string;
+  teamId: Id<"teams">;
 }
 
 interface TaskProps {
@@ -86,7 +87,7 @@ export function Task({ task }: TaskProps) {
               onClick={() => handleStatusChange("todo")}
               className="flex-1 text-xs rounded-full border-gray-200"
             >
-              A Fazer
+              To Do
             </Button>
           )}
           {task.status !== "in-progress" && (
@@ -96,7 +97,7 @@ export function Task({ task }: TaskProps) {
               onClick={() => handleStatusChange("in-progress")}
               className="flex-1 text-xs rounded-full border-gray-200"
             >
-              Em Progresso
+              In Progress
             </Button>
           )}
           {task.status !== "done" && (
@@ -106,7 +107,7 @@ export function Task({ task }: TaskProps) {
               onClick={() => handleStatusChange("done")}
               className="flex-1 text-xs rounded-full border-gray-200"
             >
-              Concluído
+              Done
             </Button>
           )}
         </div>

@@ -20,12 +20,7 @@ interface HeaderProps {
   onTeamChange?: (team: string) => void;
 }
 
-export function Header({
-  activeView,
-  onViewChange,
-  selectedTeam,
-  onTeamChange,
-}: HeaderProps) {
+export function Header({ activeView }: HeaderProps) {
   const pathname = usePathname();
 
   // Determine active view from pathname if not provided
@@ -111,7 +106,7 @@ export function Header({
               }`}
             >
               <Users className="w-4 h-4 mr-2" />
-              <span className="hidden lg:inline">Equipe</span>
+              <span className="hidden lg:inline">Team</span>
             </Button>
           </Link>
         </nav>

@@ -69,10 +69,10 @@ export function ChatPage() {
       <div className="h-full flex flex-col">
         <div className="p-4 sm:p-6 lg:p-8 border-b border-gray-200">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-            Chat da Equipe
+            Team Chat
           </h1>
           <p className="text-sm sm:text-base text-gray-600">
-            Converse e colabore em tempo real
+            Chat and collaborate in real time
           </p>
         </div>
 
@@ -95,7 +95,7 @@ export function ChatPage() {
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Digite sua mensagem..."
+              placeholder="Type your message..."
               className="flex-1 rounded-2xl text-sm sm:text-base px-4 py-2.5 sm:py-3"
             />
             <Button
@@ -103,7 +103,7 @@ export function ChatPage() {
               className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold"
             >
               <Send className="w-4 h-4 mr-2 sm:mr-0" />
-              <span className="sm:sr-only">Enviar</span>
+              <span className="sm:sr-only">Send</span>
             </Button>
           </form>
         </div>

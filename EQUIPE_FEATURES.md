@@ -1,176 +1,176 @@
-# 👥 Página de Equipe - Funcionalidades Implementadas
+# 👥 Team Page - Implemented Features
 
-## 🚀 Visão Geral
+## 🚀 Overview
 
-A página de equipe foi completamente redesenhada para oferecer uma experiência interativa e moderna para gerenciamento de membros da equipe. A página agora possui recursos avançados de pesquisa, filtros, estatísticas em tempo real e operações CRUD completas.
+The team page has been completely redesigned to offer an interactive and modern experience for team member management. The page now has advanced search features, filters, real-time statistics, and complete CRUD operations.
 
-## ✨ Funcionalidades Principais
+## ✨ Main Features
 
-### 📊 Dashboard de Estatísticas
+### 📊 Statistics Dashboard
 
-- **Cards Interativos**: 4 cards principais mostrando estatísticas da equipe
-  - Total de membros
-  - Membros online
-  - Membros offline
-  - Taxa de atividade (%)
-- **Design Responsivo**: Cards se adaptam a diferentes tamanhos de tela
-- **Animações**: Efeitos hover e transições suaves
+- **Interactive Cards**: 4 main cards showing team statistics
+  - Total members
+  - Online members
+  - Offline members
+  - Activity rate (%)
+- **Responsive Design**: Cards adapt to different screen sizes
+- **Animations**: Hover effects and smooth transitions
 
-### 🔍 Sistema de Pesquisa e Filtros
+### 🔍 Search and Filter System
 
-- **Pesquisa em Tempo Real**:
+- **Real-Time Search**:
 
-  - Busca por nome ou email
-  - Resultados instantâneos conforme você digita
-  - Destacação visual dos termos pesquisados
+  - Search by name or email
+  - Instant results as you type
+  - Visual highlighting of searched terms
 
-- **Filtros Avançados**:
+- **Advanced Filters**:
 
-  - **Por Status**: Online, Offline ou Todos
-  - **Por Função**: Admin, Manager, Member, Viewer ou Todas
-  - **Contador Dinâmico**: Mostra quantos membros correspondem aos filtros
+  - **By Status**: Online, Offline or All
+  - **By Role**: Admin, Manager, Member, Viewer or All
+  - **Dynamic Counter**: Shows how many members match the filters
 
-- **Informações Contextuais**:
-  - Contador de localizações únicas
-  - Badge com número de resultados filtrados
-  - Botão de limpar pesquisa
+- **Contextual Information**:
+  - Unique locations counter
+  - Badge with number of filtered results
+  - Clear search button
 
-### 👤 Gerenciamento de Membros
+### 👤 Member Management
 
-#### ➕ Adicionar Membro
+#### ➕ Add Member
 
-- **Dialog Moderno**: Interface limpa e intuitiva
-- **Campos Obrigatórios**: Nome e email
-- **Campos Opcionais**:
-  - Telefone
-  - Localização
-  - Função na equipe (com descrições)
-- **Validação**: Verificações em tempo real
-- **Feedback Visual**: Estados de loading e confirmação
+- **Modern Dialog**: Clean and intuitive interface
+- **Required Fields**: Name and email
+- **Optional Fields**:
+  - Phone
+  - Location
+  - Team role (with descriptions)
+- **Validation**: Real-time checks
+- **Visual Feedback**: Loading and confirmation states
 
-#### ✏️ Editar Membro
+#### ✏️ Edit Member
 
-- **Dialog de Edição**: Formulário pré-preenchido com dados atuais
-- **Todos os Campos Editáveis**:
-  - Informações pessoais
+- **Edit Dialog**: Form pre-filled with current data
+- **All Editable Fields**:
+  - Personal information
   - Status (Online/Offline)
-  - Função e permissões
-- **Ação de Remoção**: Botão para remover membro com confirmação
-- **Validação**: Mesmas validações do formulário de criação
+  - Role and permissions
+- **Remove Action**: Button to remove member with confirmation
+- **Validation**: Same validations as creation form
 
-#### 👁️ Visualizar Perfil Detalhado
+#### 👁️ View Detailed Profile
 
-- **Dialog de Detalhes**: Visualização completa do perfil
-- **Seções Organizadas**:
-  - Header com avatar e status
-  - Informações pessoais (email, telefone, localização)
-  - Informações profissionais (função, descrição, data de entrada)
-  - Estatísticas rápidas (dias na equipe, status, nível de acesso)
-- **Avatar Personalizado**: Iniciais coloridas com gradiente
-- **Badges Informativos**: Status, função e permissões
-- **Ações Rápidas**: Botões para editar ou enviar mensagem
+- **Details Dialog**: Complete profile view
+- **Organized Sections**:
+  - Header with avatar and status
+  - Personal information (email, phone, location)
+  - Professional information (role, description, join date)
+  - Quick statistics (days on team, status, access level)
+- **Custom Avatar**: Colored initials with gradient
+- **Informative Badges**: Status, role and permissions
+- **Quick Actions**: Buttons to edit or send message
 
-### 🎨 Interface e UX
+### 🎨 Interface and UX
 
-#### 📱 Design Responsivo
+#### 📱 Responsive Design
 
-- **Mobile First**: Otimizado para dispositivos móveis
-- **Breakpoints Inteligentes**:
-  - 1 coluna em mobile
-  - 2 colunas em tablet
-  - 3 colunas em desktop
-- **Tipografia Escalável**: Tamanhos de fonte responsivos
+- **Mobile First**: Optimized for mobile devices
+- **Smart Breakpoints**:
+  - 1 column on mobile
+  - 2 columns on tablet
+  - 3 columns on desktop
+- **Scalable Typography**: Responsive font sizes
 
-#### 🌈 Sistema Visual
+#### 🌈 Visual System
 
-- **Gradientes Modernos**: Cores vibrantes e atrativas
-- **Ícones Contextuais**: Lucide React para consistência
-- **Cards Elevados**: Sombras e bordas suaves
-- **Estados Interativos**: Hover, focus e animações
+- **Modern Gradients**: Vibrant and attractive colors
+- **Contextual Icons**: Lucide React for consistency
+- **Elevated Cards**: Soft shadows and borders
+- **Interactive States**: Hover, focus and animations
 
-#### 🔄 Estados da Interface
+#### 🔄 Interface States
 
-- **Estado Vazio**:
-  - Mensagem amigável quando não há membros
-  - Call-to-action para adicionar primeiro membro
-- **Estado de Pesquisa Vazia**:
-  - Mensagem específica para quando filtros não retornam resultados
-  - Sugestões para ajustar critérios
-- **Estados de Loading**: Indicadores visuais durante operações
+- **Empty State**:
+  - Friendly message when there are no members
+  - Call-to-action to add first member
+- **Empty Search State**:
+  - Specific message when filters return no results
+  - Suggestions to adjust criteria
+- **Loading States**: Visual indicators during operations
 
-### 📋 Componentes Implementados
+### 📋 Implemented Components
 
 1. **`edit-member-dialog.tsx`**
 
-   - Dialog para edição completa de membros
-   - Formulário com validações
-   - Integração com API Convex
+   - Dialog for complete member editing
+   - Form with validations
+   - Convex API integration
 
 2. **`member-details-dialog.tsx`**
 
-   - Visualização detalhada do perfil
-   - Cards informativos organizados
-   - Estatísticas e métricas do membro
+   - Detailed profile view
+   - Organized information cards
+   - Member statistics and metrics
 
-3. **`team-member.tsx` (Atualizado)**
+3. **`team-member.tsx` (Updated)**
 
-   - Card de membro com menu dropdown
-   - Opções de editar e visualizar perfil
-   - Design moderno com avatar e badges
+   - Member card with dropdown menu
+   - Edit and view profile options
+   - Modern design with avatar and badges
 
-4. **`app/team/page.tsx` (Reescrito)**
-   - Página principal com layout completo
-   - Sistema de filtros e pesquisa
-   - Gerenciamento de estados dos dialogs
+4. **`app/team/page.tsx` (Rewritten)**
+   - Main page with complete layout
+   - Filter and search system
+   - Dialog state management
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Technologies Used
 
-- **React 18**: Hooks modernos (useState, useMemo, useEffect)
-- **TypeScript**: Tipagem completa e interfaces bem definidas
-- **Tailwind CSS**: Classes utilitárias para styling responsivo
-- **Convex**: Banco de dados em tempo real e mutações
-- **Lucide React**: Biblioteca de ícones consistente
-- **Shadcn/UI**: Componentes de interface padronizados
+- **React 18**: Modern hooks (useState, useMemo, useEffect)
+- **TypeScript**: Complete typing and well-defined interfaces
+- **Tailwind CSS**: Utility classes for responsive styling
+- **Convex**: Real-time database and mutations
+- **Lucide React**: Consistent icon library
+- **Shadcn/UI**: Standardized interface components
 
-## 🎯 Benefícios para o Usuário
+## 🎯 Benefits for the User
 
-### 🚀 Produtividade
+### 🚀 Productivity
 
-- **Pesquisa Rápida**: Encontre membros instantaneamente
-- **Operações em Lote**: Visualize e gerencie múltiplos membros
-- **Interface Intuitiva**: Curva de aprendizado mínima
+- **Quick Search**: Find members instantly
+- **Batch Operations**: View and manage multiple members
+- **Intuitive Interface**: Minimal learning curve
 
 ### 📊 Insights
 
-- **Estatísticas Visuais**: Entenda o status da equipe rapidamente
-- **Informações Detalhadas**: Acesso completo aos dados dos membros
-- **Métricas de Atividade**: Acompanhe engajamento da equipe
+- **Visual Statistics**: Understand team status quickly
+- **Detailed Information**: Complete access to member data
+- **Activity Metrics**: Track team engagement
 
-### 🎨 Experiência
+### 🎨 Experience
 
-- **Design Moderno**: Interface atrativa e profissional
-- **Responsividade**: Funciona perfeitamente em todos os dispositivos
-- **Feedback Visual**: Estados claros para todas as ações
+- **Modern Design**: Attractive and professional interface
+- **Responsiveness**: Works perfectly on all devices
+- **Visual Feedback**: Clear states for all actions
 
-## 🔄 Possíveis Melhorias Futuras
+## 🔄 Possible Future Improvements
 
-1. **Importação em Massa**: Upload de CSV/Excel para adicionar múltiplos membros
-2. **Notificações**: Sistema de notificações para mudanças na equipe
-3. **Histórico de Atividades**: Log de ações realizadas por cada membro
-4. **Permissões Granulares**: Sistema mais detalhado de controle de acesso
-5. **Integração com Calendário**: Visualizar disponibilidade dos membros
-6. **Chat Direto**: Mensagens instantâneas entre membros
-7. **Relatórios**: Exportar dados da equipe em diferentes formatos
+1. **Bulk Import**: CSV/Excel upload to add multiple members
+2. **Notifications**: Notification system for team changes
+3. **Activity History**: Log of actions performed by each member
+4. **Granular Permissions**: More detailed access control system
+5. **Calendar Integration**: View member availability
+6. **Direct Chat**: Instant messages between members
+7. **Reports**: Export team data in different formats
 
-## 📝 Como Usar
+## 📝 How to Use
 
-1. **Navegue para `/team`** na aplicação
-2. **Visualize as estatísticas** no dashboard superior
-3. **Use os filtros** para encontrar membros específicos
-4. **Clique em "Adicionar Membro"** para registrar novos membros
-5. **Use o menu dropdown** nos cards para editar ou visualizar perfis
-6. **Explore os detalhes** clicando em "Ver Perfil"
+1. **Navigate to `/team`** in the application
+2. **View statistics** on the upper dashboard
+3. **Use filters** to find specific members
+4. **Click "Add Member"** to register new members
+5. **Use the dropdown menu** on cards to edit or view profiles
+6. **Explore details** by clicking "View Profile"
 
 ---
 
-**🎉 A nova página de equipe oferece uma experiência completa e moderna para gerenciamento de membros, combinando funcionalidade robusta com design excepcional!**
+**🎉 The new team page offers a complete and modern experience for member management, combining robust functionality with exceptional design!**

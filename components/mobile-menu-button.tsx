@@ -1,7 +1,7 @@
 "use client";
 
 import { Menu } from "lucide-react";
-import { useLayout } from "./layout-provider";
+import { useLayout } from "@/app/layout-wrapper";
 import { usePathname } from "next/navigation";
 
 export function MobileMenuButton() {

@@ -1,132 +1,132 @@
-# Todo Chat App - Estrutura Refatorada
+# Todo Chat App - Refactored Structure
 
-## 📁 Nova Estrutura de Organização
+## 📁 New Organization Structure
 
-A aplicação foi completamente refatorada para ter uma estrutura mais organizada e modular:
+The application has been completely refactored to have a more organized and modular structure:
 
-### 🌐 Páginas Separadas (`app/`)
+### 🌐 Separate Pages (`app/`)
 
-- **`app/page.tsx`** - Página principal (Home)
-- **`app/tasks/page.tsx`** - Página de tarefas
-- **`app/chat/page.tsx`** - Página de chat
-- **`app/team/page.tsx`** - Página da equipe
+- **`app/page.tsx`** - Main page (Home)
+- **`app/tasks/page.tsx`** - Tasks page
+- **`app/chat/page.tsx`** - Chat page
+- **`app/team/page.tsx`** - Team page
 
-### 🏠 Componentes por Página
+### 🏠 Components by Page
 
-Cada página agora tem sua própria pasta com componentes relacionados:
+Each page now has its own folder with related components:
 
 #### **`components/home/`**
 
-- **`home-page.tsx`** - Componente da página inicial
-- **`quick-action.tsx`** - Componente de ação rápida
-- **`feature.tsx`** - Componente de funcionalidade
+- **`home-page.tsx`** - Home page component
+- **`quick-action.tsx`** - Quick action component
+- **`feature.tsx`** - Feature component
 
 #### **`components/tasks/`**
 
-- **`tasks-page.tsx`** - Componente da página de tarefas
-- **`task.tsx`** - Componente individual de tarefa
-- **`task-column.tsx`** - Componente de coluna de tarefas
-- **`task-calendar.tsx`** - Componente de calendário de tarefas
-- **`create-manual-task-dialog.tsx`** - Diálogo para criar tarefas manualmente
+- **`tasks-page.tsx`** - Tasks page component
+- **`task.tsx`** - Individual task component
+- **`task-column.tsx`** - Task column component
+- **`task-calendar.tsx`** - Task calendar component
+- **`create-manual-task-dialog.tsx`** - Dialog for manually creating tasks
 
 #### **`components/chat/`**
 
-- **`chat-page.tsx`** - Componente da página de chat
-- **`message.tsx`** - Componente individual de mensagem
-- **`create-task-dialog.tsx`** - Diálogo para criar tarefa a partir de mensagem
+- **`chat-page.tsx`** - Chat page component
+- **`message.tsx`** - Individual message component
+- **`create-task-dialog.tsx`** - Dialog for creating task from message
 
 #### **`components/team/`**
 
-- **`team-page.tsx`** - Componente da página da equipe
-- **`team-member.tsx`** - Componente individual de membro da equipe
-- **`team-members.tsx`** - Lista de membros da equipe
-- **`add-member-dialog.tsx`** - Diálogo para adicionar novo membro
+- **`team-page.tsx`** - Team page component
+- **`team-member.tsx`** - Individual team member component
+- **`team-members.tsx`** - List of team members
+- **`add-member-dialog.tsx`** - Dialog for adding new member
 
-## 🔄 Melhorias Implementadas
+## 🔄 Implemented Improvements
 
-### ✅ Navegação com Next.js App Router
+### ✅ Navigation with Next.js App Router
 
-- Roteamento nativo do Next.js ao invés de estado local
-- URLs amigáveis (`/tasks`, `/chat`, `/team`)
-- Header atualizado com Links do Next.js
+- Native Next.js routing instead of local state
+- Friendly URLs (`/tasks`, `/chat`, `/team`)
+- Header updated with Next.js Links
 
-### ✅ Componentes Organizados por Página
+### ✅ Components Organized by Page
 
-- **Estrutura por domínio**: Cada página tem sua pasta com componentes relacionados
-- **Imports relativos**: Componentes da mesma página usam imports relativos (ex: `./task.tsx`)
-- **Coesão funcional**: Componentes relacionados ficam próximos fisicamente no código
-- **Fácil navegação**: Desenvolvedores encontram rapidamente os componentes de cada página
+- **Domain-based structure**: Each page has its folder with related components
+- **Relative imports**: Components from the same page use relative imports (ex: `./task.tsx`)
+- **Functional cohesion**: Related components stay physically close in the code
+- **Easy navigation**: Developers quickly find components for each page
 
-### ✅ Estrutura Escalável
+### ✅ Scalable Structure
 
-- Fácil adição de novas páginas com seus componentes
-- Componentes reutilizáveis organizados logicamente
-- Código mais limpo e organizado por domínio
-- Separação clara de responsabilidades por contexto
+- Easy addition of new pages with their components
+- Reusable components organized logically
+- Cleaner code organized by domain
+- Clear separation of responsibilities by context
 
-## 🚀 Como Usar
+## 🚀 How to Use
 
 ```bash
-# Instalar dependências
+# Install dependencies
 npm install
 
-# Executar em desenvolvimento
+# Run in development
 npm run dev
 ```
 
-## 📖 Estrutura de Arquivos
+## 📖 File Structure
 
 ```
 /app/
-  ├── page.tsx                    # Página principal
+  ├── page.tsx                    # Main page
   ├── tasks/
-  │   └── page.tsx               # Página de tarefas
+  │   └── page.tsx               # Tasks page
   ├── chat/
-  │   └── page.tsx               # Página de chat
+  │   └── page.tsx               # Chat page
   ├── team/
-  │   └── page.tsx               # Página da equipe
-  └── layout.tsx                 # Layout principal
+  │   └── page.tsx               # Team page
+  └── layout.tsx                 # Main layout
 
 /components/
-  ├── home/                      # Componentes da página inicial
+  ├── home/                      # Home page components
   │   ├── home-page.tsx
   │   ├── quick-action.tsx
   │   └── feature.tsx
-  ├── tasks/                     # Componentes da página de tarefas
+  ├── tasks/                     # Tasks page components
   │   ├── tasks-page.tsx
   │   ├── task.tsx
   │   ├── task-column.tsx
   │   ├── task-calendar.tsx
   │   └── create-manual-task-dialog.tsx
-  ├── chat/                      # Componentes da página de chat
+  ├── chat/                      # Chat page components
   │   ├── chat-page.tsx
   │   ├── message.tsx
   │   └── create-task-dialog.tsx
-  ├── team/                      # Componentes da página da equipe
+  ├── team/                      # Team page components
   │   ├── team-page.tsx
   │   ├── team-member.tsx
   │   ├── team-members.tsx
   │   └── add-member-dialog.tsx
-  ├── ui/                        # Componentes UI básicos
-  └── [outros componentes...]
+  ├── ui/                        # Basic UI components
+  └── [other components...]
 ```
 
-## 🎯 Benefícios da Nova Estrutura
+## 🎯 Benefits of the New Structure
 
-1. **Melhor SEO** - URLs próprias para cada página
-2. **Navegação Nativa** - Botões de voltar/avançar funcionam
-3. **Carregamento Otimizado** - Code splitting automático
-4. **Manutenibilidade** - Código organizado e modular
-5. **Reutilização** - Componentes podem ser usados em diferentes contextos
-6. **Escalabilidade** - Fácil adicionar novas funcionalidades
-7. **Organização por Domínio** - Componentes relacionados agrupados logicamente
-8. **Produtividade** - Desenvolvedores encontram código relacionado mais rapidamente
+1. **Better SEO** - Own URLs for each page
+2. **Native Navigation** - Back/forward buttons work
+3. **Optimized Loading** - Automatic code splitting
+4. **Maintainability** - Organized and modular code
+5. **Reusability** - Components can be used in different contexts
+6. **Scalability** - Easy to add new functionalities
+7. **Domain Organization** - Related components grouped logically
+8. **Productivity** - Developers find related code faster
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Technologies Used
 
-- **Next.js 14** - Framework React com App Router
-- **TypeScript** - Tipagem estática
-- **Tailwind CSS** - Estilização utilitária
-- **Convex** - Backend em tempo real
-- **Radix UI** - Componentes acessíveis
-- **Lucide React** - Ícones modernos
+- **Next.js 14** - React framework with App Router
+- **TypeScript** - Static typing
+- **Tailwind CSS** - Utility-first styling
+- **Convex** - Real-time backend
+- **Radix UI** - Accessible components
+- **Lucide React** - Modern icons

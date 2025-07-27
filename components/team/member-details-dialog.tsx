@@ -51,8 +51,8 @@ export function MemberDetailsDialog({
   if (!member) return null;
 
   const formatJoinDate = (timestamp?: number) => {
-    if (!timestamp) return "Data não informada";
-    return new Date(timestamp).toLocaleDateString("pt-BR", {
+    if (!timestamp) return "Date not provided";
+    return new Date(timestamp).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -77,7 +77,7 @@ export function MemberDetailsDialog({
       case "offline":
         return "Offline";
       default:
-        return "Desconhecido";
+        return "Unknown";
     }
   };
 
@@ -95,15 +95,15 @@ export function MemberDetailsDialog({
   const getRoleDescription = (role?: string) => {
     switch (role) {
       case "admin":
-        return "Administrador com acesso total ao sistema";
+        return "Administrator with full system access";
       case "manager":
-        return "Gerente responsável por tarefas e membros";
+        return "Manager responsible for tasks and members";
       case "member":
-        return "Membro da equipe com acesso padrão";
+        return "Team member with standard access";
       case "viewer":
-        return "Visualizador com permissões limitadas";
+        return "Viewer with limited permissions";
       default:
-        return "Função não definida";
+        return "Role not defined";
     }
   };
 

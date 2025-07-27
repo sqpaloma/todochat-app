@@ -10,16 +10,12 @@ import {
   Users,
   Settings,
   LogOut,
-  User,
   Bell,
   Search,
   Plus,
   ChevronDown,
   Sparkles,
-  Calendar,
-  BarChart3,
   X,
-  Menu,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -42,7 +38,7 @@ interface SidebarProps {
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTeam, setActiveTeam] = useState("Equipe Principal");
+  const [activeTeam, setActiveTeam] = useState("Main Team");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
 
@@ -84,13 +80,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const navigationItems = [
     {
-      name: "Início",
-      href: "/",
-      icon: Home,
-      active: pathname === "/",
-      gradient: "from-purple-500 to-pink-500",
-    },
-    {
       name: "Tasks",
       href: "/tasks",
       icon: CheckSquare,
@@ -107,7 +96,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       indicator: true,
     },
     {
-      name: "Equipe",
+      name: "Team",
       href: "/team",
       icon: Users,
       active: pathname === "/team",
@@ -139,8 +128,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <div
-            className={`flex items-center space-x-3 ${isCollapsed ? "lg:hidden" : ""}`}
+          <Link
+            href="/"
+            className={`flex items-center space-x-3 hover:opacity-80 transition-opacity ${isCollapsed ? "lg:hidden" : ""}`}
           >
             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-white" />
@@ -149,7 +139,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               <h2 className="font-bold text-lg gradient-text">Chat do ✨</h2>
               <p className="text-xs text-gray-500">Workspace</p>
             </div>
-          </div>
+          </Link>
 
           <div className="flex items-center space-x-2">
             {/* Toggle Button - Desktop only */}
@@ -158,7 +148,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               size="sm"
               onClick={toggleCollapse}
               className="hidden lg:flex hover:bg-gray-100 rounded-lg p-1.5"
-              title={isCollapsed ? "Expandir sidebar" : "Minimizar sidebar"}
+              title={isCollapsed ? "Expand sidebar" : "Minimize sidebar"}
             >
               {isCollapsed ? (
                 <ChevronRight className="w-5 h-5 text-gray-600" />
@@ -173,7 +163,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               size="sm"
               onClick={onClose}
               className="lg:hidden hover:bg-gray-100 rounded-lg p-1.5"
-              title="Fechar sidebar"
+              title="Close sidebar"
             >
               <X className="w-5 h-5 text-gray-600" />
             </Button>
@@ -183,9 +173,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         {/* Collapsed Logo - Desktop only */}
         {isCollapsed && (
           <div className="hidden lg:flex items-center justify-center p-4 border-b border-gray-100">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-white" />
-            </div>
+            <Link href="/" className="hover:opacity-80 transition-opacity">
+              <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+            </Link>
           </div>
         )}
 
@@ -196,7 +188,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
                 type="text"
-                placeholder="Buscar..."
+                placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 rounded-xl border-gray-200 focus:border-purple-300 focus:ring-purple-200"
@@ -220,7 +212,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <p className="text-sm font-semibold text-gray-900">
                     {activeTeam}
                   </p>
-                  <p className="text-xs text-gray-500">3 membros online</p>
+                  <p className="text-xs text-gray-500">3 members online</p>
                 </div>
               </div>
               <ChevronDown className="w-4 h-4 text-gray-400" />
@@ -233,7 +225,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           <div className="mb-4">
             {!isCollapsed && (
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                Navegação
+                Navigation
               </p>
             )}
             {navigationItems.map((item) => {
@@ -295,11 +287,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           {!isCollapsed && (
             <div className="border-t border-gray-100 pt-4">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                Ações Rápidas
+                Quick Actions
               </p>
               <Button className="w-full justify-start bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
                 <Plus className="w-4 h-4 mr-3" />
-                Nova Tarefa
+                New Task
               </Button>
               <div className="grid grid-cols-2 gap-2 mt-3">
                 <Button
@@ -308,7 +300,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   className="rounded-lg border-gray-200 hover:border-blue-300 hover:bg-blue-50"
                 >
                   <Bell className="w-4 h-4 mr-2" />
-                  Alertas
+                  Alerts
                 </Button>
                 <Button
                   variant="outline"
@@ -316,7 +308,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   className="rounded-lg border-gray-200 hover:border-green-300 hover:bg-green-50"
                 >
                   <Settings className="w-4 h-4 mr-2" />
-                  Config
+                  Settings
                 </Button>
               </div>
             </div>
@@ -334,12 +326,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     size="sm"
                     className="w-full text-xs"
                   >
-                    Entrar
+                    Sign In
                   </Button>
                 </SignInButton>
                 <SignUpButton>
                   <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xs">
-                    Registrar
+                    Register
                   </Button>
                 </SignUpButton>
               </div>
@@ -347,12 +339,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               <div className="space-y-2">
                 <SignInButton>
                   <Button variant="outline" className="w-full">
-                    Fazer Login
+                    Sign In
                   </Button>
                 </SignInButton>
                 <SignUpButton>
                   <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
-                    Criar Conta
+                    Create Account
                   </Button>
                 </SignUpButton>
               </div>
@@ -374,7 +366,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     variant="ghost"
                     size="sm"
                     className="text-gray-400 hover:text-red-500 p-1"
-                    title="Sair"
+                    title="Sign out"
                   >
                     <LogOut className="w-4 h-4" />
                   </Button>
@@ -396,7 +388,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     variant="ghost"
                     size="sm"
                     className="text-gray-400 hover:text-red-500"
-                    title="Sair"
+                    title="Sign out"
                   >
                     <LogOut className="w-4 h-4" />
                   </Button>

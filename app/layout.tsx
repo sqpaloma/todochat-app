@@ -1,7 +1,13 @@
 import type React from "react";
 import "./globals.css";
 import { ConvexClientProvider } from "./convex-provider";
-import { ConditionalAuthHeader } from "@/components/conditional-auth-header";
+import { LayoutWrapper } from "./layout-wrapper";
+
+export const metadata = {
+  title: "Chat Do ✨ - Transform conversations into incredible results",
+  description:
+    "The most fun tool to transform your conversations into organized tasks. Your team will love gamified productivity!",
+};
 
 export default function RootLayout({
   children,
@@ -9,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR">
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -24,16 +30,9 @@ export default function RootLayout({
       </head>
       <body className="font-jakarta">
         <ConvexClientProvider>
-          <ConditionalAuthHeader />
-          {children}
+          <LayoutWrapper>{children}</LayoutWrapper>
         </ConvexClientProvider>
       </body>
     </html>
   );
 }
-
-export const metadata = {
-  title: "Chat do ✨ - Transforme conversas em resultados",
-  description:
-    "A ferramenta mais divertida para transformar suas conversas em tarefas organizadas. Sua equipe vai amar a produtividade gamificada!",
-};

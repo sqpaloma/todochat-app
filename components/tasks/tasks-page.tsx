@@ -42,17 +42,17 @@ export function TasksPage() {
   const statusConfig = [
     {
       status: "todo" as const,
-      title: "A Fazer",
+      title: "To Do",
       count: tasksByStatus.todo.length,
     },
     {
       status: "in-progress" as const,
-      title: "Em Progresso",
+      title: "In Progress",
       count: tasksByStatus["in-progress"].length,
     },
     {
       status: "done" as const,
-      title: "Concluído",
+      title: "Done",
       count: tasksByStatus.done.length,
     },
   ];
@@ -65,7 +65,7 @@ export function TasksPage() {
             Task Board
           </h1>
           <p className="text-sm sm:text-base text-gray-600">
-            Organize e acompanhe o progresso das tarefas
+            Organize and track task progress
           </p>
         </div>
 
@@ -76,7 +76,7 @@ export function TasksPage() {
             className="w-full sm:w-auto lg:hidden rounded-2xl font-semibold px-4 py-2.5"
           >
             <Calendar className="w-4 h-4 mr-2" />
-            {showCalendar ? "Ocultar" : "Mostrar"} Calendário
+            {showCalendar ? "Hide" : "Show"} Calendar
           </Button>
 
           <Button
@@ -84,7 +84,7 @@ export function TasksPage() {
             className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-2xl font-semibold px-4 sm:px-6 py-2.5 sm:py-3"
           >
             <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-            Nova Tarefa
+            New Task
           </Button>
         </div>
       </div>

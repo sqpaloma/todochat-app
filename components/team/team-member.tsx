@@ -40,8 +40,8 @@ interface TeamMemberProps {
 
 export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
   const formatJoinDate = (timestamp?: number) => {
-    if (!timestamp) return "Data não informada";
-    return new Date(timestamp).toLocaleDateString("pt-BR", {
+    if (!timestamp) return "Date not provided";
+    return new Date(timestamp).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
     });
@@ -65,7 +65,7 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
       case "offline":
         return "Offline";
       default:
-        return "Desconhecido";
+        return "Unknown";
     }
   };
 

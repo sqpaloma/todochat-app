@@ -1,16 +1,16 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Users, Circle } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Users, Circle } from "lucide-react";
 
 interface TeamMember {
-  _id: string
-  name: string
-  email: string
-  status?: "online" | "offline"
+  _id: string;
+  name: string;
+  email: string;
+  status?: "online" | "offline";
 }
 
 interface TeamMembersProps {
-  members: TeamMember[]
+  members: TeamMember[];
 }
 
 export function TeamMembers({ members }: TeamMembersProps) {
@@ -19,7 +19,7 @@ export function TeamMembers({ members }: TeamMembersProps) {
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium flex items-center">
           <Users className="w-4 h-4 mr-2" />
-          Equipe ({members.length})
+          Team ({members.length})
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
@@ -37,12 +37,16 @@ export function TeamMembers({ members }: TeamMembersProps) {
                 </Avatar>
                 <Circle
                   className={`w-3 h-3 absolute -bottom-0.5 -right-0.5 ${
-                    member.status === "online" ? "text-green-500 fill-green-500" : "text-gray-400 fill-gray-400"
+                    member.status === "online"
+                      ? "text-green-500 fill-green-500"
+                      : "text-gray-400 fill-gray-400"
                   }`}
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">{member.name}</p>
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {member.name}
+                </p>
                 <p className="text-xs text-gray-500 truncate">{member.email}</p>
               </div>
             </div>
@@ -51,11 +55,11 @@ export function TeamMembers({ members }: TeamMembersProps) {
           {members.length === 0 && (
             <div className="text-center py-4 text-gray-400">
               <Users className="w-8 h-8 mx-auto mb-2" />
-              <p className="text-sm">Nenhum membro</p>
+              <p className="text-sm">No members</p>
             </div>
           )}
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

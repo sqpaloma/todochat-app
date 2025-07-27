@@ -1,61 +1,82 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useMutation } from "convex/react"
-import { api } from "@/convex/_generated/api"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, MessageSquare } from "lucide-react"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
+import { useState } from "react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { CalendarIcon, MessageSquare } from "lucide-react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface Message {
-  _id: string
-  content: string
-  authorId: string
-  authorName: string
-  timestamp: number
+  _id: string;
+  content: string;
+  authorId: string;
+  authorName: string;
+  timestamp: number;
 }
 
 interface TeamMember {
-  _id: string
-  name: string
-  email: string
+  _id: string;
+  name: string;
+  email: string;
 }
 
 interface CreateTaskDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  message: Message | null
-  teamMembers: TeamMember[]
-  teamId: string
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  message: Message | null;
+  teamMembers: TeamMember[];
+  teamId: string;
 }
 
-export function CreateTaskDialog({ open, onOpenChange, message, teamMembers, teamId }: CreateTaskDialogProps) {
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [assigneeId, setAssigneeId] = useState("")
-  const [dueDate, setDueDate] = useState<Date>()
-  const [isLoading, setIsLoading] = useState(false)
+export function CreateTaskDialog({
+  open,
+  onOpenChange,
+  message,
+  teamMembers,
+  teamId,
+}: CreateTaskDialogProps) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [assigneeId, setAssigneeId] = useState("");
+  const [dueDate, setDueDate] = useState<Date>();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const createTask = useMutation(api.tasks.createTask)
+  const createTask = useMutation(api.tasks.createTask);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!title.trim() || !assigneeId) return
+    e.preventDefault();
+    if (!title.trim() || !assigneeId) return;
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      const assignee = teamMembers.find((member) => member._id === assigneeId)
+      const assignee = teamMembers.find((member) => member._id === assigneeId);
 
       await createTask({
         title: title.trim(),
@@ -67,27 +88,30 @@ export function CreateTaskDialog({ open, onOpenChange, message, teamMembers, tea
         createdBy: "user-1", // In real app, get from auth
         dueDate: dueDate?.getTime(),
         originalMessage: message?.content,
-      })
+      });
 
       // Reset form
-      setTitle("")
-      setDescription("")
-      setAssigneeId("")
-      setDueDate(undefined)
-      onOpenChange(false)
+      setTitle("");
+      setDescription("");
+      setAssigneeId("");
+      setDueDate(undefined);
+      onOpenChange(false);
     } catch (error) {
-      console.error("Error creating task:", error)
+      console.error("Error creating task:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // Auto-fill title from message when dialog opens
   useState(() => {
     if (message && open) {
-      setTitle(message.content.slice(0, 50) + (message.content.length > 50 ? "..." : ""))
+      setTitle(
+        message.content.slice(0, 50) +
+          (message.content.length > 50 ? "..." : "")
+      );
     }
-  })
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -95,46 +119,48 @@ export function CreateTaskDialog({ open, onOpenChange, message, teamMembers, tea
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <MessageSquare className="w-5 h-5 text-blue-500" />
-            <span>Criar Tarefa</span>
+            <span>Create Task</span>
           </DialogTitle>
         </DialogHeader>
 
         {message && (
           <div className="bg-gray-50 p-3 rounded-lg mb-4">
-            <p className="text-sm text-gray-600 mb-1">Mensagem original:</p>
+            <p className="text-sm text-gray-600 mb-1">Original message:</p>
             <p className="text-sm italic">"{message.content}"</p>
-            <p className="text-xs text-gray-500 mt-1">Por {message.authorName}</p>
+            <p className="text-xs text-gray-500 mt-1">
+              By {message.authorName}
+            </p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="title">Título da Tarefa</Label>
+            <Label htmlFor="title">Task Title</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Digite o título da tarefa..."
+              placeholder="Enter the task title..."
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="description">Descrição (opcional)</Label>
+            <Label htmlFor="description">Description (optional)</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Adicione mais detalhes sobre a tarefa..."
+              placeholder="Add more details about the task..."
               rows={3}
             />
           </div>
 
           <div>
-            <Label>Responsável</Label>
+            <Label>Assignee</Label>
             <Select value={assigneeId} onValueChange={setAssigneeId} required>
               <SelectTrigger>
-                <SelectValue placeholder="Selecione um membro da equipe" />
+                <SelectValue placeholder="Select a team member" />
               </SelectTrigger>
               <SelectContent>
                 {teamMembers.map((member) => (
@@ -147,30 +173,47 @@ export function CreateTaskDialog({ open, onOpenChange, message, teamMembers, tea
           </div>
 
           <div>
-            <Label>Data de Vencimento (opcional)</Label>
+            <Label>Due Date (optional)</Label>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full justify-start text-left font-normal bg-transparent">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-left font-normal bg-transparent"
+                >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dueDate ? format(dueDate, "PPP", { locale: ptBR }) : "Selecionar data"}
+                  {dueDate
+                    ? format(dueDate, "PPP", { locale: ptBR })
+                    : "Select date"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
-                <Calendar mode="single" selected={dueDate} onSelect={setDueDate} initialFocus />
+                <Calendar
+                  mode="single"
+                  selected={dueDate}
+                  onSelect={setDueDate}
+                  initialFocus
+                />
               </PopoverContent>
             </Popover>
           </div>
 
           <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancelar
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
+              Cancel
             </Button>
-            <Button type="submit" disabled={isLoading || !title.trim() || !assigneeId}>
-              {isLoading ? "Criando..." : "Criar Tarefa"}
+            <Button
+              type="submit"
+              disabled={isLoading || !title.trim() || !assigneeId}
+            >
+              {isLoading ? "Creating..." : "Create Task"}
             </Button>
           </div>
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
