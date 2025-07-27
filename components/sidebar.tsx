@@ -25,6 +25,13 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/nextjs";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -317,34 +324,65 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
         {/* User Profile */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-100 bg-gray-50">
-          {isCollapsed ? (
-            <div className="flex justify-center">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                <User className="w-5 h-5 text-white" />
+          <SignedOut>
+            {isCollapsed ? (
+              <div className="flex flex-col space-y-2">
+                <SignInButton>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-xs"
+                  >
+                    Entrar
+                  </Button>
+                </SignInButton>
+                <SignUpButton>
+                  <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xs">
+                    Registrar
+                  </Button>
+                </SignUpButton>
               </div>
-            </div>
-          ) : (
-            <div className="flex items-center space-x-3 p-3 rounded-xl bg-white shadow-sm">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                <User className="w-5 h-5 text-white" />
+            ) : (
+              <div className="space-y-2">
+                <SignInButton>
+                  <Button variant="outline" className="w-full">
+                    Fazer Login
+                  </Button>
+                </SignInButton>
+                <SignUpButton>
+                  <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
+                    Criar Conta
+                  </Button>
+                </SignUpButton>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">
-                  João Silva
-                </p>
-                <p className="text-xs text-gray-500 truncate">
-                  joao@exemplo.com
-                </p>
+            )}
+          </SignedOut>
+
+          <SignedIn>
+            {isCollapsed ? (
+              <div className="flex justify-center">
+                <UserButton
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-10 h-10",
+                    },
+                  }}
+                />
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-400 hover:text-red-500"
-              >
-                <LogOut className="w-4 h-4" />
-              </Button>
-            </div>
-          )}
+            ) : (
+              <div className="flex items-center justify-between p-3 rounded-xl bg-white shadow-sm">
+                <UserButton
+                  showName={true}
+                  appearance={{
+                    elements: {
+                      userButtonAvatarBox: "w-10 h-10",
+                      userButtonBox: "flex-row-reverse",
+                    },
+                  }}
+                />
+              </div>
+            )}
+          </SignedIn>
         </div>
       </div>
     </>
