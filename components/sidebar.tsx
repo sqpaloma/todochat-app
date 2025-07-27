@@ -31,6 +31,7 @@ import {
   SignInButton,
   SignUpButton,
   UserButton,
+  SignOutButton,
 } from "@clerk/nextjs";
 
 interface SidebarProps {
@@ -360,7 +361,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
           <SignedIn>
             {isCollapsed ? (
-              <div className="flex justify-center">
+              <div className="flex flex-col items-center space-y-2">
                 <UserButton
                   appearance={{
                     elements: {
@@ -368,6 +369,16 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     },
                   }}
                 />
+                <SignOutButton>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-400 hover:text-red-500 p-1"
+                    title="Sair"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </Button>
+                </SignOutButton>
               </div>
             ) : (
               <div className="flex items-center justify-between p-3 rounded-xl bg-white shadow-sm">
@@ -380,6 +391,16 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     },
                   }}
                 />
+                <SignOutButton>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-400 hover:text-red-500"
+                    title="Sair"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </Button>
+                </SignOutButton>
               </div>
             )}
           </SignedIn>
