@@ -52,7 +52,9 @@ export function Message({
   onCreateTask,
 }: MessageProps) {
   const [showReactions, setShowReactions] = useState(false);
+  const [isNudging, setIsNudging] = useState(false);
   const addReaction = useMutation(api.messages.addReaction);
+  const nudgeUser = useMutation(api.messages.nudgeUser);
 
   // Get file URL if this message has a file
   const fileUrl = useQuery(
@@ -102,9 +104,36 @@ export function Message({
     }
   };
 
-  const handleNudge = () => {
-    // TODO: Implement nudge functionality
-    console.log("Nudging user:", message.authorName);
+  const handleNudge = async () => {
+    if (isCurrentUser) {
+      alert("You cannot nudge yourself!");
+      return;
+    }
+
+    setIsNudging(true);
+    try {
+      await nudgeUser({
+        messageId: message._id as any,
+        nudgerUserId: currentUserId,
+        nudgerUserName: currentUserName,
+      });
+
+      // Show success feedback
+      const successMessage = `🔔 Nudged ${message.authorName}! They'll receive an email notification.`;
+      alert(successMessage);
+    } catch (error) {
+      console.error("Error nudging user:", error);
+      if (
+        error instanceof Error &&
+        error.message === "You cannot nudge yourself"
+      ) {
+        alert("You cannot nudge yourself!");
+      } else {
+        alert("Failed to nudge user. Please try again.");
+      }
+    } finally {
+      setIsNudging(false);
+    }
   };
 
   const handleFileDownload = () => {
@@ -341,8 +370,11 @@ export function Message({
                 onClick={handleNudge}
                 className="p-1 h-auto hover:bg-gray-100 rounded-full"
                 title="Nudge user"
+                disabled={isNudging}
               >
-                <Zap className="w-4 h-4 text-amber-500" />
+                <Zap
+                  className={`w-4 h-4 ${isNudging ? "text-gray-400" : "text-amber-500"}`}
+                />
               </Button>
               <Button
                 variant="ghost"

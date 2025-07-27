@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { internal } from "./_generated/api";
 
 export const getMessages = query({
   args: { teamId: v.string() },
@@ -69,6 +70,60 @@ export const getFileUrl = query({
   args: { fileId: v.id("_storage") },
   handler: async (ctx, args) => {
     return await ctx.storage.getUrl(args.fileId);
+  },
+});
+
+export const nudgeUser = mutation({
+  args: {
+    messageId: v.id("messages"),
+    nudgerUserId: v.string(),
+    nudgerUserName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Get the message details
+    const message = await ctx.db.get(args.messageId);
+    if (!message) {
+      throw new Error("Message not found");
+    }
+
+    // Don't allow nudging yourself
+    if (message.authorId === args.nudgerUserId) {
+      throw new Error("You cannot nudge yourself");
+    }
+
+    // Get the message author's details
+    const messageAuthor = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("_id"), message.authorId))
+      .unique();
+
+    if (!messageAuthor) {
+      throw new Error("Message author not found");
+    }
+
+    // Get team details for context
+    const team = await ctx.db
+      .query("teams")
+      .filter((q) => q.eq(q.field("_id"), message.teamId))
+      .unique();
+
+    // Get the author's display name
+    const authorDisplayName =
+      [messageAuthor.firstName, messageAuthor.lastName]
+        .filter(Boolean)
+        .join(" ") || "Anonymous";
+
+    // Send the nudge email
+    await ctx.scheduler.runAfter(0, internal.emails.sendNudgeEmail, {
+      to: messageAuthor.email,
+      toName: authorDisplayName,
+      fromName: args.nudgerUserName,
+      messageContent: message.content,
+      messageId: args.messageId,
+      teamName: team?.name || "Team Chat",
+    });
+
+    return { success: true };
   },
 });
 

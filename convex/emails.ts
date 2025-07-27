@@ -8,6 +8,74 @@ export const resend: Resend = new Resend(components.resend, {
   testMode: false,
 });
 
+// Função para enviar nudge por email
+export const sendNudgeEmail = internalMutation({
+  args: {
+    to: v.string(),
+    toName: v.string(),
+    fromName: v.string(),
+    messageContent: v.string(),
+    messageId: v.id("messages"),
+    teamName: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+    await resend.sendEmail(ctx, {
+      from: "Acme <onboarding@resend.dev>",
+      to: "paloma.sq@hotmail.com", //args.to, refactor to use args.to after testing
+      subject: `🔔 ${args.fromName} está te chamando no TodoChat`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #7c3aed; margin: 0; font-size: 28px;">🔔</h1>
+            <h2 style="color: #7c3aed; margin: 10px 0;">Alguém está te chamando!</h2>
+          </div>
+          
+          <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); padding: 20px; border-radius: 12px; margin: 20px 0;">
+            <p style="color: white; margin: 0; text-align: center; font-size: 18px;">
+              <strong>${args.fromName}</strong> te cutucou em uma mensagem
+            </p>
+          </div>
+
+          <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; border-left: 4px solid #7c3aed; margin: 20px 0;">
+            <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 16px;">Mensagem:</h3>
+            <p style="margin: 0; color: #64748b; font-style: italic; font-size: 14px;">
+              "${args.messageContent.length > 100 ? args.messageContent.substring(0, 100) + "..." : args.messageContent}"
+            </p>
+            ${
+              args.teamName
+                ? `<p style="margin: 10px 0 0 0; color: #7c3aed; font-size: 12px;">
+              Em: ${args.teamName}
+            </p>`
+                : ""
+            }
+            <p style="margin: 10px 0 0 0; color: #7c3aed; font-size: 12px;">
+              Para: ${args.toName} (${args.to})
+            </p>
+          </div>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${appUrl}/chat" 
+               style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
+              Ver Mensagem
+            </a>
+          </div>
+
+          <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+            <p style="color: #64748b; font-size: 12px; margin: 0;">
+              Você recebeu este email porque alguém te cutucou no TodoChat.
+            </p>
+            <p style="color: #dc2626; font-size: 10px; margin: 5px 0 0 0;">
+              [TEST MODE] Este email foi enviado para delivered@resend.dev para testes
+            </p>
+          </div>
+        </div>
+      `,
+    });
+  },
+});
+
 // Função para enviar email de nova tarefa
 export const sendTaskNotificationEmail = internalMutation({
   args: {
@@ -54,10 +122,6 @@ export const sendTaskNotificationEmail = internalMutation({
               Marcar como Concluída
             </a>
           </div>
-          
-          <p style="color: #6b7280; font-size: 14px;">
-            💡 Dica: Você pode responder a este email com "done" para marcar a tarefa como concluída.
-          </p>
         </div>
       `,
     });
