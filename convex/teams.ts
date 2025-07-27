@@ -29,6 +29,9 @@ export const addMember = mutation({
     teamId: v.string(),
     email: v.string(),
     role: v.optional(v.string()),
+    name: v.optional(v.string()),
+    phone: v.optional(v.string()),
+    location: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     // Verificar se o usuário atual tem permissão (deve estar autenticado)
