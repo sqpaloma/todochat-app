@@ -64,10 +64,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   // Fetch real team members from Convex
   const teamMembers =
-    useQuery(api.teams.getTeamMembers, { teamId: "main-team" }) || [];
+    useQuery(api.teams.getTeamMembers, { teamId: "team-1" }) || [];
 
   // Fetch real tasks count
-  const tasks = useQuery(api.tasks.getTasks, { teamId: "main-team" }) || [];
+  const tasks = useQuery(api.tasks.getTasks, { teamId: "team-1" }) || [];
   const taskCount = tasks.length;
 
   // Handle window resize
