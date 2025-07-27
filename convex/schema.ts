@@ -1,5 +1,5 @@
-import { defineSchema, defineTable } from "convex/server"
-import { v } from "convex/values"
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
 
 export default defineSchema({
   messages: defineTable({
@@ -13,7 +13,11 @@ export default defineSchema({
   tasks: defineTable({
     title: v.string(),
     description: v.string(),
-    status: v.union(v.literal("todo"), v.literal("in-progress"), v.literal("done")),
+    status: v.union(
+      v.literal("todo"),
+      v.literal("in-progress"),
+      v.literal("done")
+    ),
     assigneeId: v.string(),
     assigneeName: v.string(),
     createdBy: v.string(),
@@ -29,4 +33,12 @@ export default defineSchema({
     members: v.array(v.string()),
     createdAt: v.number(),
   }),
-})
+
+  users: defineTable({
+    email: v.string(),
+    clerkUserId: v.string(),
+    firstName: v.optional(v.string()),
+    lastName: v.optional(v.string()),
+    imageUrl: v.optional(v.string()),
+  }).index("by_clerkUserId", ["clerkUserId"]),
+});

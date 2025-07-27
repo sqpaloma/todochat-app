@@ -3,9 +3,9 @@ import { internalMutation } from "./_generated/server";
 
 const crons = cronJobs();
 
-// Enviar resumo diário todos os dias às 9h da manhã
+/* // Enviar resumo diário todos os dias às 9h da manhã
 crons.interval(
-  "Enviar resumo diário para todos os membros da equipe",
+  "Enviar resumo diario para todos os membros da equipe",
   { hours: 24 }, // A cada 24 horas
   "teams:sendDailyDigestToTeam" as any,
   { teamId: "team-1" } // ID da equipe padrão
@@ -16,9 +16,9 @@ crons.interval(
   "Limpar emails antigos do componente Resend",
   { hours: 1 },
   "crons:cleanupOldEmails" as any
-);
+); */
 
-// Função para limpar emails antigos
+/* // Função para limpar emails antigos
 export const cleanupOldEmails = internalMutation({
   args: {},
   handler: async (ctx) => {
@@ -34,6 +34,6 @@ export const cleanupOldEmails = internalMutation({
       olderThan: 4 * ONE_WEEK_MS,
     });
   },
-});
+}); */
 
 export default crons;

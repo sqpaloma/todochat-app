@@ -1,19 +1,20 @@
 "use client";
 
-import { ConvexProvider, ConvexReactClient } from "convex/react";
-import type { ReactNode } from "react";
+import { ConvexReactClient } from "convex/react";
+import { ReactNode } from "react";
+import { ClerkProvider, useAuth } from "@clerk/clerk-react";
+import { ConvexProviderWithClerk } from "convex/react-clerk";
 
-const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || "http://localhost:3001";
-
-if (!process.env.NEXT_PUBLIC_CONVEX_URL) {
-  console.warn(
-    "⚠️  NEXT_PUBLIC_CONVEX_URL not set. Falling back to http://localhost:3001.\n" +
-      "If Convex dev isn't running, start it with `npx convex dev` or set NEXT_PUBLIC_CONVEX_URL."
-  );
-}
-
-const convex = new ConvexReactClient(convexUrl);
+const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 export function ConvexClientProvider({ children }: { children: ReactNode }) {
-  return <ConvexProvider client={convex}>{children}</ConvexProvider>;
+  return (
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!}
+    >
+      <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
+        {children}
+      </ConvexProviderWithClerk>
+    </ClerkProvider>
+  );
 }

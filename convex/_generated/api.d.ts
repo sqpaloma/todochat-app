@@ -8,9 +8,13 @@
  * @module
  */
 
+import type * as crons from "../crons.js";
+import type * as emails from "../emails.js";
+import type * as http from "../http.js";
 import type * as messages from "../messages.js";
 import type * as tasks from "../tasks.js";
 import type * as teams from "../teams.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -27,9 +31,13 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  crons: typeof crons;
+  emails: typeof emails;
+  http: typeof http;
   messages: typeof messages;
   tasks: typeof tasks;
   teams: typeof teams;
+  users: typeof users;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
@@ -51,7 +59,48 @@ export declare const components: {
         { emailId: string },
         null
       >;
-      get: FunctionReference<"query", "internal", { emailId: string }, any>;
+      cleanupAbandonedEmails: FunctionReference<
+        "mutation",
+        "internal",
+        { olderThan?: number },
+        null
+      >;
+      cleanupOldEmails: FunctionReference<
+        "mutation",
+        "internal",
+        { olderThan?: number },
+        null
+      >;
+      get: FunctionReference<
+        "query",
+        "internal",
+        { emailId: string },
+        {
+          complained: boolean;
+          createdAt: number;
+          errorMessage?: string;
+          finalizedAt: number;
+          from: string;
+          headers?: Array<{ name: string; value: string }>;
+          html?: string;
+          opened: boolean;
+          replyTo: Array<string>;
+          resendId?: string;
+          segment: number;
+          status:
+            | "waiting"
+            | "queued"
+            | "cancelled"
+            | "sent"
+            | "delivered"
+            | "delivery_delayed"
+            | "bounced"
+            | "failed";
+          subject: string;
+          text?: string;
+          to: string;
+        } | null
+      >;
       getStatus: FunctionReference<
         "query",
         "internal",
@@ -67,8 +116,9 @@ export declare const components: {
             | "sent"
             | "delivered"
             | "delivery_delayed"
-            | "bounced";
-        }
+            | "bounced"
+            | "failed";
+        } | null
       >;
       handleEmailEvent: FunctionReference<
         "mutation",

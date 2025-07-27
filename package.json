@@ -11,6 +11,7 @@
   "dependencies": {
     "@auth0/auth0-react": "latest",
     "@clerk/clerk-react": "latest",
+    "@clerk/nextjs": "^6.27.1",
     "@convex-dev/resend": "^0.1.7",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "1.2.2",
@@ -49,7 +50,7 @@
     "embla-carousel-react": "8.5.1",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
-    "next": "14.2.16",
+    "next": "15.4.4",
     "next-themes": "^0.4.4",
     "react": "^18",
     "react-day-picker": "8.10.1",

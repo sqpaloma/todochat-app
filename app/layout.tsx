@@ -1,6 +1,13 @@
 import type React from "react";
 import "./globals.css";
 import { ConvexClientProvider } from "./convex-provider";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/nextjs";
 
 export default function RootLayout({
   children,
@@ -10,19 +17,6 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
-        />
-        <meta
-          name="description"
-          content="Chat do - A ferramenta mais divertida para transformar conversas em tarefas organizadas"
-        />
-        <meta
-          name="keywords"
-          content="chat, tasks, produtividade, equipe, colaboração"
-        />
-        <meta name="theme-color" content="#8b5cf6" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
@@ -35,7 +29,22 @@ export default function RootLayout({
         />
       </head>
       <body className="font-jakarta">
-        <ConvexClientProvider>{children}</ConvexClientProvider>
+        <ConvexClientProvider>
+          <header className="flex justify-end items-center p-4 gap-4 h-16">
+            <SignedOut>
+              <SignInButton />
+              <SignUpButton>
+                <button className="bg-[#6c47ff] text-ceramic-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
+                  Sign Up
+                </button>
+              </SignUpButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </header>
+          {children}
+        </ConvexClientProvider>
       </body>
     </html>
   );
@@ -45,7 +54,4 @@ export const metadata = {
   title: "Chat do ✨ - Transforme conversas em resultados",
   description:
     "A ferramenta mais divertida para transformar suas conversas em tarefas organizadas. Sua equipe vai amar a produtividade gamificada!",
-  generator: "v0.dev",
-  viewport: "width=device-width, initial-scale=1.0, maximum-scale=5.0",
-  themeColor: "#8b5cf6",
 };
