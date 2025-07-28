@@ -16,6 +16,7 @@ import {
   MessageCircle,
   Plus,
   Wifi,
+  Trash2,
 } from "lucide-react";
 import { CreateTaskDialog } from "./create-task-dialog";
 import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
@@ -44,19 +45,33 @@ type ChatTab = "general" | "announcements" | "direct";
 
 // Helper function to get user display name
 const getDisplayName = (user: any) => {
-  if (!user) return "Anonymous";
+  console.log("getDisplayName called with user:", user);
+
+  if (!user) {
+    console.log("No user provided, returning Anonymous");
+    return "Anonymous";
+  }
 
   // Try to get name from firstName and lastName
   const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
 
-  if (fullName.trim()) return fullName;
+  console.log("Full name from firstName/lastName:", fullName);
+
+  if (fullName.trim()) {
+    console.log("Using full name:", fullName);
+    return fullName;
+  }
 
   // Fallback to email username
   if (user.email) {
     const emailUsername = user.email.split("@")[0];
-    return emailUsername.charAt(0).toUpperCase() + emailUsername.slice(1);
+    const displayName =
+      emailUsername.charAt(0).toUpperCase() + emailUsername.slice(1);
+    console.log("Using email username:", displayName);
+    return displayName;
   }
 
+  console.log("No name found, returning Anonymous");
   return "Anonymous";
 };
 
@@ -78,6 +93,16 @@ export function ChatPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const currentUser = useQuery(api.users.current);
+
+  // Debug: Log current user data
+  useEffect(() => {
+    if (currentUser) {
+      console.log("Current user in chat:", currentUser);
+      console.log("User firstName:", currentUser.firstName);
+      console.log("User lastName:", currentUser.lastName);
+      console.log("User email:", currentUser.email);
+    }
+  }, [currentUser]);
 
   // Get messages based on active tab
   const messages = useQuery(api.messages.getMessages, {
@@ -110,6 +135,7 @@ export function ChatPage() {
   const sendMessage = useMutation(api.messages.sendMessage);
   const generateUploadUrl = useMutation(api.messages.generateUploadUrl);
   const sendFile = useMutation(api.messages.sendFile);
+  const clearChat = useMutation(api.messages.clearChat);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -249,6 +275,35 @@ export function ChatPage() {
   const handleCreateTask = (message: MessageType) => {
     setSelectedMessage(message);
     setShowTaskDialog(true);
+  };
+
+  const handleClearChat = async () => {
+    if (!currentUser) return;
+
+    const confirmed = window.confirm(
+      "Tem certeza que deseja limpar este chat? Esta ação não pode ser desfeita."
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await clearChat({
+        teamId: selectedTeam,
+        messageType:
+          activeTab === "general"
+            ? "general"
+            : activeTab === "announcements"
+              ? "announcement"
+              : "direct",
+        recipientId:
+          activeTab === "direct"
+            ? selectedDirectContact || undefined
+            : undefined,
+        currentUserId: currentUser._id,
+      });
+    } catch (error) {
+      console.error("Error clearing chat:", error);
+    }
   };
 
   const formatFileSize = (bytes: number) => {
@@ -391,45 +446,58 @@ export function ChatPage() {
           <div className="flex-1 p-6">
             <div className="h-[600px] bg-white rounded-2xl border-2 border-purple-200 shadow-lg flex flex-col overflow-hidden">
               {/* Conversation Header */}
-              <div className="bg-gradient-to-r from-purple-100 to-pink-100 px-6 py-4 border-b border-purple-200 flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                  {activeTab === "general" ? (
-                    <Users className="w-5 h-5" />
-                  ) : activeTab === "announcements" ? (
-                    <Megaphone className="w-5 h-5" />
-                  ) : selectedDirectContact ? (
-                    teamMembers
-                      ?.find((m) => m._id === selectedDirectContact)
-                      ?.name.split(" ")
-                      .map((n: string) => n[0])
-                      .join("")
-                      .slice(0, 2) || "DM"
-                  ) : (
-                    <MessageCircle className="w-5 h-5" />
-                  )}
+              <div className="bg-gradient-to-r from-purple-100 to-pink-100 px-6 py-4 border-b border-purple-200 flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                    {activeTab === "general" ? (
+                      <Users className="w-5 h-5" />
+                    ) : activeTab === "announcements" ? (
+                      <Megaphone className="w-5 h-5" />
+                    ) : selectedDirectContact ? (
+                      teamMembers
+                        ?.find((m) => m._id === selectedDirectContact)
+                        ?.name.split(" ")
+                        .map((n: string) => n[0])
+                        .join("")
+                        .slice(0, 2) || "DM"
+                    ) : (
+                      <MessageCircle className="w-5 h-5" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-800">
+                      {activeTab === "general"
+                        ? "Team General"
+                        : activeTab === "announcements"
+                          ? "Announcements"
+                          : selectedDirectContact
+                            ? teamMembers?.find(
+                                (m) => m._id === selectedDirectContact
+                              )?.name || "Direct Message"
+                            : "Select a Contact"}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {activeTab === "general"
+                        ? "Team conversations"
+                        : activeTab === "announcements"
+                          ? "Important messages"
+                          : selectedDirectContact
+                            ? "Private conversation"
+                            : "Choose someone to chat with"}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold text-gray-800">
-                    {activeTab === "general"
-                      ? "Team General"
-                      : activeTab === "announcements"
-                        ? "Announcements"
-                        : selectedDirectContact
-                          ? teamMembers?.find(
-                              (m) => m._id === selectedDirectContact
-                            )?.name || "Direct Message"
-                          : "Select a Contact"}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    {activeTab === "general"
-                      ? "Team conversations"
-                      : activeTab === "announcements"
-                        ? "Important messages"
-                        : selectedDirectContact
-                          ? "Private conversation"
-                          : "Choose someone to chat with"}
-                  </p>
-                </div>
+
+                {/* Clear Chat Button */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClearChat}
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg"
+                  title="Limpar chat"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
               </div>
 
               {/* Messages Area */}

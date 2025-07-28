@@ -405,3 +405,71 @@ export const removeReaction = mutation({
     return reactions;
   },
 });
+
+// Function to clear chat messages
+export const clearChat = mutation({
+  args: {
+    teamId: v.string(),
+    messageType: v.optional(
+      v.union(
+        v.literal("general"),
+        v.literal("announcement"),
+        v.literal("direct")
+      )
+    ),
+    recipientId: v.optional(v.string()),
+    currentUserId: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    // Get all messages to delete
+    let query = ctx.db
+      .query("messages")
+      .filter((q) => q.eq(q.field("teamId"), args.teamId));
+
+    if (args.messageType) {
+      if (
+        args.messageType === "direct" &&
+        args.recipientId &&
+        args.currentUserId
+      ) {
+        // For direct messages, only delete messages between these two users
+        query = query.filter((q) =>
+          q.and(
+            q.eq(q.field("messageType"), "direct"),
+            q.or(
+              q.and(
+                q.eq(q.field("authorId"), args.currentUserId),
+                q.eq(q.field("recipientId"), args.recipientId)
+              ),
+              q.and(
+                q.eq(q.field("authorId"), args.recipientId),
+                q.eq(q.field("recipientId"), args.currentUserId)
+              )
+            )
+          )
+        );
+      } else {
+        query = query.filter((q) =>
+          q.eq(q.field("messageType"), args.messageType)
+        );
+      }
+    } else {
+      // If no message type specified, clear general messages
+      query = query.filter((q) =>
+        q.or(
+          q.eq(q.field("messageType"), "general"),
+          q.eq(q.field("messageType"), undefined)
+        )
+      );
+    }
+
+    const messagesToDelete = await query.collect();
+
+    // Delete all messages
+    for (const message of messagesToDelete) {
+      await ctx.db.delete(message._id);
+    }
+
+    return { deletedCount: messagesToDelete.length };
+  },
+});
