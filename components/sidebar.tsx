@@ -207,7 +207,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               title={isCollapsed ? "Expand sidebar" : "Minimize sidebar"}
             >
               {isCollapsed ? (
-                <ChevronRight className="w-5 h-5 text-gray-600" />
+                <ChevronRight className="w-6 h-6 text-gray-600" />
               ) : (
                 <ChevronLeft className="w-5 h-5 text-gray-600" />
               )}
@@ -230,26 +230,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         {isCollapsed && (
           <div className="hidden lg:flex items-center justify-center p-4 border-b border-gray-100">
             <Link href="/" className="hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-white" />
               </div>
             </Link>
-          </div>
-        )}
-
-        {/* Search */}
-        {!isCollapsed && (
-          <div className="p-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                type="text"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 rounded-xl border-gray-200 focus:border-purple-300 focus:ring-purple-200"
-              />
-            </div>
           </div>
         )}
 
@@ -364,8 +348,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         )}
 
         {/* Navigation */}
-        <nav className="px-4 space-y-2">
-          <div className="mb-4">
+        <nav
+          className={`${isCollapsed ? "flex flex-col items-center space-y-2" : "px-4 space-y-2"}`}
+        >
+          <div
+            className={`${isCollapsed ? "w-full flex flex-col items-center" : "mb-4"}`}
+          >
             {!isCollapsed && (
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
                 Navigation
@@ -378,7 +366,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <div
                     className={`flex items-center rounded-xl transition-all duration-200 group relative ${
                       isCollapsed
-                        ? "justify-center p-3"
+                        ? "justify-center w-12 h-12"
                         : "space-x-3 px-3 py-2.5"
                     } ${
                       item.active
@@ -388,8 +376,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     title={isCollapsed ? item.name : ""}
                   >
                     <IconComponent
-                      className={`w-5 h-5 ${
-                        item.active ? "text-white" : "text-gray-400"
+                      className={`${isCollapsed ? "w-6 h-6" : "w-5 h-5"} ${
+                        item.active ? "text-white" : "text-gray-600"
                       } group-hover:scale-110 transition-transform duration-200`}
                     />
                     {!isCollapsed && (
@@ -425,37 +413,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               );
             })}
           </div>
-
-          {/* Quick Actions */}
-          {!isCollapsed && (
-            <div className="border-t border-gray-100 pt-4">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                Quick Actions
-              </p>
-              <Button className="w-full justify-start bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-                <Plus className="w-4 h-4 mr-3" />
-                New Task
-              </Button>
-              <div className="grid grid-cols-2 gap-2 mt-3">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-lg border-gray-200 hover:border-blue-300 hover:bg-blue-50"
-                >
-                  <Bell className="w-4 h-4 mr-2" />
-                  Alerts
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-lg border-gray-200 hover:border-green-300 hover:bg-green-50"
-                >
-                  <Settings className="w-4 h-4 mr-2" />
-                  Settings
-                </Button>
-              </div>
-            </div>
-          )}
         </nav>
 
         {/* User Profile */}
@@ -511,7 +468,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     className="text-gray-400 hover:text-red-500 p-1"
                     title="Sign out"
                   >
-                    <LogOut className="w-4 h-4" />
+                    <LogOut className="w-6 h-6" />
                   </Button>
                 </SignOutButton>
               </div>
