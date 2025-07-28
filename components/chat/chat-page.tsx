@@ -94,7 +94,9 @@ export function ChatPage() {
   const sendFile = useMutation(api.messages.sendFile);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
   };
 
   useEffect(() => {
@@ -295,7 +297,7 @@ export function ChatPage() {
     <>
       <div
         className="flex bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50"
-        style={{ height: "calc(100vh - 120px)" }}
+        style={{ height: "calc(100vh - 120px)", minHeight: "700px" }}
       >
         {/* Main Chat Area */}
         <div className="flex-1 flex flex-col">
@@ -375,7 +377,7 @@ export function ChatPage() {
 
           {/* Conversation Container */}
           <div className="flex-1 p-6">
-            <div className="h-full bg-white rounded-2xl border-2 border-purple-200 shadow-lg flex flex-col overflow-hidden">
+            <div className="h-[600px] bg-white rounded-2xl border-2 border-purple-200 shadow-lg flex flex-col overflow-hidden">
               {/* Conversation Header */}
               <div className="bg-gradient-to-r from-purple-100 to-pink-100 px-6 py-4 border-b border-purple-200 flex items-center space-x-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
@@ -420,11 +422,12 @@ export function ChatPage() {
 
               {/* Messages Area */}
               <div
-                className="flex-1 overflow-y-auto p-4 relative"
+                className="flex-1 overflow-y-auto p-4 relative scroll-smooth"
                 style={{
                   backgroundImage: `url("data:image/svg+xml,%3csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3e%3cg fill='none' fill-rule='evenodd'%3e%3cg fill='%23e879f9' fill-opacity='0.02'%3e%3ccircle cx='30' cy='30' r='1'/%3e%3c/g%3e%3c/g%3e%3c/svg%3e")`,
                   backgroundColor: "#fafafa",
                 }}
+                ref={messagesEndRef}
               >
                 {/* Empty state for direct messages */}
                 {activeTab === "direct" &&
@@ -475,7 +478,6 @@ export function ChatPage() {
                           );
                         }
                       )}
-                    <div ref={messagesEndRef} />
                   </div>
                 )}
 
