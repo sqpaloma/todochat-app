@@ -636,12 +636,12 @@ export function ChatPage() {
 
               <div className="space-y-3">
                 {(["general", "announcements", "direct"] as ChatTab[]).map(
-                  (tab, index) => {
+                  (tab) => {
                     const config = getTabConfig(tab);
                     const isActive = activeTab === tab;
                     return (
                       <Button
-                        key={`tab-${tab}-${index}`}
+                        key={tab}
                         variant={isActive ? "default" : "ghost"}
                         onClick={() => setActiveTab(tab)}
                         className={`w-full justify-start p-4 rounded-xl transition-all ${
