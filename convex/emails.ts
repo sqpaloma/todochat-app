@@ -19,7 +19,8 @@ export const sendNudgeEmail = internalMutation({
     teamName: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL || "https://chatdo.upcraftcrew.com/";
 
     await resend.sendEmail(ctx, {
       from: "Acme <onboarding@resend.dev>",
@@ -94,7 +95,8 @@ export const sendTeamInvitationEmail = internalMutation({
       teamId: args.teamId,
     });
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL || "https://chatdo.upcraftcrew.com/";
     const joinUrl = `${appUrl}/join?team=${args.teamId}&email=${encodeURIComponent(args.to)}`;
 
     try {
@@ -180,7 +182,8 @@ export const sendTaskNotificationEmail = internalMutation({
     dueDate: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL || "https://chatdo.upcraftcrew.com/";
 
     const dueDateText = args.dueDate
       ? `<br><small style="color: #dc2626;">Due: ${new Date(args.dueDate).toLocaleDateString("en-US")}</small>`
@@ -241,7 +244,8 @@ export const sendDailyDigest = internalMutation({
   handler: async (ctx, args) => {
     if (args.memberTasks.length === 0) return;
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL || "https://chatdo.upcraftcrew.com/";
 
     const tasksList = args.memberTasks
       .map((task) => {
@@ -318,7 +322,8 @@ export const sendTaskCompletionEmail = internalMutation({
     teamMemberEmails: v.array(v.string()),
   },
   handler: async (ctx, args) => {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL || "https://chatdo.upcraftcrew.com/";
 
     // Send to all team members
     for (const email of args.teamMemberEmails) {
