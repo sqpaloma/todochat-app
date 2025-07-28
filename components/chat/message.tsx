@@ -236,151 +236,155 @@ export function Message({
     );
   };
 
+  // Current user's message - Right aligned
   if (isCurrentUser) {
-    // Current user's message - Right aligned
     return (
       <div
-        className={`flex justify-end items-end space-x-2 ${isGrouped ? "mt-1" : "mt-3"}`}
+        className={`flex items-start justify-end space-x-3 ${isGrouped ? "mt-1" : "mt-4"}`}
       >
-        <div className="max-w-[75%] group relative">
-          {/* Reaction bar for current user */}
-          <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-full mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <div className="flex items-center space-x-1 bg-white rounded-full shadow-lg border border-gray-200 px-2 py-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowReactions(!showReactions)}
-                className="p-1 h-auto hover:bg-gray-100 rounded-full"
-              >
-                <Smile className="w-4 h-4 text-gray-600" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onCreateTask}
-                className="p-1 h-auto hover:bg-gray-100 rounded-full"
-              >
-                <Plus className="w-4 h-4 text-gray-600" />
-              </Button>
-            </div>
+        <div className="flex items-end space-x-3 flex-1 justify-end">
+          {/* Timestamp outside bubble */}
+          <span className="text-xs text-gray-400 flex-shrink-0 pb-2">
+            {formatTime(message.timestamp)}
+          </span>
 
-            {/* Quick reaction popup */}
-            {showReactions && (
-              <div className="absolute top-full left-0 mt-1 bg-white rounded-full shadow-lg border border-gray-200 px-2 py-1 flex space-x-1">
+          <div className="max-w-[75%] group relative">
+            {/* Reaction bar for current user */}
+            <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="flex items-center space-x-2 bg-white rounded-xl shadow-lg border border-gray-200 px-3 py-2">
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleReaction("👍")}
-                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
+                  onClick={() => setShowReactions(!showReactions)}
+                  className="p-2 h-auto hover:bg-gray-100 rounded-lg"
                 >
-                  👍
+                  <Smile className="w-4 h-4 text-gray-600" />
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleReaction("❤️")}
-                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
+                  onClick={onCreateTask}
+                  className="p-2 h-auto hover:bg-gray-100 rounded-lg"
                 >
-                  ❤️
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleReaction("😂")}
-                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
-                >
-                  😂
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleReaction("😮")}
-                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
-                >
-                  😮
+                  <Plus className="w-4 h-4 text-gray-600" />
                 </Button>
               </div>
-            )}
-          </div>
 
-          <div className="relative">
-            {/* Tail for first message only */}
-            {!isGrouped && (
-              <div
-                className="absolute top-2 -right-2 w-0 h-0"
-                style={{
-                  borderStyle: "solid",
-                  borderWidth: "8px 0 8px 12px",
-                  borderColor: "transparent transparent transparent #ec4899",
-                }}
-              />
-            )}
-            <div
-              className={`
-                bg-gradient-to-r from-purple-500 to-pink-500 text-white 
-                px-3 py-2 shadow-sm relative
-                ${
-                  isGrouped
-                    ? "rounded-2xl rounded-br-lg"
-                    : "rounded-2xl rounded-br-md"
-                }
-              `}
-            >
-              {/* Indicador do tipo de mensagem */}
-              {!isGrouped &&
-                message.messageType &&
-                message.messageType !== "general" && (
-                  <div
-                    className={`flex items-center space-x-1 mb-2 text-xs ${typeConfig.bgColor} px-2 py-1 rounded-full w-fit`}
+              {/* Quick reaction popup */}
+              {showReactions && (
+                <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-200 px-3 py-2 flex space-x-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleReaction("👍")}
+                    className="p-2 h-auto hover:bg-gray-100 rounded-lg text-lg"
                   >
-                    <TypeIcon className={`w-3 h-3 ${typeConfig.color}`} />
-                    <span className={typeConfig.color}>{typeConfig.label}</span>
-                    {message.messageType === "direct" &&
-                      message.recipientName && (
-                        <span className="text-gray-500">
-                          → {message.recipientName}
-                        </span>
-                      )}
-                  </div>
-                )}
-
-              {!hasFile && (
-                <p className="text-sm leading-relaxed break-words">
-                  {message.content}
-                </p>
+                    👍
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleReaction("❤️")}
+                    className="p-2 h-auto hover:bg-gray-100 rounded-lg text-lg"
+                  >
+                    ❤️
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleReaction("😂")}
+                    className="p-2 h-auto hover:bg-gray-100 rounded-lg text-lg"
+                  >
+                    😂
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleReaction("😮")}
+                    className="p-2 h-auto hover:bg-gray-100 rounded-lg text-lg"
+                  >
+                    😮
+                  </Button>
+                </div>
               )}
-              {hasFile && isImageFile && renderFileContent()}
             </div>
 
-            {/* File content outside bubble for non-images */}
-            {hasFile && !isImageFile && (
-              <div className="mt-2">{renderFileContent()}</div>
-            )}
+            <div className="relative">
+              {/* Tail for first message only */}
+              {!isGrouped && (
+                <div
+                  className="absolute top-3 -right-2 w-0 h-0"
+                  style={{
+                    borderStyle: "solid",
+                    borderWidth: "8px 0 8px 12px",
+                    borderColor: "transparent transparent transparent #ec4899",
+                  }}
+                />
+              )}
+              <div
+                className={`
+                  bg-gradient-to-r from-purple-500 to-pink-500 text-white 
+                  px-4 py-3 shadow-md relative
+                  ${
+                    isGrouped
+                      ? "rounded-2xl rounded-br-lg"
+                      : "rounded-2xl rounded-br-md"
+                  }
+                `}
+              >
+                {/* Indicador do tipo de mensagem */}
+                {!isGrouped &&
+                  message.messageType &&
+                  message.messageType !== "general" && (
+                    <div
+                      className={`flex items-center space-x-2 mb-2 text-xs ${typeConfig.bgColor} px-3 py-2 rounded-full w-fit`}
+                    >
+                      <TypeIcon className={`w-3 h-3 ${typeConfig.color}`} />
+                      <span className={typeConfig.color}>
+                        {typeConfig.label}
+                      </span>
+                      {message.messageType === "direct" &&
+                        message.recipientName && (
+                          <span className="text-gray-500">
+                            → {message.recipientName}
+                          </span>
+                        )}
+                    </div>
+                  )}
 
-            {/* Show reactions below message */}
-            {message.reactions && message.reactions.length > 0 && (
-              <div className="flex items-center space-x-1 mt-1 justify-end">
-                {message.reactions.map((reaction) => (
-                  <div
-                    key={reaction.emoji}
-                    className="bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 text-xs flex items-center space-x-1 shadow-sm border border-purple-200 cursor-pointer hover:bg-white"
-                    onClick={() => handleReaction(reaction.emoji)}
-                  >
-                    <span>{reaction.emoji}</span>
-                    <span className="text-purple-600 font-medium">
-                      {reaction.users.length}
-                    </span>
-                  </div>
-                ))}
+                {!hasFile && (
+                  <p className="text-sm leading-relaxed break-words">
+                    {message.content}
+                  </p>
+                )}
+                {hasFile && isImageFile && renderFileContent()}
               </div>
-            )}
+
+              {/* File content outside bubble for non-images */}
+              {hasFile && !isImageFile && (
+                <div className="mt-3">{renderFileContent()}</div>
+              )}
+
+              {/* Show reactions below message */}
+              {message.reactions && message.reactions.length > 0 && (
+                <div className="flex items-center space-x-2 mt-2 justify-end">
+                  {message.reactions.map((reaction, index) => (
+                    <div
+                      key={`${reaction.emoji}-${index}`}
+                      className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-2 text-xs flex items-center space-x-2 shadow-sm border border-purple-200 cursor-pointer hover:bg-white"
+                      onClick={() => handleReaction(reaction.emoji)}
+                    >
+                      <span className="text-base">{reaction.emoji}</span>
+                      <span className="text-purple-600 font-semibold">
+                        {reaction.users.length}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
-
-        {/* Timestamp outside bubble */}
-        <span className="text-xs text-gray-400 flex-shrink-0 pb-1">
-          {formatTime(message.timestamp)}
-        </span>
       </div>
     );
   }
@@ -388,12 +392,12 @@ export function Message({
   // Other user's message - Left aligned
   return (
     <div
-      className={`flex items-start space-x-2 ${isGrouped ? "mt-1" : "mt-3"}`}
+      className={`flex items-start space-x-3 ${isGrouped ? "mt-1" : "mt-4"}`}
     >
       <div className="flex-shrink-0">
         {!isGrouped ? (
-          <Avatar className="w-8 h-8">
-            <AvatarFallback className="bg-gradient-to-br from-purple-400 to-pink-500 text-white text-xs font-semibold">
+          <Avatar className="w-10 h-10">
+            <AvatarFallback className="bg-gradient-to-br from-purple-400 to-pink-500 text-white text-sm font-bold">
               {message.authorName
                 .split(" ")
                 .map((n) => n[0])
@@ -402,20 +406,20 @@ export function Message({
             </AvatarFallback>
           </Avatar>
         ) : (
-          <div className="w-8 h-8" />
+          <div className="w-10 h-10" />
         )}
       </div>
 
-      <div className="flex items-end space-x-2 flex-1">
+      <div className="flex items-end space-x-3 flex-1">
         <div className="max-w-[75%] group relative">
           {/* Reaction bar for other users */}
-          <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-full ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <div className="flex items-center space-x-1 bg-white rounded-full shadow-lg border border-gray-200 px-2 py-1">
+          <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-full ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <div className="flex items-center space-x-2 bg-white rounded-xl shadow-lg border border-gray-200 px-3 py-2">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowReactions(!showReactions)}
-                className="p-1 h-auto hover:bg-gray-100 rounded-full"
+                className="p-2 h-auto hover:bg-gray-100 rounded-lg"
               >
                 <Smile className="w-4 h-4 text-gray-600" />
               </Button>
@@ -423,7 +427,7 @@ export function Message({
                 variant="ghost"
                 size="sm"
                 onClick={handleNudge}
-                className="p-1 h-auto hover:bg-gray-100 rounded-full"
+                className="p-2 h-auto hover:bg-gray-100 rounded-lg"
                 title="Nudge user"
                 disabled={isNudging}
               >
@@ -435,7 +439,7 @@ export function Message({
                 variant="ghost"
                 size="sm"
                 onClick={onCreateTask}
-                className="p-1 h-auto hover:bg-gray-100 rounded-full"
+                className="p-2 h-auto hover:bg-gray-100 rounded-lg"
               >
                 <Plus className="w-4 h-4 text-gray-600" />
               </Button>
@@ -443,12 +447,12 @@ export function Message({
 
             {/* Quick reaction popup */}
             {showReactions && (
-              <div className="absolute top-full right-0 mt-1 bg-white rounded-full shadow-lg border border-gray-200 px-2 py-1 flex space-x-1">
+              <div className="absolute top-full right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-200 px-3 py-2 flex space-x-2">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => handleReaction("👍")}
-                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
+                  className="p-2 h-auto hover:bg-gray-100 rounded-lg text-lg"
                 >
                   👍
                 </Button>
@@ -456,7 +460,7 @@ export function Message({
                   variant="ghost"
                   size="sm"
                   onClick={() => handleReaction("❤️")}
-                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
+                  className="p-2 h-auto hover:bg-gray-100 rounded-lg text-lg"
                 >
                   ❤️
                 </Button>
@@ -464,7 +468,7 @@ export function Message({
                   variant="ghost"
                   size="sm"
                   onClick={() => handleReaction("😂")}
-                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
+                  className="p-2 h-auto hover:bg-gray-100 rounded-lg text-lg"
                 >
                   😂
                 </Button>
@@ -472,7 +476,7 @@ export function Message({
                   variant="ghost"
                   size="sm"
                   onClick={() => handleReaction("😮")}
-                  className="p-1 h-auto hover:bg-gray-100 rounded-full text-lg"
+                  className="p-2 h-auto hover:bg-gray-100 rounded-lg text-lg"
                 >
                   😮
                 </Button>
@@ -484,7 +488,7 @@ export function Message({
             {/* Tail for first message only */}
             {!isGrouped && (
               <div
-                className="absolute top-2 -left-2 w-0 h-0"
+                className="absolute top-3 -left-2 w-0 h-0"
                 style={{
                   borderStyle: "solid",
                   borderWidth: "8px 12px 8px 0",
@@ -495,7 +499,7 @@ export function Message({
             <div
               className={`
                 bg-white border border-purple-100 
-                px-3 py-2 shadow-sm relative
+                px-4 py-3 shadow-md relative
                 ${
                   isGrouped
                     ? "rounded-2xl rounded-bl-lg"
@@ -504,7 +508,7 @@ export function Message({
               `}
             >
               {!isGrouped && (
-                <p className="text-xs font-semibold text-purple-600 mb-1">
+                <p className="text-xs font-bold text-purple-600 mb-2">
                   {message.authorName}
                 </p>
               )}
@@ -514,7 +518,7 @@ export function Message({
                 message.messageType &&
                 message.messageType !== "general" && (
                   <div
-                    className={`flex items-center space-x-1 mb-2 text-xs ${typeConfig.bgColor} px-2 py-1 rounded-full w-fit`}
+                    className={`flex items-center space-x-2 mb-2 text-xs ${typeConfig.bgColor} px-3 py-2 rounded-full w-fit`}
                   >
                     <TypeIcon className={`w-3 h-3 ${typeConfig.color}`} />
                     <span className={typeConfig.color}>{typeConfig.label}</span>
@@ -537,20 +541,20 @@ export function Message({
 
             {/* File content outside bubble for non-images */}
             {hasFile && !isImageFile && (
-              <div className="mt-2">{renderFileContent()}</div>
+              <div className="mt-3">{renderFileContent()}</div>
             )}
 
             {/* Show reactions below message */}
             {message.reactions && message.reactions.length > 0 && (
-              <div className="flex items-center space-x-1 mt-1">
-                {message.reactions.map((reaction) => (
+              <div className="flex items-center space-x-2 mt-2">
+                {message.reactions.map((reaction, index) => (
                   <div
-                    key={reaction.emoji}
-                    className="bg-purple-50 rounded-full px-2 py-1 text-xs flex items-center space-x-1 shadow-sm border border-purple-200 cursor-pointer hover:bg-purple-100"
+                    key={`${reaction.emoji}-${index}`}
+                    className="bg-purple-50 rounded-full px-3 py-2 text-xs flex items-center space-x-2 shadow-sm border border-purple-200 cursor-pointer hover:bg-purple-100"
                     onClick={() => handleReaction(reaction.emoji)}
                   >
-                    <span>{reaction.emoji}</span>
-                    <span className="text-purple-600 font-medium">
+                    <span className="text-base">{reaction.emoji}</span>
+                    <span className="text-purple-600 font-semibold">
                       {reaction.users.length}
                     </span>
                   </div>
@@ -561,7 +565,7 @@ export function Message({
         </div>
 
         {/* Timestamp outside bubble */}
-        <span className="text-xs text-gray-400 flex-shrink-0 pb-1">
+        <span className="text-xs text-gray-400 flex-shrink-0 pb-2">
           {formatTime(message.timestamp)}
         </span>
       </div>
