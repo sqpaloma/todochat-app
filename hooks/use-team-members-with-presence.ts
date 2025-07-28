@@ -24,13 +24,12 @@ export function useTeamMembersWithPresence(teamId: string) {
   // Get team members
   const teamMembers = useQuery(api.teams.getTeamMembers, { teamId });
 
-  // Use presence system for the team room - only if we have a valid userId
+  // Use presence system for the team room
   const presenceState = usePresence(api.presence, teamId, currentUserId || "");
 
   // Handle presence errors
   useEffect(() => {
     if (presenceState === undefined && currentUserId) {
-      // If we have a userId but no presence state, there might be an error
       setPresenceError(true);
     } else {
       setPresenceError(false);
@@ -40,6 +39,8 @@ export function useTeamMembersWithPresence(teamId: string) {
   // Create a map of online users from presence state
   const onlineUsers = useMemo(() => {
     const onlineSet = new Set<string>();
+
+    // Add users from presence state
     if (presenceState && currentUserId && !presenceError) {
       presenceState.forEach((entry) => {
         if (entry.online) {
@@ -47,6 +48,12 @@ export function useTeamMembersWithPresence(teamId: string) {
         }
       });
     }
+
+    // Always add current user to online set if they have a userId
+    if (currentUserId) {
+      onlineSet.add(currentUserId);
+    }
+
     return onlineSet;
   }, [presenceState, currentUserId, presenceError]);
 
@@ -54,16 +61,23 @@ export function useTeamMembersWithPresence(teamId: string) {
   const membersWithPresence = useMemo(() => {
     if (!teamMembers) return [];
 
-    return teamMembers.map((member) => ({
-      ...member,
-      // If presence system has errors, default to offline status
-      status: presenceError
-        ? ("offline" as const)
-        : onlineUsers.has(member._id)
-          ? ("online" as const)
-          : ("offline" as const),
-    }));
-  }, [teamMembers, onlineUsers, presenceError]);
+    return teamMembers.map((member) => {
+      const isOnline = onlineUsers.has(member._id);
+
+      return {
+        ...member,
+        // If this is the current user and they have a userId, they are always online
+        status:
+          currentUserId && member._id === currentUserId
+            ? ("online" as const)
+            : presenceError
+              ? ("offline" as const)
+              : isOnline
+                ? ("online" as const)
+                : ("offline" as const),
+      };
+    });
+  }, [teamMembers, onlineUsers, presenceError, currentUserId]);
 
   // Calculate statistics
   const stats = useMemo(() => {
