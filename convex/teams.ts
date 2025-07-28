@@ -4,6 +4,22 @@ import { getCurrentUserOrThrow } from "./users";
 import { internal } from "./_generated/api";
 import { presence } from "./presence";
 
+// Helper function to get user display name
+const getDisplayName = (user: any) => {
+  // Try to get name from firstName and lastName
+  const fullName = `${user.firstName || ""} ${user.lastName || ""}`.trim();
+
+  if (fullName) return fullName;
+
+  // Fallback to email username
+  if (user.email) {
+    const emailUsername = user.email.split("@")[0];
+    return emailUsername.charAt(0).toUpperCase() + emailUsername.slice(1);
+  }
+
+  return "User";
+};
+
 export const getTeamMembers = query({
   args: { teamId: v.string() },
   handler: async (ctx, args) => {
@@ -13,7 +29,7 @@ export const getTeamMembers = query({
     // Return formatted users for the team component
     return users.map((user) => ({
       _id: user._id,
-      name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "User",
+      name: getDisplayName(user),
       email: user.email,
       status: "online" as const, // In a real implementation, this would come from a presence system
       role: "member", // In a real implementation, this would come from the team-user relationship
@@ -36,7 +52,7 @@ export const getTeamMembersWithPresence = query({
     // by using the presence.list() function with a room token
     return users.map((user) => ({
       _id: user._id,
-      name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "User",
+      name: getDisplayName(user),
       email: user.email,
       status: "online" as const, // This will be updated with real presence data
       role: "member",
@@ -59,9 +75,7 @@ export const addMember = mutation({
     const currentUser = await getCurrentUserOrThrow(ctx);
 
     // Get inviter's name for the email
-    const inviterName =
-      `${currentUser.firstName || ""} ${currentUser.lastName || ""}`.trim() ||
-      currentUser.email;
+    const inviterName = getDisplayName(currentUser);
 
     // Send invitation email - user doesn't need to exist in system yet
     await ctx.scheduler.runAfter(0, internal.emails.sendTeamInvitationEmail, {
@@ -110,9 +124,7 @@ export const sendDailyDigestToTeam = internalMutation({
       if (memberTasks.length > 0) {
         await ctx.scheduler.runAfter(0, "emails:sendDailyDigest" as any, {
           memberEmail: member.email,
-          memberName:
-            `${member.firstName || ""} ${member.lastName || ""}`.trim() ||
-            "User",
+          memberName: getDisplayName(member),
           memberTasks: memberTasks.map((task) => ({
             _id: task._id,
             title: task.title,

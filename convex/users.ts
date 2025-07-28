@@ -5,17 +5,23 @@ import { ConvexError, v, Validator } from "convex/values";
 export const current = query({
   args: {},
   handler: async (ctx) => {
-    return await getCurrentUser(ctx);
+    const user = await getCurrentUser(ctx);
+    console.log("Current user data:", user);
+    return user;
   },
 });
 
 export async function getCurrentUser(ctx: QueryCtx) {
   const identity = await ctx.auth.getUserIdentity();
   if (!identity) {
-    console.log("no user info found", identity);
+    console.log("no user identity found", identity);
     return null;
   }
-  return await userByClerkUserId(ctx, identity.subject);
+
+  console.log("User identity:", identity);
+  const user = await userByClerkUserId(ctx, identity.subject);
+  console.log("User from database:", user);
+  return user;
 }
 
 export async function getCurrentUserOrThrow(ctx: QueryCtx) {
@@ -25,30 +31,59 @@ export async function getCurrentUserOrThrow(ctx: QueryCtx) {
 }
 
 async function userByClerkUserId(ctx: QueryCtx, clerkUserId: string) {
-  return await ctx.db
+  console.log("Looking for user with clerkUserId:", clerkUserId);
+  const user = await ctx.db
     .query("users")
     .withIndex("by_clerkUserId")
     .filter((q) => q.eq(q.field("clerkUserId"), clerkUserId))
     .unique();
+  console.log("Found user:", user);
+  return user;
 }
 
 export const upsertFromClerk = internalMutation({
   args: { data: v.any() as Validator<UserJSON> },
   async handler(ctx, { data }) {
+    console.log("Upserting user from Clerk:", data);
+    console.log("Full Clerk data structure:", JSON.stringify(data, null, 2));
+
+    // Ensure we have email addresses
+    if (!data.email_addresses || data.email_addresses.length === 0) {
+      console.error("No email addresses found in Clerk data");
+      return null;
+    }
+
+    // Check for different possible name fields
+    console.log("Available name fields in Clerk data:");
+    console.log("- first_name:", data.first_name);
+    console.log("- last_name:", data.last_name);
+    console.log("- name:", (data as any).name);
+    console.log("- username:", (data as any).username);
+    console.log("- full_name:", (data as any).full_name);
+
     const userAttributes = {
       email: data.email_addresses[0].email_address,
       clerkUserId: data.id,
-      firstName: data.first_name ?? undefined,
-      lastName: data.last_name ?? undefined,
+      firstName:
+        data.first_name ?? (data as any).name?.split(" ")[0] ?? undefined,
+      lastName:
+        data.last_name ??
+        (data as any).name?.split(" ").slice(1).join(" ") ??
+        undefined,
       imageUrl: data.image_url ?? undefined,
     };
+
+    console.log("User attributes:", userAttributes);
 
     const user = await userByClerkUserId(ctx, data.id);
     if (user === null) {
       const newUser = await ctx.db.insert("users", userAttributes);
+      console.log("Created new user:", newUser);
       return newUser;
     } else {
       await ctx.db.patch(user._id, userAttributes);
+      console.log("Updated existing user:", user._id);
+      return user._id;
     }
   },
 });
@@ -65,5 +100,25 @@ export const deleteFromClerk = internalMutation({
     } else {
       throw new ConvexError("User not found");
     }
+  },
+});
+
+// Debug function to check all users in the database
+export const debugUsers = query({
+  args: {},
+  handler: async (ctx) => {
+    const users = await ctx.db.query("users").collect();
+    console.log("All users in database:", users);
+    return users;
+  },
+});
+
+// Debug function to check current user identity
+export const debugCurrentUserIdentity = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    console.log("Current user identity:", identity);
+    return identity;
   },
 });

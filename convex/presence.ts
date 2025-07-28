@@ -51,10 +51,30 @@ export const list = query({
           if (!user) {
             return entry;
           }
+          // Helper function to get user display name
+          const getDisplayName = (user: any) => {
+            if (!user) return "Anonymous";
+
+            // Try to get name from firstName and lastName
+            const fullName = [user.firstName, user.lastName]
+              .filter(Boolean)
+              .join(" ");
+
+            if (fullName.trim()) return fullName;
+
+            // Fallback to email username
+            if (user.email) {
+              const emailUsername = user.email.split("@")[0];
+              return (
+                emailUsername.charAt(0).toUpperCase() + emailUsername.slice(1)
+              );
+            }
+
+            return "Anonymous";
+          };
+
           // Combine firstName and lastName to create a display name
-          const displayName =
-            [user.firstName, user.lastName].filter(Boolean).join(" ") ||
-            "Anonymous";
+          const displayName = getDisplayName(user);
           return {
             ...entry,
             name: displayName,

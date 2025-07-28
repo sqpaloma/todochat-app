@@ -42,6 +42,24 @@ interface MessageType {
 
 type ChatTab = "general" | "announcements" | "direct";
 
+// Helper function to get user display name
+const getDisplayName = (user: any) => {
+  if (!user) return "Anonymous";
+
+  // Try to get name from firstName and lastName
+  const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
+
+  if (fullName.trim()) return fullName;
+
+  // Fallback to email username
+  if (user.email) {
+    const emailUsername = user.email.split("@")[0];
+    return emailUsername.charAt(0).toUpperCase() + emailUsername.slice(1);
+  }
+
+  return "Anonymous";
+};
+
 export function ChatPage() {
   const [selectedTeam] = useState("team-1");
   const [activeTab, setActiveTab] = useState<ChatTab>("general");
@@ -120,10 +138,7 @@ export function ChatPage() {
     }
 
     try {
-      const displayName =
-        [currentUser.firstName, currentUser.lastName]
-          .filter(Boolean)
-          .join(" ") || "Anonymous";
+      const displayName = getDisplayName(currentUser);
 
       let recipientData = {};
       if (activeTab === "direct" && selectedDirectContact) {
@@ -175,10 +190,7 @@ export function ChatPage() {
 
     setIsUploading(true);
     try {
-      const displayName =
-        [currentUser.firstName, currentUser.lastName]
-          .filter(Boolean)
-          .join(" ") || "Anonymous";
+      const displayName = getDisplayName(currentUser);
 
       // Step 1: Get upload URL
       const postUrl = await generateUploadUrl();
@@ -318,7 +330,7 @@ export function ChatPage() {
                       {teamMembers
                         ?.find((m) => m._id === selectedDirectContact)
                         ?.name.split(" ")
-                        .map((n) => n[0])
+                        .map((n: string) => n[0])
                         .join("")
                         .slice(0, 2) || "U"}
                     </div>
@@ -389,7 +401,7 @@ export function ChatPage() {
                     teamMembers
                       ?.find((m) => m._id === selectedDirectContact)
                       ?.name.split(" ")
-                      .map((n) => n[0])
+                      .map((n: string) => n[0])
                       .join("")
                       .slice(0, 2) || "DM"
                   ) : (
@@ -461,10 +473,7 @@ export function ChatPage() {
                             index > 0 ? sortedMessages[index - 1] : null;
                           const isGrouped =
                             previousMessage?.authorId === message.authorId;
-                          const currentUserName =
-                            [currentUser.firstName, currentUser.lastName]
-                              .filter(Boolean)
-                              .join(" ") || "Anonymous";
+                          const currentUserName = getDisplayName(currentUser);
 
                           return (
                             <Message
