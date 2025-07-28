@@ -296,8 +296,8 @@ export function ChatPage() {
   return (
     <>
       <div
-        className="flex bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50"
-        style={{ height: "calc(100vh - 120px)", minHeight: "700px" }}
+        className="flex bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 min-h-screen"
+        style={{ minHeight: "100vh" }}
       >
         {/* Main Chat Area */}
         <div className="flex-1 flex flex-col">
