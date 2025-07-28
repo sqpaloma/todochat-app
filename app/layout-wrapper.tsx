@@ -8,6 +8,7 @@ import {
   SignInButton,
   SignUpButton,
   UserButton,
+  useAuth,
 } from "@clerk/nextjs";
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
@@ -96,13 +97,32 @@ function SidebarLayoutContent({
   activeView?: "chat" | "tasks" | "team";
 }) {
   const { sidebarOpen, closeSidebar } = useLayout();
+  const { isSignedIn, isLoaded } = useAuth();
+
+  // Don't show sidebar if user is not authenticated
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
+
+  if (!isSignedIn) {
+    // Show full-screen content without sidebar when not authenticated
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <main className="min-h-screen">{children}</main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Sidebar only */}
       <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
-      {/* Mobile Menu Button */}
+      {/* Mobile Menu Button - Only shown when authenticated */}
       <MobileMenuButton />
 
       {/* Main Content */}

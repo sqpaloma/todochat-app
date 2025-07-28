@@ -3,10 +3,17 @@
 import { Menu } from "lucide-react";
 import { useLayout } from "@/app/layout-wrapper";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 
 export function MobileMenuButton() {
   const { sidebarOpen, toggleSidebar } = useLayout();
   const pathname = usePathname();
+  const { isSignedIn, isLoaded } = useAuth();
+
+  // Don't show mobile menu button if user is not authenticated
+  if (!isLoaded || !isSignedIn) {
+    return null;
+  }
 
   return (
     <>

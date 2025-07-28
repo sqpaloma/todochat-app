@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
+import { AuthGuard } from "@/components/auth/auth-guard";
 
 import {
   Select,
@@ -276,5 +277,9 @@ function TeamPageContent() {
 }
 
 export default function TeamPage() {
-  return <TeamPageContent />;
+  return (
+    <AuthGuard pageName="Team">
+      <TeamPageContent />
+    </AuthGuard>
+  );
 }
