@@ -5,10 +5,12 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Header } from "@/components/header";
 import { TeamMember } from "./team-member";
+import { TeamMembers } from "./team-members";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Plus } from "lucide-react";
 import { AddMemberDialog } from "./add-member-dialog";
+import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
 
 interface TeamMemberType {
   _id: string;
@@ -25,14 +27,8 @@ export function TeamPageComponent() {
   const [selectedTeam] = useState("team-1");
   const [showAddMemberDialog, setShowAddMemberDialog] = useState(false);
 
-  const teamMembers = useQuery(api.teams.getTeamMembers, {
-    teamId: selectedTeam,
-  });
-
-  const onlineMembers = (teamMembers || []).filter(
-    (member: TeamMemberType) => member.status === "online"
-  ).length;
-  const totalMembers = (teamMembers || []).length;
+  const { members: teamMembers, stats } =
+    useTeamMembersWithPresence(selectedTeam);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -60,7 +56,7 @@ export function TeamPageComponent() {
               <CardContent className="p-6 text-center">
                 <Users className="w-8 h-8 text-blue-500 mx-auto mb-4" />
                 <h3 className="text-2xl font-bold text-blue-900 mb-1">
-                  {totalMembers}
+                  {stats.total}
                 </h3>
                 <p className="text-blue-600 text-sm font-medium">
                   Total Members
@@ -74,7 +70,7 @@ export function TeamPageComponent() {
                   <div className="w-3 h-3 bg-white rounded-full"></div>
                 </div>
                 <h3 className="text-2xl font-bold text-green-900 mb-1">
-                  {onlineMembers}
+                  {stats.online}
                 </h3>
                 <p className="text-green-600 text-sm font-medium">Online Now</p>
               </CardContent>
@@ -84,7 +80,7 @@ export function TeamPageComponent() {
               <CardContent className="p-6 text-center">
                 <div className="w-8 h-8 bg-orange-500 rounded-full mx-auto mb-4"></div>
                 <h3 className="text-2xl font-bold text-orange-900 mb-1">
-                  {totalMembers - onlineMembers}
+                  {stats.offline}
                 </h3>
                 <p className="text-orange-600 text-sm font-medium">Offline</p>
               </CardContent>
@@ -96,10 +92,7 @@ export function TeamPageComponent() {
                   %
                 </div>
                 <h3 className="text-2xl font-bold text-purple-900 mb-1">
-                  {totalMembers > 0
-                    ? Math.round((onlineMembers / totalMembers) * 100)
-                    : 0}
-                  %
+                  {stats.onlinePercentage}%
                 </h3>
                 <p className="text-purple-600 text-sm font-medium">
                   Activity Rate
@@ -108,21 +101,31 @@ export function TeamPageComponent() {
             </Card>
           </div>
 
-          <Card className="border-0 shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Users className="w-5 h-5 text-gray-600" />
-                <span>Team Members</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {(teamMembers || []).map((member: TeamMemberType) => (
-                  <TeamMember key={member._id} member={member} />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Team Members List */}
+            <div className="md:col-span-2">
+              <Card className="border-0 shadow-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Users className="w-5 h-5 text-gray-600" />
+                    <span>Team Members</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {teamMembers.map((member: TeamMemberType) => (
+                      <TeamMember key={member._id} member={member} />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Team Members Sidebar */}
+            <div>
+              <TeamMembers teamId={selectedTeam} />
+            </div>
+          </div>
         </div>
       </div>
 

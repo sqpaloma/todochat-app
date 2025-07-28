@@ -10,6 +10,7 @@ import { MemberDetailsDialog } from "@/components/team/member-details-dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
 
 import {
   Select,
@@ -50,10 +51,12 @@ function TeamPageContent() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [roleFilter, setRoleFilter] = useState<string>("all");
 
-  // Fetch team members from Convex
-  const teamMembers = useQuery(api.teams.getTeamMembers, {
-    teamId: selectedTeam,
-  });
+  // Use the new presence-enabled hook
+  const {
+    members: teamMembers,
+    stats,
+    isLoading,
+  } = useTeamMembersWithPresence(selectedTeam);
 
   // Filter members based on search and filters
   const filteredMembers = useMemo(() => {
@@ -82,21 +85,6 @@ function TeamPageContent() {
     return Array.from(new Set(roles)) as string[];
   }, [teamMembers]);
 
-  // Team statistics
-  const stats = useMemo(() => {
-    if (!teamMembers) return { total: 0, online: 0, offline: 0 };
-
-    const total = teamMembers.length;
-    const online = teamMembers.filter(
-      (m: TeamMemberType) => m.status === "online"
-    ).length;
-    const offline = teamMembers.filter(
-      (m: TeamMemberType) => m.status === "offline"
-    ).length;
-
-    return { total, online, offline };
-  }, [teamMembers]);
-
   const handleEditMember = (member: TeamMemberType) => {
     setSelectedMember(member);
     setShowEditMemberDialog(true);
@@ -107,7 +95,7 @@ function TeamPageContent() {
     setShowMemberDetailsDialog(true);
   };
 
-  if (!teamMembers) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
@@ -180,14 +168,16 @@ function TeamPageContent() {
               <TrendingUp className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Growth</p>
-              <p className="text-2xl font-bold text-blue-600">+12%</p>
+              <p className="text-sm text-gray-600">Activity Rate</p>
+              <p className="text-2xl font-bold text-blue-600">
+                {stats.onlinePercentage}%
+              </p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Filters */}
+      {/* Search and Filters */}
       <Card>
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4">
@@ -285,6 +275,6 @@ function TeamPageContent() {
   );
 }
 
-export default function Team() {
+export default function TeamPage() {
   return <TeamPageContent />;
 }

@@ -2,6 +2,7 @@ import { mutation, query, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { getCurrentUserOrThrow } from "./users";
 import { internal } from "./_generated/api";
+import { presence } from "./presence";
 
 export const getTeamMembers = query({
   args: { teamId: v.string() },
@@ -19,6 +20,29 @@ export const getTeamMembers = query({
       joinDate: user._creationTime,
       phone: undefined, // Field doesn't exist in current user structure
       location: undefined, // Field doesn't exist in current user structure
+      imageUrl: user.imageUrl,
+    }));
+  },
+});
+
+export const getTeamMembersWithPresence = query({
+  args: { teamId: v.string() },
+  handler: async (ctx, args) => {
+    // Fetch all users registered in the system
+    const users = await ctx.db.query("users").collect();
+
+    // For now, we'll use a simple approach where we consider users online
+    // In a real implementation, you would integrate with the presence system
+    // by using the presence.list() function with a room token
+    return users.map((user) => ({
+      _id: user._id,
+      name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "User",
+      email: user.email,
+      status: "online" as const, // This will be updated with real presence data
+      role: "member",
+      joinDate: user._creationTime,
+      phone: undefined,
+      location: undefined,
       imageUrl: user.imageUrl,
     }));
   },

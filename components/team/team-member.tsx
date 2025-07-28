@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PresenceIndicator } from "@/components/ui/presence-indicator";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,17 +48,6 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
     });
   };
 
-  const getStatusColor = (status?: string) => {
-    switch (status) {
-      case "online":
-        return "bg-green-500";
-      case "offline":
-        return "bg-gray-400";
-      default:
-        return "bg-gray-400";
-    }
-  };
-
   const getStatusText = (status?: string) => {
     switch (status) {
       case "online":
@@ -84,82 +74,123 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
                     .slice(0, 2)}
                 </AvatarFallback>
               </Avatar>
-              <div
-                className={`absolute -bottom-1 -right-1 w-4 h-4 ${getStatusColor(member.status)} rounded-full border-2 border-white`}
-              ></div>
+              <div className="absolute -bottom-1 -right-1">
+                <PresenceIndicator
+                  status={member.status || "offline"}
+                  size="md"
+                  showIcon={true}
+                />
+              </div>
             </div>
 
             <div>
               <h3 className="font-semibold text-gray-900">{member.name}</h3>
-              <Badge variant="secondary" className="text-xs">
-                {getStatusText(member.status)}
-              </Badge>
+              <div className="flex items-center space-x-2">
+                <Badge
+                  variant={member.status === "online" ? "default" : "secondary"}
+                  className={`text-xs ${
+                    member.status === "online"
+                      ? "bg-green-100 text-green-800 hover:bg-green-200"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  {getStatusText(member.status)}
+                </Badge>
+                {member.role && (
+                  <Badge variant="outline" className="text-xs">
+                    {member.role}
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <MoreVertical className="w-4 h-4" />
+              <Button
+                variant="ghost"
+                className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {onEdit && (
-                <DropdownMenuItem
-                  className="text-orange-600"
-                  onClick={() => onEdit(member)}
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit Member
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuItem className="text-blue-600">
-                <MessageSquare className="w-4 h-4 mr-2" />
-                Send Message
-              </DropdownMenuItem>
               {onViewProfile && (
-                <DropdownMenuItem
-                  className="text-green-600"
-                  onClick={() => onViewProfile(member)}
-                >
-                  <UserCheck className="w-4 h-4 mr-2" />
+                <DropdownMenuItem onClick={() => onViewProfile(member)}>
+                  <UserCheck className="mr-2 h-4 w-4" />
                   View Profile
                 </DropdownMenuItem>
               )}
+              {onEdit && (
+                <DropdownMenuItem onClick={() => onEdit(member)}>
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit Member
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem>
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Send Message
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
 
-        <div className="space-y-3 text-sm text-gray-600">
-          {member.role && (
-            <div className="flex items-center space-x-2">
-              <UserCheck className="w-4 h-4 text-purple-500" />
-              <span>{member.role}</span>
-            </div>
-          )}
-
-          <div className="flex items-center space-x-2">
-            <Mail className="w-4 h-4 text-blue-500" />
-            <span className="truncate">{member.email}</span>
+        <div className="space-y-3">
+          <div className="flex items-center space-x-3 text-sm">
+            <Mail className="w-4 h-4 text-gray-400" />
+            <span className="text-gray-600">{member.email}</span>
           </div>
 
           {member.phone && (
-            <div className="flex items-center space-x-2">
-              <Phone className="w-4 h-4 text-green-500" />
-              <span>{member.phone}</span>
+            <div className="flex items-center space-x-3 text-sm">
+              <Phone className="w-4 h-4 text-gray-400" />
+              <span className="text-gray-600">{member.phone}</span>
             </div>
           )}
 
           {member.location && (
-            <div className="flex items-center space-x-2">
-              <MapPin className="w-4 h-4 text-red-500" />
-              <span>{member.location}</span>
+            <div className="flex items-center space-x-3 text-sm">
+              <MapPin className="w-4 h-4 text-gray-400" />
+              <span className="text-gray-600">{member.location}</span>
             </div>
           )}
 
-          <div className="flex items-center space-x-2">
-            <Calendar className="w-4 h-4 text-orange-500" />
-            <span>Joined in {formatJoinDate(member.joinDate)}</span>
+          <div className="flex items-center space-x-3 text-sm">
+            <Calendar className="w-4 h-4 text-gray-400" />
+            <span className="text-gray-600">
+              Joined {formatJoinDate(member.joinDate)}
+            </span>
+          </div>
+        </div>
+
+        {/* Real-time status indicator */}
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <PresenceIndicator
+                status={member.status || "offline"}
+                size="sm"
+                showIcon={false}
+              />
+              <span className="text-xs text-gray-500">
+                {member.status === "online"
+                  ? "Active now"
+                  : "Last seen recently"}
+              </span>
+            </div>
+            {member.status === "online" && (
+              <div className="flex items-center space-x-1">
+                <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
+                <div
+                  className="w-1 h-1 bg-green-500 rounded-full animate-pulse"
+                  style={{ animationDelay: "0.2s" }}
+                ></div>
+                <div
+                  className="w-1 h-1 bg-green-500 rounded-full animate-pulse"
+                  style={{ animationDelay: "0.4s" }}
+                ></div>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>

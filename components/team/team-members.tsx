@@ -1,25 +1,27 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Users, Circle } from "lucide-react";
-
-interface TeamMember {
-  _id: string;
-  name: string;
-  email: string;
-  status?: "online" | "offline";
-}
+import { PresenceIndicator } from "@/components/ui/presence-indicator";
+import { Users } from "lucide-react";
+import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
 
 interface TeamMembersProps {
-  members: TeamMember[];
+  teamId: string;
 }
 
-export function TeamMembers({ members }: TeamMembersProps) {
+export function TeamMembers({ teamId }: TeamMembersProps) {
+  const { members, stats } = useTeamMembersWithPresence(teamId);
+
   return (
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium flex items-center">
           <Users className="w-4 h-4 mr-2" />
-          Team ({members.length})
+          Team ({stats.total})
+          {stats.online > 0 && (
+            <span className="ml-2 text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">
+              {stats.online} online
+            </span>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
@@ -28,26 +30,44 @@ export function TeamMembers({ members }: TeamMembersProps) {
             <div key={member._id} className="flex items-center space-x-3">
               <div className="relative">
                 <Avatar className="w-8 h-8">
-                  <AvatarFallback className="bg-blue-500 text-white text-sm">
-                    {member.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
+                  {member.imageUrl ? (
+                    <img
+                      src={member.imageUrl}
+                      alt={member.name}
+                      className="w-8 h-8 rounded-full"
+                    />
+                  ) : (
+                    <AvatarFallback className="bg-blue-500 text-white text-sm">
+                      {member.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  )}
                 </Avatar>
-                <Circle
-                  className={`w-3 h-3 absolute -bottom-0.5 -right-0.5 ${
-                    member.status === "online"
-                      ? "text-green-500 fill-green-500"
-                      : "text-gray-400 fill-gray-400"
-                  }`}
-                />
+                <div className="absolute -bottom-0.5 -right-0.5">
+                  <PresenceIndicator
+                    status={member.status || "offline"}
+                    size="sm"
+                    showIcon={true}
+                  />
+                </div>
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
                   {member.name}
                 </p>
                 <p className="text-xs text-gray-500 truncate">{member.email}</p>
+              </div>
+              <div className="flex items-center space-x-1">
+                <PresenceIndicator
+                  status={member.status || "offline"}
+                  size="sm"
+                  showIcon={false}
+                />
+                <span className="text-xs text-gray-500">
+                  {member.status === "online" ? "Active" : "Offline"}
+                </span>
               </div>
             </div>
           ))}

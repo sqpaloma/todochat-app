@@ -20,6 +20,7 @@ import { CreateManualTaskDialog } from "./create-manual-task-dialog";
 import { Task } from "./task";
 import { Button } from "@/components/ui/button";
 import { Plus, Calendar } from "lucide-react";
+import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
 
 interface TaskType {
   _id: Id<"tasks">;
@@ -43,9 +44,10 @@ export function TasksPage() {
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
 
   const tasks = useQuery(api.tasks.getTasks, { teamId: selectedTeam });
-  const teamMembers = useQuery(api.teams.getTeamMembers, {
-    teamId: selectedTeam,
-  });
+
+  // Use the new presence-enabled hook
+  const { members: teamMembers } = useTeamMembersWithPresence(selectedTeam);
+
   const updateTaskStatus = useMutation(api.tasks.updateTaskStatus);
 
   const sensors = useSensors(

@@ -15,8 +15,10 @@ import {
   Megaphone,
   MessageCircle,
   Plus,
+  Wifi,
 } from "lucide-react";
 import { CreateTaskDialog } from "./create-task-dialog";
+import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
 
 interface MessageType {
   _id: string;
@@ -84,9 +86,8 @@ export function ChatPage() {
       : "skip"
   );
 
-  const teamMembers = useQuery(api.teams.getTeamMembers, {
-    teamId: selectedTeam,
-  });
+  // Use the new presence-enabled hook
+  const { members: teamMembers } = useTeamMembersWithPresence(selectedTeam);
 
   const sendMessage = useMutation(api.messages.sendMessage);
   const generateUploadUrl = useMutation(api.messages.generateUploadUrl);
@@ -673,53 +674,58 @@ export function ChatPage() {
                 <Users className="w-5 h-5 mr-2 text-green-600" />
                 Online Members
                 <span className="ml-2 text-sm font-medium text-gray-500 bg-green-100 px-2 py-1 rounded-full">
-                  {teamMembers?.length || 0}
+                  {teamMembers?.filter((m) => m.status === "online").length ||
+                    0}
                 </span>
               </h3>
 
               <div className="space-y-3 max-h-64 overflow-y-auto">
                 {teamMembers && teamMembers.length > 0 ? (
-                  teamMembers.map((member) => (
-                    <div
-                      key={member._id}
-                      className="flex items-center space-x-3 p-3 bg-white/60 rounded-xl border border-purple-100 hover:bg-white/80 transition-colors cursor-pointer"
-                      onClick={() => {
-                        if (member._id !== currentUser?._id) {
-                          setActiveTab("direct");
-                          setSelectedDirectContact(member._id);
-                        }
-                      }}
-                    >
-                      <div className="relative">
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                          {member.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")
-                            .slice(0, 2)}
+                  teamMembers
+                    .filter((member) => member.status === "online")
+                    .map((member) => (
+                      <div
+                        key={member._id}
+                        className="flex items-center space-x-3 p-3 bg-white/60 rounded-xl border border-purple-100 hover:bg-white/80 transition-colors cursor-pointer"
+                        onClick={() => {
+                          if (member._id !== currentUser?._id) {
+                            setActiveTab("direct");
+                            setSelectedDirectContact(member._id);
+                          }
+                        }}
+                      >
+                        <div className="relative">
+                          <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                            {member.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                              .slice(0, 2)}
+                          </div>
+                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full flex items-center justify-center">
+                            <Wifi className="w-2 h-2 text-white" />
+                          </div>
                         </div>
-                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-semibold text-gray-800 truncate">
+                            {member.name}
+                            {member._id === currentUser?._id && (
+                              <span className="text-xs text-purple-600 ml-1">
+                                (You)
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-500 truncate">
+                            {member.email}
+                          </div>
+                        </div>
+                        {member._id !== currentUser?._id && (
+                          <div className="text-xs text-gray-400">
+                            <MessageCircle className="w-4 h-4" />
+                          </div>
+                        )}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold text-gray-800 truncate">
-                          {member.name}
-                          {member._id === currentUser?._id && (
-                            <span className="text-xs text-purple-600 ml-1">
-                              (You)
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-xs text-gray-500 truncate">
-                          {member.email}
-                        </div>
-                      </div>
-                      {member._id !== currentUser?._id && (
-                        <div className="text-xs text-gray-400">
-                          <MessageCircle className="w-4 h-4" />
-                        </div>
-                      )}
-                    </div>
-                  ))
+                    ))
                 ) : (
                   <div className="text-center py-8">
                     <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
