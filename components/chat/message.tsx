@@ -370,7 +370,7 @@ export function Message({
                 <div className="flex items-center space-x-2 mt-2 justify-end">
                   {message.reactions.map((reaction, index) => (
                     <div
-                      key={`${message._id}-${reaction.emoji}-${index}`}
+                      key={`${message._id}-reaction-${index}`}
                       className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-2 text-xs flex items-center space-x-2 shadow-sm border border-purple-200 cursor-pointer hover:bg-white"
                       onClick={() => handleReaction(reaction.emoji)}
                     >
@@ -549,7 +549,7 @@ export function Message({
               <div className="flex items-center space-x-2 mt-2">
                 {message.reactions.map((reaction, index) => (
                   <div
-                    key={`${message._id}-${reaction.emoji}-${index}`}
+                    key={`${message._id}-reaction-${index}`}
                     className="bg-purple-50 rounded-full px-3 py-2 text-xs flex items-center space-x-2 shadow-sm border border-purple-200 cursor-pointer hover:bg-purple-100"
                     onClick={() => handleReaction(reaction.emoji)}
                   >

@@ -1,5 +1,10 @@
 import { UserJSON } from "@clerk/backend";
-import { internalMutation, query, QueryCtx } from "./_generated/server";
+import {
+  internalMutation,
+  mutation,
+  query,
+  QueryCtx,
+} from "./_generated/server";
 import { ConvexError, v, Validator } from "convex/values";
 
 export const current = query({
@@ -120,5 +125,53 @@ export const debugCurrentUserIdentity = query({
     const identity = await ctx.auth.getUserIdentity();
     console.log("Current user identity:", identity);
     return identity;
+  },
+});
+
+// Debug function to create test users
+export const createTestUsers = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const existingUsers = await ctx.db.query("users").collect();
+
+    if (existingUsers.length === 0) {
+      console.log("Creating test users...");
+
+      const testUsers = [
+        {
+          email: "joao@test.com",
+          clerkUserId: "test_joao",
+          firstName: "João",
+          lastName: "Silva",
+          imageUrl: undefined,
+        },
+        {
+          email: "maria@test.com",
+          clerkUserId: "test_maria",
+          firstName: "Maria",
+          lastName: "Santos",
+          imageUrl: undefined,
+        },
+        {
+          email: "pedro@test.com",
+          clerkUserId: "test_pedro",
+          firstName: "Pedro",
+          lastName: "Oliveira",
+          imageUrl: undefined,
+        },
+      ];
+
+      const createdUsers = [];
+      for (const userData of testUsers) {
+        const userId = await ctx.db.insert("users", userData);
+        createdUsers.push(userId);
+      }
+
+      console.log("Created test users:", createdUsers);
+      return createdUsers;
+    } else {
+      console.log("Users already exist:", existingUsers.length);
+      return existingUsers.map((u) => u._id);
+    }
   },
 });
