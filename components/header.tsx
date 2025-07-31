@@ -7,7 +7,6 @@ import {
   Users,
   Home,
   Sparkles,
-  Bell,
   Search,
 } from "lucide-react";
 import Link from "next/link";
@@ -75,9 +74,6 @@ export function Header({ activeView }: HeaderProps) {
             >
               <CheckSquare className="w-4 h-4 mr-2" />
               <span className="hidden lg:inline">Tasks</span>
-              <span className="ml-2 px-2 py-0.5 bg-white/20 rounded-full text-xs">
-                3
-              </span>
             </Button>
           </Link>
 
@@ -113,10 +109,6 @@ export function Header({ activeView }: HeaderProps) {
 
         {/* Header Actions */}
         <div className="flex items-center space-x-2">
-          <Button variant="ghost" size="sm" className="hidden sm:flex">
-            <Bell className="w-5 h-5" />
-          </Button>
-
           <Button variant="ghost" size="sm" className="sm:hidden">
             <Search className="w-5 h-5" />
           </Button>
