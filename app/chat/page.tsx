@@ -60,16 +60,6 @@ export default function ChatPage() {
       <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 min-h-screen">
         {/* Main Chat Area - Usando toda a largura */}
         <div className="flex flex-col max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-6 px-8">
-            <div className="flex items-center justify-between">
-              <h1 className="text-4xl font-bold">Chat</h1>
-              <div className="text-sm opacity-90">
-                Team collaboration made simple
-              </div>
-            </div>
-          </div>
-
           {/* Contact Selector */}
           <ContactSelector
             activeTab={state.activeTab}

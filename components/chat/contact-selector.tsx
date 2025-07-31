@@ -28,7 +28,7 @@ export function ContactSelector({
     teamMembers?.filter((member) => member._id !== currentUser?._id) || [];
 
   return (
-    <div className="px-8 py-4 border-t border-gray-200 bg-white/90">
+    <div className="px-8 py-4 border-t border-gray-200 bg-white/90 rounded-lg">
       <div className="flex items-center space-x-4 max-w-7xl mx-auto">
         {selectedDirectContact ? (
           <div className="flex items-center space-x-4 w-full">
@@ -58,20 +58,20 @@ export function ContactSelector({
               </div>
             </div>
             <div>
-              <span className="text-lg font-semibold text-gray-800">
+              <span className="text-sm font-semibold text-gray-800">
                 {
                   availableMembers?.find((m) => m._id === selectedDirectContact)
                     ?.name
                 }
               </span>
-              <span className="text-sm text-green-600 ml-3 font-medium">
+              <span className="text-xs text-green-600 ml-3 font-medium">
                 Online
               </span>
             </div>
           </div>
         ) : (
           <>
-            <span className="text-base font-medium text-gray-700 whitespace-nowrap">
+            <span className="text-xs font-medium text-gray-700 whitespace-nowrap">
               Chat with team or select contact:
             </span>
             <div className="flex-1">
@@ -129,7 +129,7 @@ export function ContactSelector({
               ) : (
                 <div className="flex items-center space-x-3 text-gray-500">
                   <Users className="w-5 h-5" />
-                  <span className="text-base">No team members available</span>
+                  <span className="text-fon">No team members available</span>
                 </div>
               )}
             </div>
