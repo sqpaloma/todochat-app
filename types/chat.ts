@@ -1,4 +1,4 @@
-export type ChatTab = "general" | "announcements" | "direct";
+export type ChatTab = "direct";
 
 export interface MessageType {
   _id: string;
@@ -7,7 +7,7 @@ export interface MessageType {
   authorName: string;
   timestamp: number;
   teamId: string;
-  messageType?: "general" | "announcement" | "direct";
+  messageType?: "general" | "direct";
   recipientId?: string;
   recipientName?: string;
   reactions?: Array<{

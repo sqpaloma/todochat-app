@@ -1,4 +1,3 @@
-import { Wifi, WifiOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PresenceIndicatorProps {
@@ -22,12 +21,6 @@ export function PresenceIndicator({
     lg: "w-4 h-4",
   };
 
-  const iconSizeClasses = {
-    sm: "w-2 h-2",
-    md: "w-3 h-3",
-    lg: "w-4 h-4",
-  };
-
   const getStatusColor = () => {
     switch (status) {
       case "online":
@@ -36,21 +29,6 @@ export function PresenceIndicator({
         return "bg-gray-400";
       default:
         return "bg-gray-400";
-    }
-  };
-
-  const getStatusIcon = () => {
-    switch (status) {
-      case "online":
-        return <Wifi className={cn("text-green-500", iconSizeClasses[size])} />;
-      case "offline":
-        return (
-          <WifiOff className={cn("text-gray-400", iconSizeClasses[size])} />
-        );
-      default:
-        return (
-          <WifiOff className={cn("text-gray-400", iconSizeClasses[size])} />
-        );
     }
   };
 
@@ -70,12 +48,11 @@ export function PresenceIndicator({
       {showIcon && (
         <div
           className={cn(
-            "rounded-full border-2 border-white flex items-center justify-center",
+            "rounded-full border-2 border-white",
+            getStatusColor(),
             sizeClasses[size]
           )}
-        >
-          {getStatusIcon()}
-        </div>
+        ></div>
       )}
       {!showIcon && (
         <div

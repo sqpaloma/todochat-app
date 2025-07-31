@@ -11,7 +11,6 @@ export const current = query({
   args: {},
   handler: async (ctx) => {
     const user = await getCurrentUser(ctx);
-    console.log("Current user data:", user);
     return user;
   },
 });
@@ -19,13 +18,10 @@ export const current = query({
 export async function getCurrentUser(ctx: QueryCtx) {
   const identity = await ctx.auth.getUserIdentity();
   if (!identity) {
-    console.log("no user identity found", identity);
     return null;
   }
 
-  console.log("User identity:", identity);
   const user = await userByClerkUserId(ctx, identity.subject);
-  console.log("User from database:", user);
   return user;
 }
 
@@ -36,13 +32,11 @@ export async function getCurrentUserOrThrow(ctx: QueryCtx) {
 }
 
 async function userByClerkUserId(ctx: QueryCtx, clerkUserId: string) {
-  console.log("Looking for user with clerkUserId:", clerkUserId);
   const user = await ctx.db
     .query("users")
     .withIndex("by_clerkUserId")
     .filter((q) => q.eq(q.field("clerkUserId"), clerkUserId))
     .unique();
-  console.log("Found user:", user);
   return user;
 }
 
@@ -113,7 +107,15 @@ export const debugUsers = query({
   args: {},
   handler: async (ctx) => {
     const users = await ctx.db.query("users").collect();
-    console.log("All users in database:", users);
+    return users;
+  },
+});
+
+// Query to list all users
+export const list = query({
+  args: {},
+  handler: async (ctx) => {
+    const users = await ctx.db.query("users").collect();
     return users;
   },
 });

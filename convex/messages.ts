@@ -5,13 +5,7 @@ import { internal } from "./_generated/api";
 export const getMessages = query({
   args: {
     teamId: v.string(),
-    messageType: v.optional(
-      v.union(
-        v.literal("general"),
-        v.literal("announcement"),
-        v.literal("direct")
-      )
-    ),
+    messageType: v.optional(v.union(v.literal("general"), v.literal("direct"))),
     recipientId: v.optional(v.string()),
     currentUserId: v.optional(v.string()),
   },
@@ -65,13 +59,7 @@ export const searchMessages = query({
   args: {
     teamId: v.string(),
     searchTerm: v.string(),
-    messageType: v.optional(
-      v.union(
-        v.literal("general"),
-        v.literal("announcement"),
-        v.literal("direct")
-      )
-    ),
+    messageType: v.optional(v.union(v.literal("general"), v.literal("direct"))),
   },
   handler: async (ctx, args) => {
     if (!args.searchTerm.trim()) {
@@ -154,13 +142,7 @@ export const sendMessage = mutation({
     teamId: v.string(),
     authorId: v.string(),
     authorName: v.string(),
-    messageType: v.optional(
-      v.union(
-        v.literal("general"),
-        v.literal("announcement"),
-        v.literal("direct")
-      )
-    ),
+    messageType: v.optional(v.union(v.literal("general"), v.literal("direct"))),
     recipientId: v.optional(v.string()),
     recipientName: v.optional(v.string()),
   },
@@ -195,13 +177,7 @@ export const sendFile = mutation({
     teamId: v.string(),
     authorId: v.string(),
     authorName: v.string(),
-    messageType: v.optional(
-      v.union(
-        v.literal("general"),
-        v.literal("announcement"),
-        v.literal("direct")
-      )
-    ),
+    messageType: v.optional(v.union(v.literal("general"), v.literal("direct"))),
     recipientId: v.optional(v.string()),
     recipientName: v.optional(v.string()),
   },
@@ -410,13 +386,7 @@ export const removeReaction = mutation({
 export const clearChat = mutation({
   args: {
     teamId: v.string(),
-    messageType: v.optional(
-      v.union(
-        v.literal("general"),
-        v.literal("announcement"),
-        v.literal("direct")
-      )
-    ),
+    messageType: v.optional(v.union(v.literal("general"), v.literal("direct"))),
     recipientId: v.optional(v.string()),
     currentUserId: v.optional(v.string()),
   },

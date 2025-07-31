@@ -1,7 +1,6 @@
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import usePresence from "@convex-dev/presence/react";
-import { useMemo, useState, useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 interface TeamMember {
   _id: string;
@@ -16,68 +15,74 @@ interface TeamMember {
 }
 
 export function useTeamMembersWithPresence(teamId: string) {
-  const [presenceError, setPresenceError] = useState(false);
+  // Get current user
+  const currentUser = useQuery(api.users.current);
 
-  // Get current user ID
-  const currentUserId = useQuery(api.presence.getUserId);
+  // Get team members (simplified - using debugUsers for now)
+  const teamMembers = useQuery(api.users.debugUsers);
 
-  // Get team members
-  const teamMembers = useQuery(api.teams.getTeamMembers, { teamId });
+  // Buscar lista de usuários online na sala
+  const onlineUsers = useQuery(api.presence.list, {
+    roomToken: teamId,
+  });
 
-  // Use presence system for the team room
-  const presenceState = usePresence(api.presence, teamId, currentUserId || "");
+  // Enviar heartbeat para manter o presence ativo
+  const heartbeat = useMutation(api.presence.heartbeat);
 
-  // Handle presence errors
   useEffect(() => {
-    if (presenceState === undefined && currentUserId) {
-      setPresenceError(true);
-    } else {
-      setPresenceError(false);
-    }
-  }, [presenceState, currentUserId]);
+    if (!currentUser?._id || !teamId) return;
 
-  // Create a map of online users from presence state
-  const onlineUsers = useMemo(() => {
-    const onlineSet = new Set<string>();
+    // Enviar heartbeat inicial
+    const sendHeartbeat = async () => {
+      try {
+        await heartbeat({
+          roomId: teamId,
+          userId: currentUser._id,
+          sessionId: `session-${currentUser._id}-${Date.now()}`,
+          interval: 30000,
+        });
+      } catch (error) {
+        console.error("Failed to send heartbeat:", error);
+      }
+    };
 
-    // Add users from presence state
-    if (presenceState && currentUserId && !presenceError) {
-      presenceState.forEach((entry) => {
-        if (entry.online) {
-          onlineSet.add(entry.userId);
-        }
-      });
-    }
+    sendHeartbeat();
 
-    // Always add current user to online set if they have a userId
-    if (currentUserId) {
-      onlineSet.add(currentUserId);
-    }
+    // Enviar heartbeat a cada 30 segundos
+    const interval = setInterval(sendHeartbeat, 30000);
 
-    return onlineSet;
-  }, [presenceState, currentUserId, presenceError]);
+    return () => clearInterval(interval);
+  }, [currentUser?._id, teamId, heartbeat]);
 
-  // Merge team members with presence data
+  // Create members with real presence data
   const membersWithPresence = useMemo(() => {
-    if (!teamMembers) return [];
+    if (!teamMembers || !onlineUsers) return [];
 
-    return teamMembers.map((member) => {
-      const isOnline = onlineUsers.has(member._id);
+    // Criar um mapa dos usuários online
+    const onlineUserIds = new Set(
+      onlineUsers
+        .filter((user: any) => user.online)
+        .map((user: any) => user.userId)
+    );
+
+    return teamMembers.map((member: any) => {
+      const isOnline =
+        onlineUserIds.has(member._id) || member._id === currentUser?._id;
 
       return {
-        ...member,
-        // If this is the current user and they have a userId, they are always online
-        status:
-          currentUserId && member._id === currentUserId
-            ? ("online" as const)
-            : presenceError
-              ? ("offline" as const)
-              : isOnline
-                ? ("online" as const)
-                : ("offline" as const),
+        _id: member._id,
+        name:
+          `${member.firstName || ""} ${member.lastName || ""}`.trim() ||
+          member.email?.split("@")[0] ||
+          "Anonymous",
+        email: member.email || "",
+        status: isOnline ? "online" : "offline",
+        role: "member",
+        joinDate: member._creationTime,
+        imageUrl: member.imageUrl,
       };
     });
-  }, [teamMembers, onlineUsers, presenceError, currentUserId]);
+  }, [teamMembers, onlineUsers, currentUser?._id]);
 
   // Calculate statistics
   const stats = useMemo(() => {
@@ -99,8 +104,8 @@ export function useTeamMembersWithPresence(teamId: string) {
     members: membersWithPresence,
     stats,
     isLoading: teamMembers === undefined,
-    currentUserId,
-    isPresenceReady: currentUserId !== undefined && !presenceError,
-    hasPresenceError: presenceError,
+    currentUserId: currentUser?._id,
+    isPresenceReady: onlineUsers !== undefined,
+    hasPresenceError: false,
   };
 }

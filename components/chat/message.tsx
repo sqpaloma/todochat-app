@@ -15,7 +15,6 @@ import {
   Video,
   Music,
   Users,
-  Megaphone,
   MessageCircle,
 } from "lucide-react";
 import { useState } from "react";
@@ -29,7 +28,7 @@ interface MessageType {
   authorName: string;
   timestamp: number;
   teamId: string;
-  messageType?: "general" | "announcement" | "direct";
+  messageType?: "general" | "direct";
   recipientId?: string;
   recipientName?: string;
   reactions?: Array<{
@@ -99,13 +98,6 @@ export function Message({
   // Função para obter configuração do tipo de mensagem
   const getMessageTypeConfig = () => {
     switch (message.messageType) {
-      case "announcement":
-        return {
-          icon: Megaphone,
-          color: "text-orange-600",
-          bgColor: "bg-orange-100",
-          label: "Announcement",
-        };
       case "direct":
         return {
           icon: MessageCircle,

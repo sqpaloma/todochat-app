@@ -1,16 +1,9 @@
 "use client";
 
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { SignInButton, SignUpButton } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import {
-  User,
-  Sparkles,
-  Users,
-  MessageSquare,
-  CheckSquare,
-} from "lucide-react";
+import { SignInButton, SignUpButton } from "@clerk/nextjs";
+import { Sparkles, MessageSquare, CheckSquare, Users } from "lucide-react";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -21,9 +14,9 @@ export function AuthGuard({
   children,
   pageName = "this page",
 }: AuthGuardProps) {
-  const userId = useQuery(api.presence.getUserId);
+  const { isSignedIn, isLoaded } = useAuth();
 
-  if (userId === undefined) {
+  if (!isLoaded) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
@@ -31,7 +24,7 @@ export function AuthGuard({
     );
   }
 
-  if (userId === null) {
+  if (!isSignedIn) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 relative overflow-hidden">
         {/* Background decorative elements */}

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useTeamMembersWithPresence } from "./use-team-members-with-presence";
+import { useTeamPresence } from "./use-team-presence";
 import { ChatTab, MessageType, ChatState, TabConfig } from "@/types/chat";
 import { getDisplayName } from "@/utils/user";
 
@@ -11,7 +11,7 @@ export function useChat() {
   // State management
   const [state, setState] = useState<ChatState>({
     selectedTeam: DEFAULT_TEAM_ID,
-    activeTab: "general",
+    activeTab: "direct",
     newMessage: "",
     selectedMessage: null,
     showTaskDialog: false,
@@ -27,17 +27,17 @@ export function useChat() {
 
   // Queries
   const currentUser = useQuery(api.users.current);
-  const { members: teamMembers } = useTeamMembersWithPresence(
-    state.selectedTeam
+
+  // Usar o novo sistema de presence
+  const { members: teamMembers, onlineCount } = useTeamPresence(
+    state.selectedTeam,
+    currentUser
   );
 
   const messages = useQuery(api.messages.getMessages, {
     teamId: state.selectedTeam,
-    messageType: getMessageTypeFromTab(state.activeTab),
-    recipientId:
-      state.activeTab === "direct"
-        ? state.selectedDirectContact || undefined
-        : undefined,
+    messageType: state.selectedDirectContact ? "direct" : "general",
+    recipientId: state.selectedDirectContact || undefined,
     currentUserId: currentUser?._id,
   });
 
@@ -133,20 +133,22 @@ export function useChat() {
       e.preventDefault();
       if (!state.newMessage.trim() || !currentUser) return;
 
-      if (state.activeTab === "direct" && !state.selectedDirectContact) {
-        throw new Error("Select a contact to send direct message");
-      }
-
       try {
         const displayName = getDisplayName(currentUser);
-        const recipientData = getRecipientData(state, teamMembers);
+
+        // Se tem contato selecionado, enviar como "direct", senão como "general"
+        const messageType = state.selectedDirectContact ? "direct" : "general";
+
+        const recipientData = state.selectedDirectContact
+          ? getRecipientData(state, teamMembers)
+          : {};
 
         await sendMessage({
           content: state.newMessage.trim(),
           authorId: currentUser._id,
           authorName: displayName,
           teamId: state.selectedTeam,
-          messageType: getMessageTypeFromTab(state.activeTab),
+          messageType,
           ...recipientData,
         });
 
@@ -173,10 +175,6 @@ export function useChat() {
   const handleFileUpload = useCallback(async () => {
     if (!state.selectedFile || !currentUser) return;
 
-    if (state.activeTab === "direct" && !state.selectedDirectContact) {
-      throw new Error("Select a contact to send file");
-    }
-
     setIsUploading(true);
     try {
       const displayName = getDisplayName(currentUser);
@@ -189,7 +187,12 @@ export function useChat() {
       });
       const { storageId } = await result.json();
 
-      const recipientData = getRecipientData(state, teamMembers);
+      // Se tem contato selecionado, enviar como "direct", senão como "general"
+      const messageType = state.selectedDirectContact ? "direct" : "general";
+
+      const recipientData = state.selectedDirectContact
+        ? getRecipientData(state, teamMembers)
+        : {};
 
       await sendFile({
         fileId: storageId,
@@ -199,7 +202,7 @@ export function useChat() {
         teamId: state.selectedTeam,
         authorId: currentUser._id,
         authorName: displayName,
-        messageType: getMessageTypeFromTab(state.activeTab),
+        messageType,
         ...recipientData,
       });
 
@@ -245,11 +248,8 @@ export function useChat() {
     try {
       await clearChat({
         teamId: state.selectedTeam,
-        messageType: getMessageTypeFromTab(state.activeTab),
-        recipientId:
-          state.activeTab === "direct"
-            ? state.selectedDirectContact || undefined
-            : undefined,
+        messageType: state.selectedDirectContact ? "direct" : "general",
+        recipientId: state.selectedDirectContact || undefined,
         currentUserId: currentUser._id,
       });
     } catch (error) {
@@ -266,6 +266,7 @@ export function useChat() {
     directContacts: [], // Simplified - no direct contacts for now
     displayMessages,
     currentTabConfig,
+    onlineCount, // Novo: contador de membros online
 
     // Refs
     messagesEndRef,
@@ -293,21 +294,15 @@ export function useChat() {
 }
 
 // Helper functions
-function getMessageTypeFromTab(
-  tab: ChatTab
-): "general" | "announcement" | "direct" {
+function getMessageTypeFromTab(tab: ChatTab): "general" | "direct" {
   switch (tab) {
-    case "general":
-      return "general";
-    case "announcements":
-      return "announcement";
     case "direct":
       return "direct";
   }
 }
 
 function getRecipientData(state: ChatState, teamMembers: any[]) {
-  if (state.activeTab === "direct" && state.selectedDirectContact) {
+  if (state.selectedDirectContact) {
     const recipient = teamMembers?.find(
       (m) => m._id === state.selectedDirectContact
     );
@@ -323,29 +318,11 @@ function getRecipientData(state: ChatState, teamMembers: any[]) {
 
 function getTabConfig(tab: ChatTab): TabConfig {
   switch (tab) {
-    case "general":
-      return {
-        icon: "Users",
-        label: "General Chat",
-        description: "Team conversations",
-        color: "text-blue-600",
-        bgColor: "bg-blue-50",
-        borderColor: "border-blue-200",
-      };
-    case "announcements":
-      return {
-        icon: "Megaphone",
-        label: "Announcements",
-        description: "Important messages",
-        color: "text-orange-600",
-        bgColor: "bg-orange-50",
-        borderColor: "border-orange-200",
-      };
     case "direct":
       return {
         icon: "MessageCircle",
-        label: "Direct Messages",
-        description: "Private conversations",
+        label: "Messages",
+        description: "Team & private conversations",
         color: "text-green-600",
         bgColor: "bg-green-50",
         borderColor: "border-green-200",

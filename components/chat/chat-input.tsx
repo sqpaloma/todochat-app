@@ -35,16 +35,9 @@ export function ChatInput({
   onCancelFile,
 }: ChatInputProps) {
   const getPlaceholder = () => {
-    switch (activeTab) {
-      case "general":
-        return "Type a message for the team...";
-      case "announcements":
-        return "Type an important announcement...";
-      case "direct":
-        return selectedDirectContact
-          ? "Type a private message..."
-          : "Select a contact first...";
-    }
+    return selectedDirectContact
+      ? `Type a message to ${selectedDirectContact}...`
+      : "Type a message for the team...";
   };
 
   const isInputDisabled =
@@ -137,13 +130,6 @@ export function ChatInput({
               </Button>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Warning for direct messages */}
-      {activeTab === "direct" && !selectedDirectContact && (
-        <div className="mt-2 text-xs text-gray-500 text-center">
-          💡 Select a contact to start messaging
         </div>
       )}
     </div>

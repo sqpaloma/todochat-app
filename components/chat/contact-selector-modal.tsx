@@ -28,45 +28,8 @@ export function ContactSelectorModal({
   const availableMembers =
     teamMembers?.filter((member) => member._id !== currentUser?._id) || [];
 
-  // Se não há membros reais, mostrar membros de teste
-  const testMembers = [
-    {
-      _id: "test-1",
-      name: "João Silva",
-      email: "joao@test.com",
-      status: "online",
-    },
-    {
-      _id: "test-2",
-      name: "Maria Santos",
-      email: "maria@test.com",
-      status: "online",
-    },
-    {
-      _id: "test-3",
-      name: "Pedro Oliveira",
-      email: "pedro@test.com",
-      status: "offline",
-    },
-    {
-      _id: "test-4",
-      name: "Ana Costa",
-      email: "ana@test.com",
-      status: "online",
-    },
-    {
-      _id: "test-5",
-      name: "Carlos Lima",
-      email: "carlos@test.com",
-      status: "offline",
-    },
-  ];
-
-  const membersToShow =
-    availableMembers.length > 0 ? availableMembers : testMembers;
-
   // Filtrar por termo de busca
-  const filteredMembers = membersToShow.filter(
+  const filteredMembers = availableMembers.filter(
     (member) =>
       member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.email.toLowerCase().includes(searchTerm.toLowerCase())

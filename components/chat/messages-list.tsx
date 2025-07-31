@@ -4,7 +4,7 @@ import { Message } from "./message";
 import { MessageType, ChatTab } from "@/types/chat";
 import { User } from "@/types/user";
 import { getDisplayName } from "@/utils/user";
-import { Users, Megaphone, MessageCircle } from "lucide-react";
+import { Users, MessageCircle } from "lucide-react";
 
 interface MessagesListProps {
   messages: MessageType[];
@@ -28,59 +28,25 @@ export function MessagesList({
   const currentUserName = getDisplayName(currentUser);
 
   const getEmptyStateConfig = () => {
-    switch (activeTab) {
-      case "general":
-        return {
-          icon: Users,
-          title: "No messages yet",
-          description: "Be the first to send a message!",
-        };
-      case "announcements":
-        return {
-          icon: Megaphone,
-          title: "No announcements yet",
-          description: "Be the first to make an announcement!",
-        };
-      case "direct":
-        return {
-          icon: MessageCircle,
-          title: selectedDirectContact
-            ? "No messages yet"
-            : "No conversations yet",
-          description: selectedDirectContact
-            ? "Be the first to send a message!"
-            : "Select a team member to start chatting",
-        };
+    if (selectedDirectContact) {
+      return {
+        icon: MessageCircle,
+        title: "No messages yet",
+        description: "Be the first to send a message!",
+      };
+    } else {
+      return {
+        icon: MessageCircle,
+        title: "No team messages yet",
+        description: "Be the first to send a message to the team!",
+      };
     }
   };
 
   const renderEmptyState = () => {
     const config = getEmptyStateConfig();
 
-    if (
-      activeTab === "direct" &&
-      !selectedDirectContact &&
-      !directContacts?.length
-    ) {
-      return (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center p-8">
-            <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-600 mb-2">
-              No conversations yet
-            </h3>
-            <p className="text-gray-500 text-sm">
-              Select a team member to start chatting
-            </p>
-          </div>
-        </div>
-      );
-    }
-
-    if (
-      messages.length === 0 &&
-      (activeTab !== "direct" || selectedDirectContact)
-    ) {
+    if (messages.length === 0) {
       return (
         <div className="flex items-center justify-center h-full">
           <div className="text-center p-8">

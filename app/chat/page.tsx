@@ -4,7 +4,6 @@ import { useChat } from "@/hooks/use-chat";
 import { ChatHeader } from "@/components/chat/chat-header";
 import { ChatInput } from "@/components/chat/chat-input";
 import { MessagesList } from "@/components/chat/messages-list";
-import { ChatSidebar } from "@/components/chat/chat-sidebar";
 import { ContactSelector } from "@/components/chat/contact-selector";
 import { ContactSelectorModal } from "@/components/chat/contact-selector-modal";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -42,6 +41,7 @@ export default function ChatPage() {
 
     // Computed
     isLoading,
+    onlineCount,
   } = useChat();
 
   if (isLoading) {
@@ -57,13 +57,16 @@ export default function ChatPage() {
 
   return (
     <AuthGuard pageName="Chat">
-      <div className="flex bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 min-h-screen">
-        {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col">
+      <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 min-h-screen">
+        {/* Main Chat Area - Usando toda a largura */}
+        <div className="flex flex-col max-w-7xl mx-auto">
           {/* Header */}
-          <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-4 px-6">
-            <div className="flex items-center max-w-7xl mx-auto">
-              <h1 className="text-3xl font-bold">Chat</h1>
+          <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-6 px-8">
+            <div className="flex items-center justify-between">
+              <h1 className="text-4xl font-bold">Chat</h1>
+              <div className="text-sm opacity-90">
+                Team collaboration made simple
+              </div>
             </div>
           </div>
 
@@ -78,14 +81,15 @@ export default function ChatPage() {
             onShowContactSelector={() => setShowContactSelector(true)}
           />
 
-          {/* Conversation Container */}
-          <div className="flex-1 p-6">
-            <div className="h-[600px] bg-white rounded-2xl border-2 border-purple-200 shadow-lg flex flex-col overflow-hidden">
+          {/* Conversation Container - Expandido para toda a largura */}
+          <div className="flex-1 p-8">
+            <div className="h-[700px] bg-white rounded-3xl border-2 border-purple-200 shadow-xl flex flex-col overflow-hidden">
               {/* Chat Header */}
               <ChatHeader
                 activeTab={state.activeTab}
                 selectedDirectContact={state.selectedDirectContact}
                 teamMembers={teamMembers || []}
+                onlineCount={onlineCount}
                 onClearChat={handleClearChat}
               />
 
@@ -118,15 +122,6 @@ export default function ChatPage() {
             </div>
           </div>
         </div>
-
-        {/* Sidebar */}
-        <ChatSidebar
-          activeTab={state.activeTab}
-          teamMembers={teamMembers || []}
-          currentUser={currentUser || null}
-          onTabChange={setActiveTab}
-          onSelectDirectContact={setSelectedDirectContact}
-        />
       </div>
 
       {/* Modals */}
