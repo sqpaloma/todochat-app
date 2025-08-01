@@ -21,17 +21,8 @@ import {
   MessageSquare,
   Edit,
 } from "lucide-react";
-
-interface TeamMemberType {
-  _id: string;
-  name: string;
-  email: string;
-  status?: "online" | "offline";
-  role?: string;
-  joinDate?: number;
-  phone?: string;
-  location?: string;
-}
+import type { TeamMember as TeamMemberType } from "@/types/team";
+import { formatJoinDate, getStatusText, getInitials } from "@/utils/team-utils";
 
 interface TeamMemberProps {
   member: TeamMemberType;
@@ -40,38 +31,22 @@ interface TeamMemberProps {
 }
 
 export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
-  const formatJoinDate = (timestamp?: number) => {
-    if (!timestamp) return "Date not provided";
-    return new Date(timestamp).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-    });
-  };
-
-  const getStatusText = (status?: string) => {
-    switch (status) {
-      case "online":
-        return "Online";
-      case "offline":
-        return "Offline";
-      default:
-        return "Unknown";
-    }
-  };
-
   return (
-    <Card className="group border-0 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105 bg-white rounded-2xl overflow-hidden">
+    <Card
+      className="group border-0 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105 bg-white rounded-2xl overflow-hidden"
+      role="article"
+      aria-labelledby={`member-name-${member._id}`}
+    >
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center space-x-3">
             <div className="relative">
               <Avatar className="w-12 h-12">
-                <AvatarFallback className="bg-gradient-to-br from-purple-400 to-pink-500 text-white font-semibold">
-                  {member.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                    .slice(0, 2)}
+                <AvatarFallback
+                  className="bg-gradient-to-br from-purple-400 to-pink-500 text-white font-semibold"
+                  aria-label={`Avatar for ${member.name}`}
+                >
+                  {getInitials(member.name)}
                 </AvatarFallback>
               </Avatar>
               <div className="absolute -bottom-1 -right-1">
@@ -84,7 +59,12 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900">{member.name}</h3>
+              <h3
+                id={`member-name-${member._id}`}
+                className="font-semibold text-gray-900"
+              >
+                {member.name}
+              </h3>
               <div className="flex items-center space-x-2">
                 <Badge
                   variant={member.status === "online" ? "default" : "secondary"}
@@ -93,6 +73,7 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
                       ? "bg-green-100 text-green-800 hover:bg-green-200"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
+                  aria-label={`Status: ${getStatusText(member.status)}`}
                 >
                   {getStatusText(member.status)}
                 </Badge>
@@ -110,6 +91,7 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
               <Button
                 variant="ghost"
                 className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                aria-label={`Actions for ${member.name}`}
               >
                 <MoreVertical className="h-4 w-4" />
               </Button>
@@ -137,26 +119,26 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
 
         <div className="space-y-3">
           <div className="flex items-center space-x-3 text-sm">
-            <Mail className="w-4 h-4 text-gray-400" />
+            <Mail className="w-4 h-4 text-gray-400" aria-hidden="true" />
             <span className="text-gray-600">{member.email}</span>
           </div>
 
           {member.phone && (
             <div className="flex items-center space-x-3 text-sm">
-              <Phone className="w-4 h-4 text-gray-400" />
+              <Phone className="w-4 h-4 text-gray-400" aria-hidden="true" />
               <span className="text-gray-600">{member.phone}</span>
             </div>
           )}
 
           {member.location && (
             <div className="flex items-center space-x-3 text-sm">
-              <MapPin className="w-4 h-4 text-gray-400" />
+              <MapPin className="w-4 h-4 text-gray-400" aria-hidden="true" />
               <span className="text-gray-600">{member.location}</span>
             </div>
           )}
 
           <div className="flex items-center space-x-3 text-sm">
-            <Calendar className="w-4 h-4 text-gray-400" />
+            <Calendar className="w-4 h-4 text-gray-400" aria-hidden="true" />
             <span className="text-gray-600">
               Joined {formatJoinDate(member.joinDate)}
             </span>
@@ -179,7 +161,10 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
               </span>
             </div>
             {member.status === "online" && (
-              <div className="flex items-center space-x-1">
+              <div
+                className="flex items-center space-x-1"
+                aria-label="Online indicator"
+              >
                 <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
                 <div
                   className="w-1 h-1 bg-green-500 rounded-full animate-pulse"

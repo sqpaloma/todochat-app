@@ -1,18 +1,7 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useEffect, useMemo } from "react";
-
-interface TeamMember {
-  _id: string;
-  name: string;
-  email: string;
-  status?: "online" | "offline";
-  role?: string;
-  joinDate?: number;
-  phone?: string;
-  location?: string;
-  imageUrl?: string;
-}
+import { useEffect, useMemo, useCallback } from "react";
+import type { TeamMember, TeamStats } from "@/types/team";
 
 export function useTeamMembersWithPresence(teamId: string) {
   // Get current user
@@ -29,33 +18,36 @@ export function useTeamMembersWithPresence(teamId: string) {
   // Enviar heartbeat para manter o presence ativo
   const heartbeat = useMutation(api.presence.heartbeat);
 
+  // Memoized heartbeat function
+  const sendHeartbeat = useCallback(async () => {
+    if (!currentUser?._id || !teamId) return;
+
+    try {
+      await heartbeat({
+        roomId: teamId,
+        userId: currentUser._id,
+        sessionId: `session-${currentUser._id}-${Date.now()}`,
+        interval: 30000,
+      });
+    } catch (error) {
+      console.error("Failed to send heartbeat:", error);
+    }
+  }, [currentUser?._id, teamId, heartbeat]);
+
   useEffect(() => {
     if (!currentUser?._id || !teamId) return;
 
     // Enviar heartbeat inicial
-    const sendHeartbeat = async () => {
-      try {
-        await heartbeat({
-          roomId: teamId,
-          userId: currentUser._id,
-          sessionId: `session-${currentUser._id}-${Date.now()}`,
-          interval: 30000,
-        });
-      } catch (error) {
-        console.error("Failed to send heartbeat:", error);
-      }
-    };
-
     sendHeartbeat();
 
     // Enviar heartbeat a cada 30 segundos
     const interval = setInterval(sendHeartbeat, 30000);
 
     return () => clearInterval(interval);
-  }, [currentUser?._id, teamId, heartbeat]);
+  }, [sendHeartbeat]);
 
   // Create members with real presence data
-  const membersWithPresence = useMemo(() => {
+  const membersWithPresence = useMemo((): TeamMember[] => {
     if (!teamMembers || !onlineUsers) return [];
 
     // Criar um mapa dos usuários online
@@ -85,7 +77,7 @@ export function useTeamMembersWithPresence(teamId: string) {
   }, [teamMembers, onlineUsers, currentUser?._id]);
 
   // Calculate statistics
-  const stats = useMemo(() => {
+  const stats = useMemo((): TeamStats => {
     const total = membersWithPresence.length;
     const online = membersWithPresence.filter(
       (m) => m.status === "online"
