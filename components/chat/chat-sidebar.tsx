@@ -10,13 +10,7 @@ interface ChatSidebarProps {
   onSelectDirectContact: (contactId: string) => void;
 }
 
-export function ChatSidebar({
-  activeTab,
-  teamMembers,
-  currentUser,
-  onTabChange,
-  onSelectDirectContact,
-}: ChatSidebarProps) {
+export function ChatSidebar({}: ChatSidebarProps) {
   return (
     <div className="w-80 bg-white/60 backdrop-blur-sm border-l border-purple-200 p-6">
       <div className="space-y-6">

@@ -4,9 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Plus,
-  ThumbsUp,
-  ThumbsDown,
-  Heart,
   Smile,
   Zap,
   Download,

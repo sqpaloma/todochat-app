@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Trash2, MessageCircle, Wifi } from "lucide-react";
+import { Trash2, MessageCircle } from "lucide-react";
 import { ChatTab } from "@/types/chat";
 import { getInitials } from "@/utils/user";
 
@@ -14,10 +14,8 @@ interface ChatHeaderProps {
 }
 
 export function ChatHeader({
-  activeTab,
   selectedDirectContact,
   teamMembers,
-  onlineCount = 0,
   onClearChat,
 }: ChatHeaderProps) {
   const getHeaderConfig = () => {

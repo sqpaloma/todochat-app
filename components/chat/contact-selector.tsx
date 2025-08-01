@@ -15,7 +15,6 @@ interface ContactSelectorProps {
 }
 
 export function ContactSelector({
-  activeTab,
   selectedDirectContact,
   teamMembers,
   directContacts,

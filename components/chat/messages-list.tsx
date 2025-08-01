@@ -4,7 +4,7 @@ import { Message } from "./message";
 import { MessageType, ChatTab } from "@/types/chat";
 import { User } from "@/types/user";
 import { getDisplayName } from "@/utils/user";
-import { Users, MessageCircle } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 
 interface MessagesListProps {
   messages: MessageType[];
@@ -19,9 +19,8 @@ interface MessagesListProps {
 export function MessagesList({
   messages,
   currentUser,
-  activeTab,
   selectedDirectContact,
-  directContacts,
+
   onCreateTask,
   messagesEndRef,
 }: MessagesListProps) {
