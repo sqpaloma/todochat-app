@@ -32,7 +32,6 @@ interface TeamMemberType {
   role?: string;
   joinDate?: number;
   phone?: string;
-  location?: string;
 }
 
 interface MemberDetailsDialogProps {
@@ -193,14 +192,6 @@ export function MemberDetailsDialog({
                       <Phone className="w-4 h-4 text-gray-400" />
                       <span className="text-gray-600">Phone:</span>
                       <span className="font-medium">{member.phone}</span>
-                    </div>
-                  )}
-
-                  {member.location && (
-                    <div className="flex items-center space-x-2">
-                      <MapPin className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-600">Location:</span>
-                      <span className="font-medium">{member.location}</span>
                     </div>
                   )}
                 </div>

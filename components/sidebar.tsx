@@ -4,14 +4,10 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Home,
   MessageSquare,
   CheckSquare,
   Users,
-  Settings,
   LogOut,
-  Bell,
-  Search,
   Plus,
   ChevronDown,
   Sparkles,
@@ -19,7 +15,6 @@ import {
   ChevronLeft,
   ChevronRight,
   MoreHorizontal,
-  UserPlus,
   Edit,
   Send,
   Wifi,
@@ -52,7 +47,6 @@ interface TeamMember {
   role: string;
   joinDate: number;
   phone?: string;
-  location?: string;
   imageUrl?: string;
 }
 

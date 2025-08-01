@@ -20,7 +20,6 @@ interface TeamMemberType {
   role?: string;
   joinDate?: number;
   phone?: string;
-  location?: string;
 }
 
 export function TeamPageComponent() {
@@ -111,13 +110,6 @@ export function TeamPageComponent() {
                     <span>Team Members</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {teamMembers.map((member: TeamMemberType) => (
-                      <TeamMember key={member._id} member={member} />
-                    ))}
-                  </div>
-                </CardContent>
               </Card>
             </div>
 

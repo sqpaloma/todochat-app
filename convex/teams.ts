@@ -35,7 +35,7 @@ export const getTeamMembers = query({
       role: "member", // In a real implementation, this would come from the team-user relationship
       joinDate: user._creationTime,
       phone: undefined, // Field doesn't exist in current user structure
-      location: undefined, // Field doesn't exist in current user structure
+
       imageUrl: user.imageUrl,
     }));
   },
@@ -58,7 +58,7 @@ export const getTeamMembersWithPresence = query({
       role: "member",
       joinDate: user._creationTime,
       phone: undefined,
-      location: undefined,
+
       imageUrl: user.imageUrl,
     }));
   },

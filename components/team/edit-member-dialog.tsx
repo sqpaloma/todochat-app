@@ -32,7 +32,6 @@ interface TeamMemberType {
   role?: string;
   joinDate?: number;
   phone?: string;
-  location?: string;
 }
 
 interface EditMemberDialogProps {
@@ -52,7 +51,7 @@ export function EditMemberDialog({
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("member");
   const [phone, setPhone] = useState("");
-  const [location, setLocation] = useState("");
+
   const [status, setStatus] = useState<"online" | "offline">("offline");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -65,7 +64,7 @@ export function EditMemberDialog({
       setEmail(member.email);
       setRole(member.role || "member");
       setPhone(member.phone || "");
-      setLocation(member.location || "");
+
       setStatus(member.status || "offline");
     }
   }, [member]);
@@ -251,20 +250,6 @@ export function EditMemberDialog({
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="+1 (555) 123-4567"
-                  className="pl-10"
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="location">Location</Label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                <Input
-                  id="location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="New York, NY"
                   className="pl-10"
                 />
               </div>
