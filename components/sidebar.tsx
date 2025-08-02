@@ -77,17 +77,20 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Close sidebar on route change (mobile)
+  // Helper function to check if we're on mobile
+  const isMobile = windowWidth > 0 && windowWidth < 1024;
+
+  // Fecha a sidebar no mobile apenas quando a rota mudar
   useEffect(() => {
-    if (windowWidth < 1024) {
-      // Only on mobile
+    if (isMobile) {
       onClose();
     }
-  }, [pathname, onClose, windowWidth]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   // Prevent body scroll when sidebar is open on mobile
   useEffect(() => {
-    if (isOpen && windowWidth < 1024) {
+    if (isOpen && isMobile) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
@@ -96,7 +99,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, windowWidth]);
+  }, [isOpen, isMobile]);
+
+  // Close sidebar when window is resized to desktop
+  useEffect(() => {
+    if (!isMobile && !isOpen) {
+      // Auto-open sidebar on desktop if it was closed
+      // This is optional - you can remove this if you want sidebar to stay closed
+    }
+  }, [isMobile, isOpen]);
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -170,23 +181,18 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <>
       {/* Backdrop for mobile */}
-      {isOpen && windowWidth < 1024 && (
+      {isOpen && isMobile && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-[999]"
+          className="fixed inset-0 bg-black bg-opacity-50 z-[999] lg:hidden"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar */}
       <div
-        className={`
-          fixed top-0 bottom-0 bg-white shadow-2xl transition-transform duration-300 ease-in-out z-[1000]
-          ${isOpen ? "right-0 translate-x-0" : "translate-x-full"}
-          ${windowWidth >= 1024 ? "lg:static lg:translate-x-0 lg:shadow-none lg:border-r lg:border-gray-200" : ""}
-        `}
+        className="fixed top-0 bottom-0 bg-white shadow-2xl transition-transform duration-300 ease-in-out z-[1000] w-80 left-0 lg:static lg:translate-x-0 lg:shadow-none lg:border-r lg:border-gray-200"
         style={{
-          width: windowWidth >= 1024 && isCollapsed ? "64px" : "320px",
-          right: windowWidth >= 1024 ? "auto" : "0",
+          transform: isOpen ? "translateX(0)" : "translateX(-100%)",
         }}
       >
         {/* Header */}

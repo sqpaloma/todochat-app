@@ -205,6 +205,54 @@
   }
 }
 
+/* Left-side sidebar animations for mobile */
+.slide-in-from-left {
+  animation: slide-in-from-left 0.3s ease-out;
+}
+
+@keyframes slide-in-from-left {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Mobile sidebar specific styles */
+.sidebar-mobile {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar-mobile.open {
+  transform: translateX(0);
+}
+
+/* Ensure sidebar is above content on mobile */
+@media (max-width: 1023px) {
+  .sidebar-mobile {
+    z-index: 1000;
+  }
+
+  .sidebar-backdrop {
+    z-index: 999;
+  }
+}
+
+/* Force sidebar to be visible when open on mobile */
+@media (max-width: 1023px) {
+  .sidebar-open {
+    transform: translateX(0) !important;
+  }
+
+  .sidebar-closed {
+    transform: translateX(-100%) !important;
+  }
+}
+
 /* Mobile-specific improvements */
 @media (max-width: 768px) {
   /* Reduce animations on mobile for better performance */

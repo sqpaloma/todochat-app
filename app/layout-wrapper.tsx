@@ -1,7 +1,13 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 import {
   SignedIn,
   SignedOut,
@@ -67,10 +73,8 @@ function HomeLayoutContent({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Sidebar - Only show on mobile when opened */}
-      <div className="lg:hidden">
-        <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
-      </div>
+      {/* Sidebar - Always render, but hidden on mobile when closed */}
+      <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
       {/* Mobile Menu Button - Only visible on mobile */}
       <MobileMenuButton />
@@ -81,7 +85,7 @@ function HomeLayoutContent({ children }: { children: ReactNode }) {
       </div>
 
       {/* Content Area - Full width on desktop, full height on mobile, with header space on desktop */}
-      <main className="min-h-screen lg:min-h-[calc(100vh-4rem)]">
+      <main className="min-h-screen lg:min-h-[calc(100vh-4rem)] lg:ml-0">
         {children}
       </main>
     </div>
@@ -119,14 +123,14 @@ function SidebarLayoutContent({
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* Sidebar only */}
+      {/* Sidebar - Always render, but hidden on mobile when closed */}
       <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
       {/* Mobile Menu Button - Only shown when authenticated */}
       <MobileMenuButton />
 
       {/* Main Content */}
-      <div className="flex flex-col flex-1 min-w-0">
+      <div className="flex flex-col flex-1 min-w-0 lg:ml-0">
         {/* Content Area - Full height without header */}
         <main className="flex-1 overflow-hidden">{children}</main>
       </div>
@@ -137,6 +141,17 @@ function SidebarLayoutContent({
 // Main Layout Provider Component
 function LayoutProvider({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Initialize sidebar state based on screen size
+  useEffect(() => {
+    const isDesktop = window.innerWidth >= 1024;
+
+    if (isDesktop) {
+      setSidebarOpen(true);
+    } else {
+      setSidebarOpen(false);
+    }
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
