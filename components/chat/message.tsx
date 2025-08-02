@@ -175,6 +175,7 @@ export function Message({
         messageId: message._id as any, // Cast para o tipo correto do Convex
         status,
         currentUserId,
+        currentUserName,
       });
     } catch (error) {
       console.error("Error responding to task:", error);
@@ -375,6 +376,30 @@ export function Message({
                   </p>
                 )}
                 {hasFile && isImageFile && renderFileContent()}
+
+                {/* Task Status - Minimalista e integrado */}
+                {message.isTask && (
+                  <div className="flex items-center space-x-1 mt-3 pt-2 border-t border-primary/20">
+                    {message.taskStatus === "pending" && (
+                      <>
+                        <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                        <span className="text-xs opacity-80">Pendente</span>
+                      </>
+                    )}
+                    {message.taskStatus === "accepted" && (
+                      <>
+                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                        <span className="text-xs opacity-80">Aceita</span>
+                      </>
+                    )}
+                    {message.taskStatus === "rejected" && (
+                      <>
+                        <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                        <span className="text-xs opacity-80">Rejeitada</span>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* File content outside bubble for non-images */}
@@ -555,25 +580,27 @@ export function Message({
               )}
               {hasFile && isImageFile && renderFileContent()}
 
-              {/* Task Badge */}
+              {/* Task Status - Minimalista e integrado */}
               {message.isTask && (
-                <div className="flex items-center space-x-1 mt-2 mb-2">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <span className="text-xs font-medium text-primary">
-                    {message.taskStatus === "pending" && "📋 Tarefa Pendente"}
-                    {message.taskStatus === "accepted" && "✅ Tarefa Aceita"}
-                    {message.taskStatus === "rejected" && "❌ Tarefa Rejeitada"}
-                  </span>
-                </div>
-              )}
-
-              {/* Task Details */}
-              {message.isTask && message.taskDueDate && (
-                <div className="mt-2 space-y-1">
-                  <div className="flex items-center space-x-1 text-xs opacity-75">
-                    <Calendar className="w-3 h-3" />
-                    <span>Prazo: {formatDueDate(message.taskDueDate)}</span>
-                  </div>
+                <div className="flex items-center space-x-1 mt-3 pt-2 border-t border-border/20">
+                  {message.taskStatus === "pending" && (
+                    <>
+                      <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                      <span className="text-xs text-gray-600">Pendente</span>
+                    </>
+                  )}
+                  {message.taskStatus === "accepted" && (
+                    <>
+                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                      <span className="text-xs text-gray-600">Aceita</span>
+                    </>
+                  )}
+                  {message.taskStatus === "rejected" && (
+                    <>
+                      <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                      <span className="text-xs text-gray-600">Rejeitada</span>
+                    </>
+                  )}
                 </div>
               )}
 

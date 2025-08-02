@@ -24,7 +24,6 @@ export default function ChatPage() {
     showContactSelector,
     isTaskMode,
     taskAssigneeId,
-    taskDueDate,
     selectedTeam,
 
     // Actions
@@ -36,7 +35,6 @@ export default function ChatPage() {
     setShowTaskDialog,
     setIsTaskMode,
     setTaskAssigneeId,
-    setTaskDueDate,
 
     // Data
     currentUser,
@@ -128,8 +126,6 @@ export default function ChatPage() {
                 onTaskModeChange={setIsTaskMode}
                 taskAssigneeId={taskAssigneeId}
                 onTaskAssigneeChange={setTaskAssigneeId}
-                taskDueDate={taskDueDate}
-                onTaskDueDateChange={setTaskDueDate}
                 teamMembers={teamMembers || []}
               />
             </div>

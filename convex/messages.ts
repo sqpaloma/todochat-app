@@ -193,6 +193,7 @@ export const respondToTask = mutation({
     messageId: v.id("messages"),
     status: v.union(v.literal("accepted"), v.literal("rejected")),
     currentUserId: v.string(),
+    currentUserName: v.string(),
   },
   handler: async (ctx, args) => {
     const message = await ctx.db.get(args.messageId);
@@ -210,9 +211,12 @@ export const respondToTask = mutation({
       throw new Error("Only the assigned user can respond to this task");
     }
 
-    // Atualizar o status da tarefa na mensagem
+    // Atualizar o status da tarefa na mensagem com informações sobre quem respondeu
     await ctx.db.patch(args.messageId, {
       taskStatus: args.status,
+      taskRespondedBy: args.currentUserId,
+      taskRespondedByName: args.currentUserName,
+      taskRespondedAt: Date.now(),
     });
 
     // Se aceita, criar a tarefa no sistema de tarefas

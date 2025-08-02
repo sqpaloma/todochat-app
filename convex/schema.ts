@@ -42,6 +42,9 @@ export default defineSchema({
     taskAssigneeName: v.optional(v.string()),
     taskDueDate: v.optional(v.number()),
     taskCreatedBy: v.optional(v.string()),
+    taskRespondedBy: v.optional(v.string()),
+    taskRespondedByName: v.optional(v.string()),
+    taskRespondedAt: v.optional(v.number()),
   }),
 
   tasks: defineTable({

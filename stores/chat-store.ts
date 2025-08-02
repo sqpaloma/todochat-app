@@ -21,7 +21,6 @@ interface ChatState {
   showContactSelector: boolean;
   isTaskMode: boolean;
   taskAssigneeId: string | null;
-  taskDueDate: number | null;
 
   // Actions
   setActiveTab: (tab: ChatTab) => void;
@@ -32,7 +31,6 @@ interface ChatState {
   setShowTaskDialog: (show: boolean) => void;
   setIsTaskMode: (isTaskMode: boolean) => void;
   setTaskAssigneeId: (assigneeId: string | null) => void;
-  setTaskDueDate: (dueDate: number | null) => void;
   setSelectedMessage: (message: MessageType | null) => void;
   setIsUploading: (uploading: boolean) => void;
   clearChat: () => void;
@@ -75,12 +73,10 @@ export const useChatStore = create<ChatState>((set: any, get: any) => ({
   setIsTaskMode: (isTaskMode) =>
     set({
       isTaskMode,
-      ...(isTaskMode ? {} : { taskAssigneeId: null, taskDueDate: null }),
+      ...(isTaskMode ? {} : { taskAssigneeId: null }),
     }),
 
   setTaskAssigneeId: (assigneeId) => set({ taskAssigneeId: assigneeId }),
-
-  setTaskDueDate: (dueDate) => set({ taskDueDate: dueDate }),
 
   setSelectedMessage: (message) => set({ selectedMessage: message }),
 
@@ -181,7 +177,6 @@ export function useChat() {
                     (m) => m._id === store.taskAssigneeId
                   )?.name,
                 }),
-            ...(store.taskDueDate && { taskDueDate: store.taskDueDate }),
           }
         : {};
 
