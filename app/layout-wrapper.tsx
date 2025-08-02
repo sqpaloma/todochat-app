@@ -69,23 +69,15 @@ function ConditionalAuthHeader() {
 
 // Home Layout Component
 function HomeLayoutContent({ children }: { children: ReactNode }) {
-  const { sidebarOpen, closeSidebar } = useLayout();
-
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Sidebar - Always render, but hidden on mobile when closed */}
-      <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
-
-      {/* Mobile Menu Button - Only visible on mobile */}
-      <MobileMenuButton />
-
       {/* Header only for desktop (hidden on mobile) */}
       <div className="hidden lg:block">
         <Header activeView="home" />
       </div>
 
-      {/* Content Area - Full width on desktop, full height on mobile, with header space on desktop */}
-      <main className="min-h-screen lg:min-h-[calc(100vh-4rem)] lg:ml-0">
+      {/* Content Area - Full width, full height */}
+      <main className="min-h-screen lg:min-h-[calc(100vh-4rem)]">
         {children}
       </main>
     </div>
