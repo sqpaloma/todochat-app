@@ -2,8 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Paperclip, Smile } from "lucide-react";
+import { Send, Paperclip, Smile, Calendar, User } from "lucide-react";
 import { ChatTab } from "@/types/chat";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useState } from "react";
 
 interface ChatInputProps {
   newMessage: string;
@@ -18,6 +27,14 @@ interface ChatInputProps {
   fileInputRef: React.RefObject<HTMLInputElement>;
   formatFileSize: (bytes: number) => string;
   onCancelFile: () => void;
+  // Props para tarefas
+  isTaskMode: boolean;
+  onTaskModeChange: (isTaskMode: boolean) => void;
+  taskAssigneeId: string | null;
+  onTaskAssigneeChange: (assigneeId: string | null) => void;
+  taskDueDate: number | null;
+  onTaskDueDateChange: (dueDate: number | null) => void;
+  teamMembers: Array<{ _id: string; name: string }>;
 }
 
 export function ChatInput({
@@ -33,6 +50,14 @@ export function ChatInput({
   fileInputRef,
   formatFileSize,
   onCancelFile,
+  // Props para tarefas
+  isTaskMode,
+  onTaskModeChange,
+  taskAssigneeId,
+  onTaskAssigneeChange,
+  taskDueDate,
+  onTaskDueDateChange,
+  teamMembers,
 }: ChatInputProps) {
   const getPlaceholder = () => {
     return selectedDirectContact
@@ -40,11 +65,78 @@ export function ChatInput({
       : "Type a message for the team...";
   };
 
-  const isInputDisabled =
-    selectedFile !== null || (activeTab === "direct" && !selectedDirectContact);
+  const isInputDisabled = selectedFile !== null;
+
+  const handleDueDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value) {
+      onTaskDueDateChange(new Date(value).getTime());
+    } else {
+      onTaskDueDateChange(null);
+    }
+  };
 
   return (
     <div className="bg-white border-t border-purple-200 p-4">
+      {/* Task Mode Switch */}
+      <div className="flex items-center space-x-3 mb-3 p-3 bg-purple-50 rounded-lg">
+        <Switch
+          checked={isTaskMode}
+          onCheckedChange={onTaskModeChange}
+          className="data-[state=checked]:bg-purple-500"
+        />
+        <span className="text-sm font-medium text-gray-700">
+          Marcar como Tarefa
+        </span>
+      </div>
+
+      {/* Task Assignment Fields - Only show in group chat when task mode is on */}
+      {isTaskMode && !selectedDirectContact && (
+        <div className="mb-3 space-y-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
+          {/* Assignee Selection */}
+          <div className="flex items-center space-x-3">
+            <User className="w-4 h-4 text-orange-600" />
+            <span className="text-sm font-medium text-gray-700">
+              Designar para:
+            </span>
+            <Select
+              value={taskAssigneeId || ""}
+              onValueChange={(value) => onTaskAssigneeChange(value || null)}
+            >
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Selecionar membro" />
+              </SelectTrigger>
+              <SelectContent>
+                {teamMembers.map((member) => (
+                  <SelectItem key={member._id} value={member._id}>
+                    {member.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Due Date Selection */}
+          <div className="flex items-center space-x-3">
+            <Calendar className="w-4 h-4 text-orange-600" />
+            <span className="text-sm font-medium text-gray-700">
+              Definir prazo:
+            </span>
+            <Input
+              type="datetime-local"
+              value={
+                taskDueDate
+                  ? new Date(taskDueDate).toISOString().slice(0, 16)
+                  : ""
+              }
+              onChange={handleDueDateChange}
+              className="w-48"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Message Input Form */}
       <form onSubmit={onSendMessage} className="flex items-end space-x-3">
         <input
           ref={fileInputRef}
@@ -86,7 +178,12 @@ export function ChatInput({
 
         <Button
           type="submit"
-          disabled={!newMessage.trim() || isInputDisabled}
+          disabled={
+            !newMessage.trim() ||
+            isInputDisabled ||
+            // Validação específica para tarefas em grupo
+            (isTaskMode && !selectedDirectContact && !taskAssigneeId)
+          }
           className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl shadow-md disabled:opacity-50 disabled:bg-gray-400 flex-shrink-0"
         >
           <Send className="w-5 h-5" />

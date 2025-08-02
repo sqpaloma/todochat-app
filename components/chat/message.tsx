@@ -13,30 +13,15 @@ import {
   Music,
   Users,
   MessageCircle,
+  Check,
+  X,
+  Calendar,
+  User,
 } from "lucide-react";
 import { useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-
-interface MessageType {
-  _id: string;
-  content: string;
-  authorId: string;
-  authorName: string;
-  timestamp: number;
-  teamId: string;
-  messageType?: "general" | "direct";
-  recipientId?: string;
-  recipientName?: string;
-  reactions?: Array<{
-    emoji: string;
-    users: Array<{ userId: string; userName: string; timestamp: number }>;
-  }>;
-  fileId?: string;
-  fileName?: string;
-  fileType?: string;
-  fileSize?: number;
-}
+import { MessageType } from "@/types/chat";
 
 interface MessageProps {
   message: MessageType;
@@ -63,6 +48,8 @@ export function Message({
     api.messages.getFileUrl,
     message.fileId ? { fileId: message.fileId as any } : "skip"
   );
+  const respondToTask = useMutation(api.messages.respondToTask);
+  const [isResponding, setIsResponding] = useState(false);
 
   const formatTime = (timestamp: number) => {
     return new Date(timestamp).toLocaleTimeString("en-US", {
@@ -177,6 +164,44 @@ export function Message({
   const getReactionCount = (emoji: string) => {
     const reaction = message.reactions?.find((r) => r.emoji === emoji);
     return reaction?.users.length || 0;
+  };
+
+  const handleTaskResponse = async (status: "accepted" | "rejected") => {
+    if (!message._id) return;
+
+    setIsResponding(true);
+    try {
+      await respondToTask({
+        messageId: message._id as any, // Cast para o tipo correto do Convex
+        status,
+        currentUserId,
+      });
+    } catch (error) {
+      console.error("Error responding to task:", error);
+      alert("Erro ao responder à tarefa. Tente novamente.");
+    } finally {
+      setIsResponding(false);
+    }
+  };
+
+  const formatDate = (timestamp: number) => {
+    return new Date(timestamp).toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const formatDueDate = (timestamp: number) => {
+    return new Date(timestamp).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   const renderFileContent = () => {
@@ -526,6 +551,62 @@ export function Message({
                 </p>
               )}
               {hasFile && isImageFile && renderFileContent()}
+
+              {/* Task Badge */}
+              {message.isTask && (
+                <div className="flex items-center space-x-1 mt-2 mb-2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <span className="text-xs font-medium text-orange-600">
+                    {message.taskStatus === "pending" && "📋 Tarefa Pendente"}
+                    {message.taskStatus === "accepted" && "✅ Tarefa Aceita"}
+                    {message.taskStatus === "rejected" && "❌ Tarefa Rejeitada"}
+                  </span>
+                </div>
+              )}
+
+              {/* Task Details */}
+              {message.isTask && (
+                <div className="mt-2 space-y-1">
+                  {message.taskAssigneeName && (
+                    <div className="flex items-center space-x-1 text-xs opacity-75">
+                      <User className="w-3 h-3" />
+                      <span>Responsável: {message.taskAssigneeName}</span>
+                    </div>
+                  )}
+                  {message.taskDueDate && (
+                    <div className="flex items-center space-x-1 text-xs opacity-75">
+                      <Calendar className="w-3 h-3" />
+                      <span>Prazo: {formatDueDate(message.taskDueDate)}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Task Response Buttons */}
+              {message.isTask &&
+                message.taskStatus === "pending" &&
+                message.taskAssigneeId === currentUserId && (
+                  <div className="flex space-x-2 mt-3">
+                    <Button
+                      size="sm"
+                      onClick={() => handleTaskResponse("accepted")}
+                      disabled={isResponding}
+                      className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 text-xs"
+                    >
+                      <Check className="w-3 h-3 mr-1" />
+                      Aceitar
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => handleTaskResponse("rejected")}
+                      disabled={isResponding}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 text-xs"
+                    >
+                      <X className="w-3 h-3 mr-1" />
+                      Recusar
+                    </Button>
+                  </div>
+                )}
             </div>
 
             {/* File content outside bubble for non-images */}

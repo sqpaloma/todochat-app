@@ -44,6 +44,7 @@ export function TasksPage() {
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
 
   const tasks = useQuery(api.tasks.getTasks, { teamId: selectedTeam });
+  const deleteTask = useMutation(api.tasks.deleteTask);
 
   // Use the new presence-enabled hook
   const { members: teamMembers } = useTeamMembersWithPresence(selectedTeam);

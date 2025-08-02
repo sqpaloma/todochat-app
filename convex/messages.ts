@@ -145,6 +145,19 @@ export const sendMessage = mutation({
     messageType: v.optional(v.union(v.literal("general"), v.literal("direct"))),
     recipientId: v.optional(v.string()),
     recipientName: v.optional(v.string()),
+    // Campos para tarefas
+    isTask: v.optional(v.boolean()),
+    taskStatus: v.optional(
+      v.union(
+        v.literal("pending"),
+        v.literal("accepted"),
+        v.literal("rejected")
+      )
+    ),
+    taskAssigneeId: v.optional(v.string()),
+    taskAssigneeName: v.optional(v.string()),
+    taskDueDate: v.optional(v.number()),
+    taskCreatedBy: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const messageId = await ctx.db.insert("messages", {
@@ -157,6 +170,13 @@ export const sendMessage = mutation({
       recipientId: args.recipientId,
       recipientName: args.recipientName,
       reactions: [], // Initialize with empty reactions array
+      // Campos para tarefas
+      isTask: args.isTask,
+      taskStatus: args.taskStatus,
+      taskAssigneeId: args.taskAssigneeId,
+      taskAssigneeName: args.taskAssigneeName,
+      taskDueDate: args.taskDueDate,
+      taskCreatedBy: args.taskCreatedBy,
     });
     return messageId;
   },
@@ -165,6 +185,54 @@ export const sendMessage = mutation({
 export const generateUploadUrl = mutation({
   handler: async (ctx) => {
     return await ctx.storage.generateUploadUrl();
+  },
+});
+
+export const respondToTask = mutation({
+  args: {
+    messageId: v.id("messages"),
+    status: v.union(v.literal("accepted"), v.literal("rejected")),
+    currentUserId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get(args.messageId);
+    if (!message) {
+      throw new Error("Message not found");
+    }
+
+    // Verificar se a mensagem é uma tarefa
+    if (!message.isTask) {
+      throw new Error("Message is not a task");
+    }
+
+    // Verificar se o usuário atual é o responsável pela tarefa
+    if (message.taskAssigneeId !== args.currentUserId) {
+      throw new Error("Only the assigned user can respond to this task");
+    }
+
+    // Atualizar o status da tarefa na mensagem
+    await ctx.db.patch(args.messageId, {
+      taskStatus: args.status,
+    });
+
+    // Se aceita, criar a tarefa no sistema de tarefas
+    if (args.status === "accepted") {
+      await ctx.db.insert("tasks", {
+        title: message.content,
+        description: message.content,
+        status: "todo" as const,
+        assigneeId: message.taskAssigneeId!,
+        assigneeName: message.taskAssigneeName!,
+        createdBy: message.taskCreatedBy!,
+        createdAt: Date.now(),
+        dueDate: message.taskDueDate,
+        originalMessage: message.content,
+        teamId: message.teamId,
+        priority: "medium" as const,
+      });
+    }
+
+    return { success: true };
   },
 });
 

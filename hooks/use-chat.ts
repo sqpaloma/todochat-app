@@ -19,6 +19,10 @@ export function useChat() {
     isUploading: false,
     selectedDirectContact: null,
     showContactSelector: false,
+    // Estado para tarefas
+    isTaskMode: false,
+    taskAssigneeId: null,
+    taskDueDate: null,
   });
 
   // Refs
@@ -102,6 +106,31 @@ export function useChat() {
     [updateState]
   );
 
+  const setIsTaskMode = useCallback(
+    (isTaskMode: boolean) => {
+      updateState({
+        isTaskMode,
+        // Reset task fields when turning off task mode
+        ...(isTaskMode ? {} : { taskAssigneeId: null, taskDueDate: null }),
+      });
+    },
+    [updateState]
+  );
+
+  const setTaskAssigneeId = useCallback(
+    (assigneeId: string | null) => {
+      updateState({ taskAssigneeId: assigneeId });
+    },
+    [updateState]
+  );
+
+  const setTaskDueDate = useCallback(
+    (dueDate: number | null) => {
+      updateState({ taskDueDate: dueDate });
+    },
+    [updateState]
+  );
+
   const setSelectedMessage = useCallback(
     (message: MessageType | null) => {
       updateState({ selectedMessage: message });
@@ -133,6 +162,18 @@ export function useChat() {
       e.preventDefault();
       if (!state.newMessage.trim() || !currentUser) return;
 
+      // Validação para tarefas em grupo
+      if (
+        state.isTaskMode &&
+        !state.selectedDirectContact &&
+        !state.taskAssigneeId
+      ) {
+        alert(
+          "Para enviar uma tarefa em grupo, você deve selecionar um responsável."
+        );
+        return;
+      }
+
       try {
         const displayName = getDisplayName(currentUser);
 
@@ -143,6 +184,29 @@ export function useChat() {
           ? getRecipientData(state, teamMembers)
           : {};
 
+        // Dados da tarefa se estiver no modo de tarefa
+        const taskData = state.isTaskMode
+          ? {
+              isTask: true,
+              taskStatus: "pending" as const,
+              taskCreatedBy: currentUser._id,
+              ...(state.selectedDirectContact
+                ? {
+                    // Chat privado: destinatário é o responsável
+                    taskAssigneeId: state.selectedDirectContact,
+                    taskAssigneeName: recipientData.recipientName,
+                  }
+                : {
+                    // Chat em grupo: usar o responsável selecionado
+                    taskAssigneeId: state.taskAssigneeId!,
+                    taskAssigneeName:
+                      teamMembers?.find((m) => m._id === state.taskAssigneeId)
+                        ?.name || "",
+                  }),
+              ...(state.taskDueDate && { taskDueDate: state.taskDueDate }),
+            }
+          : {};
+
         await sendMessage({
           content: state.newMessage.trim(),
           authorId: currentUser._id,
@@ -150,9 +214,16 @@ export function useChat() {
           teamId: state.selectedTeam,
           messageType,
           ...recipientData,
+          ...taskData,
         });
 
-        updateState({ newMessage: "" });
+        // Reset task mode after sending
+        updateState({
+          newMessage: "",
+          isTaskMode: false,
+          taskAssigneeId: null,
+          taskDueDate: null,
+        });
       } catch (error) {
         console.error("Error sending message:", error);
         throw error;
@@ -279,6 +350,9 @@ export function useChat() {
     setSelectedDirectContact,
     setShowContactSelector,
     setShowTaskDialog,
+    setIsTaskMode,
+    setTaskAssigneeId,
+    setTaskDueDate,
     setSelectedMessage,
 
     // Handlers

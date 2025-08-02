@@ -29,6 +29,19 @@ export default defineSchema({
     fileName: v.optional(v.string()),
     fileType: v.optional(v.string()),
     fileSize: v.optional(v.number()),
+    // Campos para tarefas
+    isTask: v.optional(v.boolean()),
+    taskStatus: v.optional(
+      v.union(
+        v.literal("pending"),
+        v.literal("accepted"),
+        v.literal("rejected")
+      )
+    ),
+    taskAssigneeId: v.optional(v.string()),
+    taskAssigneeName: v.optional(v.string()),
+    taskDueDate: v.optional(v.number()),
+    taskCreatedBy: v.optional(v.string()),
   }),
 
   tasks: defineTable({

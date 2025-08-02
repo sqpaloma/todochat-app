@@ -1,6 +1,6 @@
 "use client";
 
-import { useChat } from "@/hooks/use-chat";
+import { useChat } from "@/stores/chat-store";
 import { ChatHeader } from "@/components/chat/chat-header";
 import { ChatInput } from "@/components/chat/chat-input";
 import { MessagesList } from "@/components/chat/messages-list";
@@ -10,19 +10,23 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { CreateTaskDialog } from "@/components/chat/create-task-dialog";
 import { formatFileSize } from "@/utils/file";
 import { AuthGuard } from "@/components/auth/auth-guard";
+import { useRef } from "react";
 
 export default function ChatPage() {
   const {
     // State
-    state,
-    currentUser,
-    teamMembers,
-    directContacts,
-    displayMessages,
-
-    // Refs
-    messagesEndRef,
-    fileInputRef,
+    activeTab,
+    newMessage,
+    selectedMessage,
+    showTaskDialog,
+    selectedFile,
+    isUploading,
+    selectedDirectContact,
+    showContactSelector,
+    isTaskMode,
+    taskAssigneeId,
+    taskDueDate,
+    selectedTeam,
 
     // Actions
     setActiveTab,
@@ -31,6 +35,18 @@ export default function ChatPage() {
     setSelectedDirectContact,
     setShowContactSelector,
     setShowTaskDialog,
+    setIsTaskMode,
+    setTaskAssigneeId,
+    setTaskDueDate,
+
+    // Data
+    currentUser,
+    teamMembers,
+    directContacts,
+    displayMessages,
+    isLoading,
+    onlineCount,
+    messagesEndRef,
 
     // Handlers
     handleSendMessage,
@@ -38,11 +54,10 @@ export default function ChatPage() {
     handleFileUpload,
     handleCreateTask,
     handleClearChat,
-
-    // Computed
-    isLoading,
-    onlineCount,
   } = useChat();
+
+  // Refs
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (isLoading) {
     return <LoadingSpinner size="lg" />;
@@ -62,8 +77,8 @@ export default function ChatPage() {
         <div className="flex flex-col max-w-7xl mx-auto">
           {/* Contact Selector */}
           <ContactSelector
-            activeTab={state.activeTab}
-            selectedDirectContact={state.selectedDirectContact}
+            activeTab={activeTab}
+            selectedDirectContact={selectedDirectContact}
             teamMembers={teamMembers || []}
             directContacts={directContacts || []}
             currentUser={currentUser}
@@ -76,8 +91,8 @@ export default function ChatPage() {
             <div className="h-[700px] bg-white rounded-3xl border-2 border-purple-200 shadow-xl flex flex-col overflow-hidden">
               {/* Chat Header */}
               <ChatHeader
-                activeTab={state.activeTab}
-                selectedDirectContact={state.selectedDirectContact}
+                activeTab={activeTab}
+                selectedDirectContact={selectedDirectContact}
                 teamMembers={teamMembers || []}
                 onlineCount={onlineCount}
                 onClearChat={handleClearChat}
@@ -87,8 +102,8 @@ export default function ChatPage() {
               <MessagesList
                 messages={displayMessages}
                 currentUser={currentUser!}
-                activeTab={state.activeTab}
-                selectedDirectContact={state.selectedDirectContact}
+                activeTab={activeTab}
+                selectedDirectContact={selectedDirectContact}
                 directContacts={directContacts || []}
                 onCreateTask={handleCreateTask}
                 messagesEndRef={messagesEndRef}
@@ -96,18 +111,26 @@ export default function ChatPage() {
 
               {/* Chat Input */}
               <ChatInput
-                newMessage={state.newMessage}
+                newMessage={newMessage}
                 onMessageChange={setNewMessage}
                 onSendMessage={handleSendMessage}
                 onFileSelect={handleFileSelect}
                 onFileUpload={handleFileUpload}
-                selectedFile={state.selectedFile}
-                isUploading={state.isUploading}
-                activeTab={state.activeTab}
-                selectedDirectContact={state.selectedDirectContact}
+                selectedFile={selectedFile}
+                isUploading={isUploading}
+                activeTab={activeTab}
+                selectedDirectContact={selectedDirectContact}
                 fileInputRef={fileInputRef}
                 formatFileSize={formatFileSize}
                 onCancelFile={handleCancelFile}
+                // Props para tarefas
+                isTaskMode={isTaskMode}
+                onTaskModeChange={setIsTaskMode}
+                taskAssigneeId={taskAssigneeId}
+                onTaskAssigneeChange={setTaskAssigneeId}
+                taskDueDate={taskDueDate}
+                onTaskDueDateChange={setTaskDueDate}
+                teamMembers={teamMembers || []}
               />
             </div>
           </div>
@@ -116,15 +139,15 @@ export default function ChatPage() {
 
       {/* Modals */}
       <CreateTaskDialog
-        open={state.showTaskDialog}
+        open={showTaskDialog}
         onOpenChange={setShowTaskDialog}
-        message={state.selectedMessage}
+        message={selectedMessage}
         teamMembers={teamMembers || []}
-        teamId={state.selectedTeam}
+        teamId={selectedTeam}
       />
 
       <ContactSelectorModal
-        isOpen={state.showContactSelector}
+        isOpen={showContactSelector}
         teamMembers={teamMembers || []}
         currentUser={currentUser}
         onSelectContact={setSelectedDirectContact}

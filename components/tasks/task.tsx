@@ -30,6 +30,7 @@ interface TaskProps {
 
 export function Task({ task }: TaskProps) {
   const updateTaskStatus = useMutation(api.tasks.updateTaskStatus);
+  const deleteTask = useMutation(api.tasks.deleteTask);
 
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
@@ -127,6 +128,16 @@ export function Task({ task }: TaskProps) {
               className="flex-1 text-xs rounded-full border-gray-200"
             >
               Done
+            </Button>
+          )}
+          {task.status !== "done" && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => deleteTask({ taskId: task._id })}
+              className="flex-1 text-xs rounded-full border-gray-200"
+            >
+              Delete
             </Button>
           )}
         </div>

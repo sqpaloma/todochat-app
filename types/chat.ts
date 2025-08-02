@@ -18,6 +18,13 @@ export interface MessageType {
   fileName?: string;
   fileType?: string;
   fileSize?: number;
+  // Campos para tarefas
+  isTask?: boolean;
+  taskStatus?: "pending" | "accepted" | "rejected";
+  taskAssigneeId?: string;
+  taskAssigneeName?: string;
+  taskDueDate?: number;
+  taskCreatedBy?: string;
 }
 
 export interface ChatState {
@@ -30,6 +37,10 @@ export interface ChatState {
   isUploading: boolean;
   selectedDirectContact: string | null;
   showContactSelector: boolean;
+  // Estado para tarefas
+  isTaskMode: boolean;
+  taskAssigneeId: string | null;
+  taskDueDate: number | null;
 }
 
 export interface TabConfig {
