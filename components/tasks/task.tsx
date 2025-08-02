@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Clock, MessageSquare } from "lucide-react";
+import { Clock, MessageSquare, Trash2 } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -50,7 +50,7 @@ export function Task({ task }: TaskProps) {
   return (
     <Card
       ref={setNodeRef}
-      className={`border-0 shadow-sm hover:shadow-md transition-all duration-200 cursor-grab active:cursor-grabbing ${
+      className={`bg-white border-2 border-purple-200 shadow-xl hover:shadow-2xl transition-all duration-200 cursor-grab active:cursor-grabbing rounded-xl ${
         isDragging ? "opacity-50 rotate-3 scale-105" : ""
       }`}
       {...listeners}
@@ -61,14 +61,24 @@ export function Task({ task }: TaskProps) {
           : undefined,
       }}
     >
-      <CardContent className="p-6">
+      <CardContent className="p-6 bg-white rounded-xl">
         <div className="flex items-start justify-between mb-4">
           <h4 className="text-sm font-semibold text-gray-900 leading-tight pr-2">
             {task.title}
           </h4>
-          {task.originalMessage && (
-            <MessageSquare className="w-4 h-4 text-blue-400 flex-shrink-0" />
-          )}
+          <div className="flex items-center gap-2 -mt-1">
+            {task.originalMessage && (
+              <MessageSquare className="w-3 h-3 text-purple-400 flex-shrink-0" />
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => deleteTask({ taskId: task._id })}
+              className="p-1 h-auto text-purple-400 hover:text-purple-600 hover:bg-purple-50 rounded-full"
+            >
+              <Trash2 className="w-3 h-3" />
+            </Button>
+          </div>
         </div>
 
         {task.description && (
@@ -80,7 +90,7 @@ export function Task({ task }: TaskProps) {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
             <Avatar className="w-6 h-6">
-              <AvatarFallback className="text-xs bg-blue-100 text-blue-600">
+              <AvatarFallback className="text-xs bg-purple-100 text-purple-600">
                 {task.assigneeName
                   .split(" ")
                   .map((n) => n[0])
@@ -105,7 +115,7 @@ export function Task({ task }: TaskProps) {
               variant="outline"
               size="sm"
               onClick={() => handleStatusChange("todo")}
-              className="flex-1 text-xs rounded-full border-gray-200"
+              className="flex-1 text-xs rounded-lg border-purple-300 bg-white hover:bg-purple-50 shadow-md text-purple-700 font-medium"
             >
               To Do
             </Button>
@@ -115,7 +125,7 @@ export function Task({ task }: TaskProps) {
               variant="outline"
               size="sm"
               onClick={() => handleStatusChange("in-progress")}
-              className="flex-1 text-xs rounded-full border-gray-200"
+              className="flex-1 text-xs rounded-lg border-purple-300 bg-white hover:bg-purple-50 shadow-md text-purple-700 font-medium"
             >
               In Progress
             </Button>
@@ -125,19 +135,9 @@ export function Task({ task }: TaskProps) {
               variant="outline"
               size="sm"
               onClick={() => handleStatusChange("done")}
-              className="flex-1 text-xs rounded-full border-gray-200"
+              className="flex-1 text-xs rounded-lg border-purple-300 bg-white hover:bg-purple-50 shadow-md text-purple-700 font-medium"
             >
               Done
-            </Button>
-          )}
-          {task.status !== "done" && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => deleteTask({ taskId: task._id })}
-              className="flex-1 text-xs rounded-full border-gray-200"
-            >
-              Delete
             </Button>
           )}
         </div>
