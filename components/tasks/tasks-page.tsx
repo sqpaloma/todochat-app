@@ -119,7 +119,7 @@ export function TasksPage() {
       <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white flex flex-col">
         {/* Header Section */}
         <div className="bg-white/80 backdrop-blur-sm border-b border-purple-100">
-          <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-6">
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-4">
             <div className="flex items-center justify-between">
               {/* Left side - Title */}
               <div className="flex items-center gap-4">
@@ -146,7 +146,7 @@ export function TasksPage() {
                 {/* Mobile Calendar Toggle */}
                 <Button
                   onClick={() => setShowCalendar(!showCalendar)}
-                  className="lg:hidden bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                  className="lg:hidden bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 min-w-[120px]"
                 >
                   <Calendar className="w-4 h-4 mr-2" />
                   {showCalendar ? "Hide" : "Show"}
@@ -157,12 +157,21 @@ export function TasksPage() {
         </div>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-1">
+          {/* Mobile Calendar - Appears below header */}
+          {showCalendar && (
+            <div className="lg:hidden mb-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                <TaskCalendar tasks={tasks || []} />
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* Task Board */}
             <div className="flex-1">
               {/* Mobile: Vertical scroll with proper height */}
-              <div className="lg:hidden space-y-6 overflow-y-auto max-h-[calc(100vh-200px)]">
+              <div className="lg:hidden space-y-4 overflow-y-auto max-h-[calc(100vh-250px)] pr-6">
                 {statusConfig.map((config) => (
                   <TaskColumn
                     key={config.status}
@@ -195,15 +204,6 @@ export function TasksPage() {
               </div>
             </div>
           </div>
-
-          {/* Calendar Mobile Toggle */}
-          {showCalendar && (
-            <div className="lg:hidden mt-6">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                <TaskCalendar tasks={tasks || []} />
-              </div>
-            </div>
-          )}
         </div>
 
         <CreateManualTaskDialog

@@ -92,13 +92,13 @@ export function TaskCalendar({ tasks }: TaskCalendarProps) {
     const isToday = isCurrentMonth && day === todayDate;
 
     if (isToday) {
-      return "bg-indigo-100 text-indigo-700 border-indigo-200";
+      return "bg-blue-100 text-blue-700";
     } else if (hasOverdue) {
-      return "bg-red-50 text-red-700 border-red-100";
+      return "bg-red-100 text-red-700";
     } else if (hasFuture) {
-      return "bg-green-50 text-green-700 border-green-100";
+      return "bg-green-100 text-green-700";
     }
-    return "bg-white text-gray-600 border-gray-100";
+    return "bg-white text-gray-600";
   };
 
   const getDotColor = (day: number) => {
@@ -113,7 +113,7 @@ export function TaskCalendar({ tasks }: TaskCalendarProps) {
     const isToday = isCurrentMonth && day === todayDate;
 
     if (isToday) {
-      return "bg-indigo-500";
+      return "bg-blue-500";
     } else if (hasOverdue) {
       return "bg-red-500";
     } else if (hasFuture) {
@@ -133,28 +133,22 @@ export function TaskCalendar({ tasks }: TaskCalendarProps) {
   return (
     <Card className="border-0 shadow-sm">
       <CardHeader className="pb-4">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-2">
           <CardTitle className="flex items-center space-x-2 text-lg font-semibold">
-            <Calendar className="w-5 h-5 text-indigo-600" />
+            <Calendar className="w-5 h-5 text-purple-600" />
             <span>Schedule</span>
           </CardTitle>
-          <Button
-            variant="outline"
-            size="sm"
-            className="rounded-full border-gray-200 bg-transparent"
-          >
-            <RefreshCw className="w-4 h-4" />
-          </Button>
+          {overdueTasks > 0 && (
+            <div className="flex items-center space-x-0">
+              <div className="flex items-center justify-center w-6 h-6 bg-red-100 rounded-full">
+                <AlertTriangle className="w-4 h-4 text-red-600" />
+              </div>
+              <span className="text-sm font-medium text-red-700">
+                {overdueTasks}
+              </span>
+            </div>
+          )}
         </div>
-
-        {overdueTasks > 0 && (
-          <div className="flex items-center space-x-2 p-3 bg-red-50 rounded-lg">
-            <AlertTriangle className="w-4 h-4 text-red-600" />
-            <span className="text-sm text-red-700 font-medium">
-              {overdueTasks} overdue task{overdueTasks > 1 ? "s" : ""}
-            </span>
-          </div>
-        )}
       </CardHeader>
 
       <CardContent>
@@ -184,7 +178,7 @@ export function TaskCalendar({ tasks }: TaskCalendarProps) {
           {dayNames.map((day) => (
             <div
               key={day}
-              className="text-center text-sm font-medium text-gray-500 py-2"
+              className="text-center text-sm font-medium text-gray-500 py-1"
             >
               {day}
             </div>
@@ -196,38 +190,14 @@ export function TaskCalendar({ tasks }: TaskCalendarProps) {
             <div
               key={index}
               className={`
-                aspect-square flex flex-col items-center justify-center text-sm font-medium border rounded-lg relative transition-all
-                ${day ? getDayStyle(day) : "bg-transparent border-transparent"}
+                aspect-square flex items-center justify-center text-sm font-medium rounded-lg transition-all
+                ${day ? getDayStyle(day) : "bg-transparent"}
                 ${day ? "hover:shadow-sm cursor-pointer" : ""}
               `}
             >
-              {day && (
-                <>
-                  <span>{day}</span>
-                  {getDotColor(day) && (
-                    <div
-                      className={`w-1.5 h-1.5 rounded-full ${getDotColor(day)} absolute bottom-1`}
-                    />
-                  )}
-                </>
-              )}
+              {day && <span>{day}</span>}
             </div>
           ))}
-        </div>
-
-        <div className="flex items-center justify-center space-x-4 mt-6 text-xs text-gray-500">
-          <div className="flex items-center space-x-1">
-            <div className="w-2 h-2 rounded-full bg-red-500" />
-            <span>Overdue</span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <div className="w-2 h-2 rounded-full bg-indigo-500" />
-            <span>Today</span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <div className="w-2 h-2 rounded-full bg-green-500" />
-            <span>Future</span>
-          </div>
         </div>
       </CardContent>
     </Card>

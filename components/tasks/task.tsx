@@ -66,19 +66,21 @@ export function Task({ task }: TaskProps) {
           <h4 className="text-sm font-semibold text-gray-900 leading-tight pr-2">
             {task.title}
           </h4>
-          <div className="flex items-center gap-2 -mt-1">
-            {task.originalMessage && (
-              <MessageSquare className="w-3 h-3 text-purple-400 flex-shrink-0" />
-            )}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => deleteTask({ taskId: task._id })}
-              className="p-1 h-auto text-purple-400 hover:text-purple-600 hover:bg-purple-50 rounded-full"
-            >
-              <Trash2 className="w-3 h-3" />
-            </Button>
-          </div>
+          {task.status !== "done" && (
+            <div className="flex items-center gap-2 -mt-1">
+              {task.originalMessage && (
+                <MessageSquare className="w-3 h-3 text-purple-400 flex-shrink-0" />
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => deleteTask({ taskId: task._id })}
+                className="p-1 h-auto text-purple-400 hover:text-purple-600 hover:bg-purple-50 rounded-full"
+              >
+                <Trash2 className="w-3 h-3" />
+              </Button>
+            </div>
+          )}
         </div>
 
         {task.description && (
@@ -110,35 +112,46 @@ export function Task({ task }: TaskProps) {
         </div>
 
         <div className="flex space-x-2">
-          {task.status !== "todo" && (
+          {task.status === "done" ? (
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleStatusChange("todo")}
-              className="flex-1 text-xs rounded-lg border-purple-300 bg-white hover:bg-purple-50 shadow-md text-purple-700 font-medium"
+              onClick={() => deleteTask({ taskId: task._id })}
+              className="flex-1 text-xs rounded-full border-purple-300 bg-white hover:bg-purple-50 shadow-md text-purple-600 font-medium"
             >
-              To Do
+              Delete
             </Button>
-          )}
-          {task.status !== "in-progress" && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleStatusChange("in-progress")}
-              className="flex-1 text-xs rounded-lg border-purple-300 bg-white hover:bg-purple-50 shadow-md text-purple-700 font-medium"
-            >
-              In Progress
-            </Button>
-          )}
-          {task.status !== "done" && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleStatusChange("done")}
-              className="flex-1 text-xs rounded-lg border-purple-300 bg-white hover:bg-purple-50 shadow-md text-purple-700 font-medium"
-            >
-              Done
-            </Button>
+          ) : (
+            <>
+              {task.status !== "todo" && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleStatusChange("todo")}
+                  className="flex-1 text-xs rounded-lg border-purple-300 bg-white hover:bg-purple-50 shadow-md text-purple-700 font-medium"
+                >
+                  To Do
+                </Button>
+              )}
+              {task.status !== "in-progress" && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleStatusChange("in-progress")}
+                  className="flex-1 text-xs rounded-lg border-purple-300 bg-white hover:bg-purple-50 shadow-md text-purple-700 font-medium"
+                >
+                  In Progress
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleStatusChange("done")}
+                className="flex-1 text-xs rounded-lg border-purple-300 bg-white hover:bg-purple-50 shadow-md text-purple-700 font-medium"
+              >
+                Done
+              </Button>
+            </>
           )}
         </div>
       </CardContent>
