@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Trash2, MessageCircle } from "lucide-react";
+import { Trash2, MessageCircle, ArrowLeft } from "lucide-react";
 import { ChatTab } from "@/types/chat";
 import { getInitials } from "@/utils/user";
 
@@ -11,12 +11,14 @@ interface ChatHeaderProps {
   teamMembers: any[];
   onlineCount?: number;
   onClearChat: () => void;
+  onBack?: () => void;
 }
 
 export function ChatHeader({
   selectedDirectContact,
   teamMembers,
   onClearChat,
+  onBack,
 }: ChatHeaderProps) {
   const getHeaderConfig = () => {
     if (selectedDirectContact) {
@@ -87,6 +89,21 @@ export function ChatHeader({
   return (
     <div className="bg-gradient-to-r from-purple-100 to-pink-100 px-8 py-6 border-b border-purple-200 flex items-center justify-between">
       <div className="flex items-center space-x-4">
+        {/* Botão de voltar - apenas no mobile quando há contato selecionado */}
+        {selectedDirectContact && onBack && (
+          <div className="md:hidden">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onBack}
+              className="p-2 h-auto hover:bg-purple-200 text-purple-600 hover:text-purple-700 rounded-full transition-colors"
+              title="Voltar ao chat da equipe"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </Button>
+          </div>
+        )}
+
         <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
           {selectedDirectContact ? (
             config.initials

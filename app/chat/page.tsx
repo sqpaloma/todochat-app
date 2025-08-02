@@ -5,7 +5,6 @@ import { ChatHeader } from "@/components/chat/chat-header";
 import { ChatInput } from "@/components/chat/chat-input";
 import { MessagesList } from "@/components/chat/messages-list";
 import { ContactSelector } from "@/components/chat/contact-selector";
-import { ContactSelectorModal } from "@/components/chat/contact-selector-modal";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { CreateTaskDialog } from "@/components/chat/create-task-dialog";
 import { formatFileSize } from "@/utils/file";
@@ -96,6 +95,7 @@ export default function ChatPage() {
                 teamMembers={teamMembers || []}
                 onlineCount={onlineCount}
                 onClearChat={handleClearChat}
+                onBack={() => setSelectedDirectContact(null)}
               />
 
               {/* Messages List */}
@@ -144,14 +144,6 @@ export default function ChatPage() {
         message={selectedMessage}
         teamMembers={teamMembers || []}
         teamId={selectedTeam}
-      />
-
-      <ContactSelectorModal
-        isOpen={showContactSelector}
-        teamMembers={teamMembers || []}
-        currentUser={currentUser}
-        onSelectContact={setSelectedDirectContact}
-        onClose={() => setShowContactSelector(false)}
       />
     </AuthGuard>
   );

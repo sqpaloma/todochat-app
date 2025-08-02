@@ -19,7 +19,7 @@ import { TaskCalendar } from "./task-calendar";
 import { CreateManualTaskDialog } from "./create-manual-task-dialog";
 import { Task } from "./task";
 import { Button } from "@/components/ui/button";
-import { Plus, Calendar } from "lucide-react";
+import { Plus, Calendar, Menu } from "lucide-react";
 import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
 
 interface TaskType {
@@ -116,62 +116,85 @@ export function TasksPage() {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="h-full p-4 sm:p-6 lg:p-8 overflow-hidden">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-              Task Board
-            </h1>
-            <p className="text-sm sm:text-base text-gray-600">
-              Organize and track task progress
-            </p>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        {/* Header Section */}
+        <div className="bg-white border-b border-gray-200 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex items-center justify-between">
+              {/* Left side - Title and Menu */}
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="lg:hidden p-2 rounded-full hover:bg-gray-100"
+                >
+                  <Menu className="w-5 h-5" />
+                </Button>
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                    Task Board
+                  </h1>
+                  <p className="text-sm sm:text-base text-gray-600 mt-1">
+                    Organize and track task progress
+                  </p>
+                </div>
+              </div>
 
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <Button
-              onClick={() => setShowCalendar(!showCalendar)}
-              variant="outline"
-              className="w-full sm:w-auto lg:hidden rounded-2xl font-semibold px-4 py-2.5"
-            >
-              <Calendar className="w-4 h-4 mr-2" />
-              {showCalendar ? "Hide" : "Show"} Calendar
-            </Button>
+              {/* Right side - Action Buttons */}
+              <div className="flex items-center gap-3">
+                <Button
+                  onClick={() => setShowCalendar(!showCalendar)}
+                  variant="outline"
+                  className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl border-gray-300 hover:bg-gray-50"
+                >
+                  <Calendar className="w-4 h-4" />
+                  {showCalendar ? "Hide" : "Show"} Calendar
+                </Button>
 
-            <Button
-              onClick={() => setShowManualTaskDialog(true)}
-              className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-2xl font-semibold px-4 sm:px-6 py-2.5 sm:py-3"
-            >
-              <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-              New Task
-            </Button>
+                <Button
+                  onClick={() => setShowManualTaskDialog(true)}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  New Task
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 h-full">
-          {/* Task Board */}
-          <div className="flex-1 min-h-0">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 h-full">
-              {statusConfig.map((config) => (
-                <TaskColumn
-                  key={config.status}
-                  title={config.title}
-                  count={config.count}
-                  tasks={tasksByStatus[config.status]}
-                  status={config.status}
-                />
-              ))}
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+            {/* Task Board */}
+            <div className="flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {statusConfig.map((config) => (
+                  <TaskColumn
+                    key={config.status}
+                    title={config.title}
+                    count={config.count}
+                    tasks={tasksByStatus[config.status]}
+                    status={config.status}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Calendar Sidebar - Desktop */}
-          <div className="hidden lg:block lg:w-80 lg:min-h-0">
-            <TaskCalendar tasks={tasks || []} />
+            {/* Calendar Sidebar - Desktop */}
+            <div className="hidden lg:block lg:w-80">
+              <div className="sticky top-6">
+                <TaskCalendar tasks={tasks || []} />
+              </div>
+            </div>
           </div>
 
           {/* Calendar Mobile Toggle */}
           {showCalendar && (
-            <div className="lg:hidden mt-4">
-              <TaskCalendar tasks={tasks || []} />
+            <div className="lg:hidden mt-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                <TaskCalendar tasks={tasks || []} />
+              </div>
             </div>
           )}
         </div>
@@ -186,13 +209,21 @@ export function TasksPage() {
 
       <DragOverlay>
         {activeTask ? (
-          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-lg opacity-90">
-            <h4 className="font-semibold text-gray-900">{activeTask.title}</h4>
+          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-xl opacity-95 backdrop-blur-sm">
+            <h4 className="font-semibold text-gray-900 mb-2">
+              {activeTask.title}
+            </h4>
             {activeTask.description && (
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-gray-600 line-clamp-2">
                 {activeTask.description}
               </p>
             )}
+            <div className="flex items-center gap-2 mt-3">
+              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+              <span className="text-xs text-gray-500 capitalize">
+                {activeTask.status}
+              </span>
+            </div>
           </div>
         ) : null}
       </DragOverlay>
