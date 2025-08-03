@@ -136,13 +136,18 @@ function LayoutProvider({ children }: { children: ReactNode }) {
 
   // Initialize sidebar state based on screen size
   useEffect(() => {
-    const isDesktop = window.innerWidth >= 1024;
+    const handleResize = () => {
+      const isDesktop = window.innerWidth >= 1024;
+      if (isDesktop) {
+        setSidebarOpen(true); // Open sidebar on desktop
+      } else {
+        setSidebarOpen(false); // Ensure it's closed on mobile
+      }
+    };
 
-    if (isDesktop) {
-      setSidebarOpen(true);
-    } else {
-      setSidebarOpen(false);
-    }
+    handleResize(); // Set initial state
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const toggleSidebar = () => {

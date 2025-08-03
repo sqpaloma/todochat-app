@@ -164,25 +164,38 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
       {/* Sidebar */}
       <div
-        className="fixed top-0 bottom-0 bg-white shadow-2xl transition-transform duration-300 ease-in-out z-[1000] w-80 left-0 lg:static lg:translate-x-0 lg:shadow-none lg:border-r lg:border-gray-200"
+        className={`fixed top-0 bottom-0 bg-white shadow-2xl transition-all duration-300 ease-in-out z-[1000] left-0 lg:static lg:translate-x-0 lg:shadow-none lg:border-r lg:border-gray-200 ${
+          isCollapsed ? "lg:w-20" : "w-80 lg:w-80"
+        }`}
         style={{
           transform: isOpen ? "translateX(0)" : "translateX(-100%)",
         }}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <Link
-            href="/"
-            className={`flex items-center space-x-3 hover:opacity-80 transition-opacity ${isCollapsed ? "lg:hidden" : ""}`}
-          >
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h2 className="font-bold text-lg gradient-text">✨ Chat do</h2>
-              <p className="text-xs text-gray-500">Workspace</p>
-            </div>
-          </Link>
+          {!isCollapsed ? (
+            <Link
+              href="/"
+              className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+            >
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="font-bold text-lg gradient-text">✨ Chat do</h2>
+                <p className="text-xs text-gray-500">Workspace</p>
+              </div>
+            </Link>
+          ) : (
+            <Link
+              href="/"
+              className="hidden lg:flex hover:opacity-80 transition-opacity"
+            >
+              <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+            </Link>
+          )}
 
           <div className="flex items-center space-x-2">
             {/* Toggle Button - Desktop only */}
@@ -212,17 +225,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             </Button>
           </div>
         </div>
-
-        {/* Collapsed Logo - Desktop only */}
-        {isCollapsed && (
-          <div className="hidden lg:flex items-center justify-center p-4 border-b border-gray-100">
-            <Link href="/" className="hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
-            </Link>
-          </div>
-        )}
 
         {!isCollapsed && (
           <div className="px-4 mb-4">
