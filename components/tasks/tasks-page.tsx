@@ -134,7 +134,7 @@ export function TasksPage() {
               </div>
 
               {/* Right side - Action Buttons */}
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col lg:flex-row gap-3">
                 <Button
                   onClick={() => setShowManualTaskDialog(true)}
                   className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
@@ -143,13 +143,22 @@ export function TasksPage() {
                   Task
                 </Button>
 
-                {/* Mobile Calendar Toggle */}
+                {/* Calendar Toggle - Mobile and Medium */}
                 <Button
                   onClick={() => setShowCalendar(!showCalendar)}
                   className="lg:hidden bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 min-w-[120px]"
                 >
                   <Calendar className="w-4 h-4 mr-2" />
                   {showCalendar ? "Hide" : "Show"}
+                </Button>
+
+                {/* Calendar Toggle - Desktop */}
+                <Button
+                  onClick={() => setShowCalendar(!showCalendar)}
+                  className="hidden lg:flex bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  <Calendar className="w-4 h-4 mr-2" />
+                  {showCalendar ? "Hide Calendar" : "Show Calendar"}
                 </Button>
               </div>
             </div>
@@ -158,9 +167,9 @@ export function TasksPage() {
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-1">
-          {/* Mobile Calendar - Appears below header */}
+          {/* Calendar - Appears below header on all screen sizes */}
           {showCalendar && (
-            <div className="lg:hidden mb-6">
+            <div className="mb-6">
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                 <TaskCalendar tasks={tasks || []} />
               </div>
@@ -171,7 +180,7 @@ export function TasksPage() {
             {/* Task Board */}
             <div className="flex-1">
               {/* Mobile: Vertical scroll with proper height */}
-              <div className="lg:hidden space-y-4 overflow-y-auto max-h-[calc(100vh-250px)] pr-6">
+              <div className="md:hidden space-y-4 overflow-y-auto max-h-[calc(100vh-250px)] pr-6">
                 {statusConfig.map((config) => (
                   <TaskColumn
                     key={config.status}
@@ -183,8 +192,21 @@ export function TasksPage() {
                 ))}
               </div>
 
-              {/* Desktop: Grid layout */}
-              <div className="hidden lg:grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {/* Medium screens: 2-column grid layout */}
+              <div className="hidden md:grid md:grid-cols-2 lg:hidden gap-4 md:gap-6">
+                {statusConfig.map((config) => (
+                  <TaskColumn
+                    key={config.status}
+                    title={config.title}
+                    count={config.count}
+                    tasks={tasksByStatus[config.status]}
+                    status={config.status}
+                  />
+                ))}
+              </div>
+
+              {/* Desktop: 3-column grid layout */}
+              <div className="hidden lg:grid grid-cols-3 gap-6">
                 {statusConfig.map((config) => (
                   <TaskColumn
                     key={config.status}
@@ -197,12 +219,7 @@ export function TasksPage() {
               </div>
             </div>
 
-            {/* Calendar Sidebar - Desktop */}
-            <div className="hidden lg:block lg:w-80">
-              <div className="sticky top-6">
-                <TaskCalendar tasks={tasks || []} />
-              </div>
-            </div>
+            {/* Calendar Sidebar - Removed, now using toggle on all screen sizes */}
           </div>
         </div>
 

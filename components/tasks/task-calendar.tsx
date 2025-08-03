@@ -132,18 +132,18 @@ export function TaskCalendar({ tasks }: TaskCalendarProps) {
 
   return (
     <Card className="border-0 shadow-sm">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between mb-2">
-          <CardTitle className="flex items-center space-x-2 text-lg font-semibold">
-            <Calendar className="w-5 h-5 text-purple-600" />
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between mb-1">
+          <CardTitle className="flex items-center space-x-2 text-base font-semibold">
+            <Calendar className="w-4 h-4 text-purple-600" />
             <span>Schedule</span>
           </CardTitle>
           {overdueTasks > 0 && (
             <div className="flex items-center space-x-0">
-              <div className="flex items-center justify-center w-6 h-6 bg-red-100 rounded-full">
-                <AlertTriangle className="w-4 h-4 text-red-600" />
+              <div className="flex items-center justify-center w-5 h-5 bg-red-100 rounded-full">
+                <AlertTriangle className="w-3 h-3 text-red-600" />
               </div>
-              <span className="text-sm font-medium text-red-700">
+              <span className="text-xs font-medium text-red-700">
                 {overdueTasks}
               </span>
             </div>
@@ -151,46 +151,46 @@ export function TaskCalendar({ tasks }: TaskCalendarProps) {
         </div>
       </CardHeader>
 
-      <CardContent>
-        <div className="flex items-center justify-between mb-6">
+      <CardContent className="pt-0">
+        <div className="flex items-center justify-between mb-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigateMonth("prev")}
-            className="rounded-full"
+            className="rounded-full h-7 w-7 p-0"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-3 h-3" />
           </Button>
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-base font-semibold text-gray-900">
             {monthNames[month]} {year}
           </h3>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigateMonth("next")}
-            className="rounded-full"
+            className="rounded-full h-7 w-7 p-0"
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-3 h-3" />
           </Button>
         </div>
 
-        <div className="grid grid-cols-7 gap-1 mb-2">
+        <div className="grid grid-cols-7 gap-0.5 mb-1">
           {dayNames.map((day) => (
             <div
               key={day}
-              className="text-center text-sm font-medium text-gray-500 py-1"
+              className="text-center text-xs font-medium text-gray-500 py-0.5"
             >
               {day}
             </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7 gap-0.5">
           {calendarDays.map((day, index) => (
             <div
               key={index}
               className={`
-                aspect-square flex items-center justify-center text-sm font-medium rounded-lg transition-all
+                aspect-square flex items-center justify-center text-xs font-medium rounded-md transition-all
                 ${day ? getDayStyle(day) : "bg-transparent"}
                 ${day ? "hover:shadow-sm cursor-pointer" : ""}
               `}

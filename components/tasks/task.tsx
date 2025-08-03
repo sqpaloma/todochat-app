@@ -50,7 +50,7 @@ export function Task({ task }: TaskProps) {
   return (
     <Card
       ref={setNodeRef}
-      className={`bg-white border-2 border-purple-200 shadow-xl hover:shadow-2xl transition-all duration-200 cursor-grab active:cursor-grabbing rounded-xl ${
+      className={`bg-white border-2 border-purple-200 shadow-xl hover:shadow-2xl transition-all duration-200 cursor-grab active:cursor-grabbing rounded-xl h-48 ${
         isDragging ? "opacity-50 rotate-3 scale-105" : ""
       }`}
       {...listeners}
@@ -61,13 +61,13 @@ export function Task({ task }: TaskProps) {
           : undefined,
       }}
     >
-      <CardContent className="p-6 bg-white rounded-xl">
+      <CardContent className="p-6 bg-white rounded-xl h-full flex flex-col">
         <div className="flex items-start justify-between mb-4">
-          <h4 className="text-sm font-semibold text-gray-900 leading-tight pr-2">
+          <h4 className="text-sm font-semibold text-gray-900 leading-tight pr-2 line-clamp-2">
             {task.title}
           </h4>
           {task.status !== "done" && (
-            <div className="flex items-center gap-2 -mt-1">
+            <div className="flex items-center gap-2 -mt-1 flex-shrink-0">
               {task.originalMessage && (
                 <MessageSquare className="w-3 h-3 text-purple-400 flex-shrink-0" />
               )}
@@ -84,12 +84,12 @@ export function Task({ task }: TaskProps) {
         </div>
 
         {task.description && (
-          <p className="text-xs text-gray-600 mb-4 leading-relaxed">
+          <p className="text-xs text-gray-600 mb-4 leading-relaxed line-clamp-2 flex-1">
             {task.description}
           </p>
         )}
 
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 mt-auto">
           <div className="flex items-center space-x-2">
             <Avatar className="w-6 h-6">
               <AvatarFallback className="text-xs bg-purple-100 text-purple-600">
@@ -100,18 +100,20 @@ export function Task({ task }: TaskProps) {
                   .slice(0, 2)}
               </AvatarFallback>
             </Avatar>
-            <span className="text-xs text-gray-600">{task.assigneeName}</span>
+            <span className="text-xs text-gray-600 truncate max-w-20">
+              {task.assigneeName}
+            </span>
           </div>
 
           {task.dueDate && (
-            <div className="flex items-center space-x-1 text-xs text-gray-500">
+            <div className="flex items-center space-x-1 text-xs text-gray-500 flex-shrink-0">
               <Clock className="w-3 h-3" />
               <span>{formatDate(task.dueDate)}</span>
             </div>
           )}
         </div>
 
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 mt-auto">
           {task.status === "done" ? (
             <Button
               variant="outline"
