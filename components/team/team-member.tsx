@@ -18,7 +18,6 @@ import {
   Calendar,
   MoreVertical,
   UserCheck,
-  MessageSquare,
   Edit,
 } from "lucide-react";
 import type { TeamMember as TeamMemberType } from "@/types/team";
@@ -109,10 +108,6 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
                   Edit Member
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem>
-                <MessageSquare className="mr-2 h-4 w-4" />
-                Send Message
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
