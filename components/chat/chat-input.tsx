@@ -32,8 +32,6 @@ interface ChatInputProps {
   onTaskModeChange: (isTaskMode: boolean) => void;
   taskAssigneeId: string | null;
   onTaskAssigneeChange: (assigneeId: string | null) => void;
-  taskDueDate: number | null;
-  onTaskDueDateChange: (dueDate: number | null) => void;
   teamMembers: Array<{ _id: string; name: string }>;
 }
 
@@ -55,8 +53,6 @@ export function ChatInput({
   onTaskModeChange,
   taskAssigneeId,
   onTaskAssigneeChange,
-  taskDueDate,
-  onTaskDueDateChange,
   teamMembers,
 }: ChatInputProps) {
   const getPlaceholder = () => {
@@ -66,15 +62,6 @@ export function ChatInput({
   };
 
   const isInputDisabled = selectedFile !== null;
-
-  const handleDueDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value) {
-      onTaskDueDateChange(new Date(value).getTime());
-    } else {
-      onTaskDueDateChange(null);
-    }
-  };
 
   return (
     <div className="bg-white border-t border-purple-200 p-4">
@@ -92,10 +79,10 @@ export function ChatInput({
 
       {/* Task Assignment Fields - Only show in group chat when task mode is on */}
       {isTaskMode && !selectedDirectContact && (
-        <div className="mb-3 space-y-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
+        <div className="mb-3 space-y-3 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
           {/* Assignee Selection */}
           <div className="flex items-center space-x-3">
-            <User className="w-4 h-4 text-orange-600" />
+            <User className="w-4 h-4 text-purple-600" />
             <span className="text-sm font-medium text-gray-700">
               Designar para:
             </span>
@@ -114,24 +101,6 @@ export function ChatInput({
                 ))}
               </SelectContent>
             </Select>
-          </div>
-
-          {/* Due Date Selection */}
-          <div className="flex items-center space-x-3">
-            <Calendar className="w-4 h-4 text-orange-600" />
-            <span className="text-sm font-medium text-gray-700">
-              Definir prazo:
-            </span>
-            <Input
-              type="datetime-local"
-              value={
-                taskDueDate
-                  ? new Date(taskDueDate).toISOString().slice(0, 16)
-                  : ""
-              }
-              onChange={handleDueDateChange}
-              className="w-48"
-            />
           </div>
         </div>
       )}
@@ -184,9 +153,20 @@ export function ChatInput({
             // Validação específica para tarefas em grupo
             (isTaskMode && !selectedDirectContact && !taskAssigneeId)
           }
-          className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl shadow-md disabled:opacity-50 disabled:bg-gray-400 flex-shrink-0"
+          className={`p-3 rounded-xl shadow-md flex-shrink-0 ${
+            isTaskMode
+              ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+              : "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+          } disabled:opacity-50 disabled:bg-gray-400`}
         >
-          <Send className="w-5 h-5" />
+          {isTaskMode ? (
+            <div className="flex items-center space-x-1">
+              <span className="text-xs">📋</span>
+              <Send className="w-4 h-4" />
+            </div>
+          ) : (
+            <Send className="w-5 h-5" />
+          )}
         </Button>
       </form>
 
@@ -195,7 +175,7 @@ export function ChatInput({
         <div className="bg-purple-50 border-t border-purple-200 px-4 py-3 mt-3">
           <div className="flex items-center justify-between p-3 bg-white/80 backdrop-blur-sm rounded-lg border border-purple-200 shadow-sm">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                 <Paperclip className="w-4 h-4 text-white" />
               </div>
               <div>

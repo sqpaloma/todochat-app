@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import {
   Dialog,
   DialogContent,
@@ -11,8 +12,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -26,17 +27,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon, MessageSquare } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-
-interface Message {
-  _id: string;
-  content: string;
-  authorId: string;
-  authorName: string;
-  timestamp: number;
-}
+import { CalendarIcon, Edit } from "lucide-react";
 
 interface TeamMember {
   _id: string;
@@ -44,21 +37,34 @@ interface TeamMember {
   email: string;
 }
 
-interface CreateTaskDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  message: Message | null;
-  teamMembers: TeamMember[];
+interface TaskType {
+  _id: Id<"tasks">;
+  title: string;
+  description: string;
+  status: "todo" | "in-progress" | "done";
+  assigneeId: string;
+  assigneeName: string;
+  createdBy: string;
+  createdAt: number;
+  dueDate?: number;
+  originalMessage?: string;
   teamId: string;
+  priority: "low" | "medium" | "high";
 }
 
-export function CreateTaskDialog({
+interface EditTaskDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  task: TaskType | null;
+  teamMembers: TeamMember[];
+}
+
+export function EditTaskDialog({
   open,
   onOpenChange,
-  message,
+  task,
   teamMembers,
-  teamId,
-}: CreateTaskDialogProps) {
+}: EditTaskDialogProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [assigneeId, setAssigneeId] = useState("");
@@ -66,94 +72,93 @@ export function CreateTaskDialog({
   const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
   const [isLoading, setIsLoading] = useState(false);
 
-  const createTask = useMutation(api.tasks.createTask);
+  const updateTask = useMutation(api.tasks.updateTask);
+
+  // Initialize form when task changes
+  useEffect(() => {
+    if (task) {
+      setTitle(task.title);
+      setDescription(task.description);
+      setAssigneeId(task.assigneeId);
+      setDueDate(task.dueDate ? new Date(task.dueDate) : undefined);
+      setPriority(task.priority);
+    }
+  }, [task]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !assigneeId || !dueDate) return;
+    if (!task || !title.trim() || !assigneeId || !dueDate) return;
 
     setIsLoading(true);
 
     try {
       const assignee = teamMembers.find((member) => member._id === assigneeId);
 
-      await createTask({
+      await updateTask({
+        taskId: task._id,
         title: title.trim(),
         description: description.trim(),
         assigneeId,
         assigneeName: assignee?.name || "",
         assigneeEmail: assignee?.email || "",
-        teamId,
-        createdBy: "user-1", // In real app, get from auth
         dueDate: dueDate?.getTime(),
-        originalMessage: message?.content,
         priority,
       });
 
-      // Reset form
-      setTitle("");
-      setDescription("");
-      setAssigneeId("");
-      setDueDate(undefined);
-      setPriority("medium");
       onOpenChange(false);
     } catch (error) {
-      console.error("Error creating task:", error);
+      console.error("Error updating task:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Auto-fill title from message when dialog opens
-  useEffect(() => {
-    if (message && open) {
-      setTitle(
-        message.content.slice(0, 50) +
-          (message.content.length > 50 ? "..." : "")
-      );
-    }
-  }, [message, open]);
+  const priorityColors = {
+    low: "text-green-600 bg-green-50",
+    medium: "text-yellow-600 bg-yellow-50",
+    high: "text-red-600 bg-red-50",
+  };
+
+  const priorityLabels = {
+    low: "Low",
+    medium: "Medium",
+    high: "High",
+  };
+
+  if (!task) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] border-purple-200">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
-            <MessageSquare className="w-5 h-5 text-blue-500" />
-            <span>Create Task</span>
+            <Edit className="w-5 h-5 text-purple-500" />
+            <span>Edit Task</span>
           </DialogTitle>
         </DialogHeader>
 
-        {message && (
-          <div className="bg-gray-50 p-3 rounded-lg mb-4">
-            <p className="text-sm text-gray-600 mb-1">Original message:</p>
-            <p className="text-sm italic">"{message.content}"</p>
-            <p className="text-xs text-gray-500 mt-1">
-              By {message.authorName}
-            </p>
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="title">Task Title</Label>
+            <Label htmlFor="title">Task Title *</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter the task title..."
+              placeholder="Ex: Review commercial proposal..."
               required
+              className="border-purple-200 focus:border-purple-500 focus:ring-purple-500"
             />
           </div>
 
           <div>
-            <Label htmlFor="description">Description (optional)</Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Add more details about the task..."
-              rows={3}
+              placeholder="Describe task details, objectives and acceptance criteria..."
+              rows={4}
+              className="border-purple-200 focus:border-purple-500 focus:ring-purple-500"
             />
           </div>
 
@@ -161,7 +166,7 @@ export function CreateTaskDialog({
             <div>
               <Label>Assignee *</Label>
               <Select value={assigneeId} onValueChange={setAssigneeId} required>
-                <SelectTrigger>
+                <SelectTrigger className="border-purple-200 focus:border-purple-500 focus:ring-purple-500">
                   <SelectValue placeholder="Select a team member" />
                 </SelectTrigger>
                 <SelectContent>
@@ -183,7 +188,7 @@ export function CreateTaskDialog({
                 }
                 required
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-purple-200 focus:border-purple-500 focus:ring-purple-500">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -201,7 +206,7 @@ export function CreateTaskDialog({
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full justify-start text-left font-normal bg-transparent"
+                  className="w-full justify-start text-left font-normal bg-transparent border-purple-200 focus:border-purple-500 focus:ring-purple-500"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {dueDate
@@ -232,8 +237,9 @@ export function CreateTaskDialog({
             <Button
               type="submit"
               disabled={isLoading || !title.trim() || !assigneeId || !dueDate}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
             >
-              {isLoading ? "Creating..." : "Create Task"}
+              {isLoading ? "Updating..." : "Update Task"}
             </Button>
           </div>
         </form>

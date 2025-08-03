@@ -19,8 +19,9 @@ interface MessagesListProps {
 export function MessagesList({
   messages,
   currentUser,
+  activeTab,
   selectedDirectContact,
-
+  directContacts,
   onCreateTask,
   messagesEndRef,
 }: MessagesListProps) {

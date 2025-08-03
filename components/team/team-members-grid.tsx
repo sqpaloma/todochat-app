@@ -18,7 +18,7 @@ export function TeamMembersGrid({
 }: TeamMembersGridProps) {
   if (members.length === 0) {
     return (
-      <Card className="col-span-full">
+      <Card className="col-span-full border-purple-200">
         <CardContent className="p-8 text-center">
           <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">

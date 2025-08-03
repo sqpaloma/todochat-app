@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import { AddMemberDialog } from "@/components/team/add-member-dialog";
 import { EditMemberDialog } from "@/components/team/edit-member-dialog";
 import { MemberDetailsDialog } from "@/components/team/member-details-dialog";
-import { TeamStats } from "@/components/team/team-stats";
+
 import { TeamFilters } from "@/components/team/team-filters";
 import { TeamMembersGrid } from "@/components/team/team-members-grid";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,7 @@ function TeamPageContent() {
   } = useTeamMembersWithPresence(selectedTeam);
 
   // Use the new filters hook
-  const { filters, filteredMembers, uniqueRoles, updateFilters, clearFilters } =
+  const { filters, filteredMembers, updateFilters, clearFilters } =
     useTeamFilters(teamMembers);
 
   // Memoized event handlers
@@ -86,7 +86,7 @@ function TeamPageContent() {
         </div>
         <Button
           onClick={handleAddMember}
-          className="bg-purple-600 hover:bg-purple-700"
+          className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
           aria-label="Add new team member"
         >
           <Plus className="w-4 h-4 mr-2" />
@@ -94,13 +94,9 @@ function TeamPageContent() {
         </Button>
       </header>
 
-      {/* Statistics Cards */}
-      <TeamStats stats={stats} />
-
       {/* Search and Filters */}
       <TeamFilters
         filters={filters}
-        uniqueRoles={uniqueRoles}
         onFiltersChange={updateFilters}
         onClearFilters={clearFilters}
       />

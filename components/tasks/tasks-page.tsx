@@ -19,7 +19,7 @@ import { TaskCalendar } from "./task-calendar";
 import { CreateManualTaskDialog } from "./create-manual-task-dialog";
 import { Task } from "./task";
 import { Button } from "@/components/ui/button";
-import { Plus, Calendar, Menu } from "lucide-react";
+import { Plus, Calendar } from "lucide-react";
 import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
 
 interface TaskType {
@@ -116,21 +116,14 @@ export function TasksPage() {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="h-screen bg-gradient-to-br from-purple-50 to-white flex flex-col overflow-hidden">
         {/* Header Section */}
-        <div className="bg-white border-b border-gray-200 shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="bg-white/80 backdrop-blur-sm border-b border-purple-100 flex-shrink-0">
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-4">
             <div className="flex items-center justify-between">
-              {/* Left side - Title and Menu */}
+              {/* Left side - Title */}
               <div className="flex items-center gap-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="lg:hidden p-2 rounded-full hover:bg-gray-100"
-                >
-                  <Menu className="w-5 h-5" />
-                </Button>
-                <div>
+                <div className="ml-12">
                   <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                     Task Board
                   </h1>
@@ -141,22 +134,31 @@ export function TasksPage() {
               </div>
 
               {/* Right side - Action Buttons */}
-              <div className="flex items-center gap-3">
-                <Button
-                  onClick={() => setShowCalendar(!showCalendar)}
-                  variant="outline"
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl border-gray-300 hover:bg-gray-50"
-                >
-                  <Calendar className="w-4 h-4" />
-                  {showCalendar ? "Hide" : "Show"} Calendar
-                </Button>
-
+              <div className="flex flex-col lg:flex-row gap-3">
                 <Button
                   onClick={() => setShowManualTaskDialog(true)}
                   className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  New Task
+                  Task
+                </Button>
+
+                {/* Calendar Toggle - Mobile and Medium */}
+                <Button
+                  onClick={() => setShowCalendar(!showCalendar)}
+                  className="lg:hidden bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 min-w-[120px]"
+                >
+                  <Calendar className="w-4 h-4 mr-2" />
+                  {showCalendar ? "Hide" : "Show"}
+                </Button>
+
+                {/* Calendar Toggle - Desktop */}
+                <Button
+                  onClick={() => setShowCalendar(!showCalendar)}
+                  className="hidden lg:flex bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  <Calendar className="w-4 h-4 mr-2" />
+                  {showCalendar ? "Hide Calendar" : "Show Calendar"}
                 </Button>
               </div>
             </div>
@@ -164,11 +166,21 @@ export function TasksPage() {
         </div>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-1 overflow-hidden">
+          {/* Calendar - Appears below header on all screen sizes */}
+          {showCalendar && (
+            <div className="mb-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                <TaskCalendar tasks={tasks || []} />
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 h-full">
             {/* Task Board */}
-            <div className="flex-1">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="flex-1 h-full">
+              {/* Mobile: Vertical scroll with proper height */}
+              <div className="md:hidden space-y-4 overflow-y-auto h-full pr-6">
                 {statusConfig.map((config) => (
                   <TaskColumn
                     key={config.status}
@@ -176,27 +188,42 @@ export function TasksPage() {
                     count={config.count}
                     tasks={tasksByStatus[config.status]}
                     status={config.status}
+                    teamMembers={teamMembers || []}
+                  />
+                ))}
+              </div>
+
+              {/* Medium screens: 2-column grid layout */}
+              <div className="hidden md:grid md:grid-cols-2 lg:hidden gap-4 md:gap-6 h-full">
+                {statusConfig.map((config) => (
+                  <TaskColumn
+                    key={config.status}
+                    title={config.title}
+                    count={config.count}
+                    tasks={tasksByStatus[config.status]}
+                    status={config.status}
+                    teamMembers={teamMembers || []}
+                  />
+                ))}
+              </div>
+
+              {/* Desktop: 3-column grid layout */}
+              <div className="hidden lg:grid grid-cols-3 gap-6 h-full">
+                {statusConfig.map((config) => (
+                  <TaskColumn
+                    key={config.status}
+                    title={config.title}
+                    count={config.count}
+                    tasks={tasksByStatus[config.status]}
+                    status={config.status}
+                    teamMembers={teamMembers || []}
                   />
                 ))}
               </div>
             </div>
 
-            {/* Calendar Sidebar - Desktop */}
-            <div className="hidden lg:block lg:w-80">
-              <div className="sticky top-6">
-                <TaskCalendar tasks={tasks || []} />
-              </div>
-            </div>
+            {/* Calendar Sidebar - Removed, now using toggle on all screen sizes */}
           </div>
-
-          {/* Calendar Mobile Toggle */}
-          {showCalendar && (
-            <div className="lg:hidden mt-6">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                <TaskCalendar tasks={tasks || []} />
-              </div>
-            </div>
-          )}
         </div>
 
         <CreateManualTaskDialog

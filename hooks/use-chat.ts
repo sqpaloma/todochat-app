@@ -22,7 +22,6 @@ export function useChat() {
     // Estado para tarefas
     isTaskMode: false,
     taskAssigneeId: null,
-    taskDueDate: null,
   });
 
   // Refs
@@ -111,7 +110,7 @@ export function useChat() {
       updateState({
         isTaskMode,
         // Reset task fields when turning off task mode
-        ...(isTaskMode ? {} : { taskAssigneeId: null, taskDueDate: null }),
+        ...(isTaskMode ? {} : { taskAssigneeId: null }),
       });
     },
     [updateState]
@@ -120,13 +119,6 @@ export function useChat() {
   const setTaskAssigneeId = useCallback(
     (assigneeId: string | null) => {
       updateState({ taskAssigneeId: assigneeId });
-    },
-    [updateState]
-  );
-
-  const setTaskDueDate = useCallback(
-    (dueDate: number | null) => {
-      updateState({ taskDueDate: dueDate });
     },
     [updateState]
   );
@@ -203,7 +195,6 @@ export function useChat() {
                       teamMembers?.find((m) => m._id === state.taskAssigneeId)
                         ?.name || "",
                   }),
-              ...(state.taskDueDate && { taskDueDate: state.taskDueDate }),
             }
           : {};
 
@@ -222,7 +213,6 @@ export function useChat() {
           newMessage: "",
           isTaskMode: false,
           taskAssigneeId: null,
-          taskDueDate: null,
         });
       } catch (error) {
         console.error("Error sending message:", error);
@@ -352,7 +342,6 @@ export function useChat() {
     setShowTaskDialog,
     setIsTaskMode,
     setTaskAssigneeId,
-    setTaskDueDate,
     setSelectedMessage,
 
     // Handlers

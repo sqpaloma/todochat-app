@@ -15,24 +15,19 @@ import type { TeamFilters } from "@/types/team";
 
 interface TeamFiltersProps {
   filters: TeamFilters;
-  uniqueRoles: string[];
   onFiltersChange: (updates: Partial<TeamFilters>) => void;
   onClearFilters: () => void;
 }
 
 export function TeamFilters({
   filters,
-  uniqueRoles,
   onFiltersChange,
   onClearFilters,
 }: TeamFiltersProps) {
-  const hasActiveFilters =
-    filters.searchTerm ||
-    filters.statusFilter !== "all" ||
-    filters.roleFilter !== "all";
+  const hasActiveFilters = filters.searchTerm;
 
   return (
-    <Card>
+    <Card className="border-purple-200">
       <CardContent className="p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
@@ -45,46 +40,13 @@ export function TeamFilters({
                 onChange={(e) =>
                   onFiltersChange({ searchTerm: e.target.value })
                 }
-                className="pl-10"
+                className="pl-10 border-purple-200 focus:border-purple-500 focus:ring-purple-500"
                 aria-label="Search team members"
               />
             </div>
           </div>
 
           <div className="flex gap-2">
-            <Select
-              value={filters.statusFilter}
-              onValueChange={(value) =>
-                onFiltersChange({ statusFilter: value })
-              }
-            >
-              <SelectTrigger className="w-32" aria-label="Filter by status">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="online">Online</SelectItem>
-                <SelectItem value="offline">Offline</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={filters.roleFilter}
-              onValueChange={(value) => onFiltersChange({ roleFilter: value })}
-            >
-              <SelectTrigger className="w-32" aria-label="Filter by role">
-                <SelectValue placeholder="Role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                {uniqueRoles.map((role: string) => (
-                  <SelectItem key={role} value={role}>
-                    {role}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
             {hasActiveFilters && (
               <Button
                 variant="outline"

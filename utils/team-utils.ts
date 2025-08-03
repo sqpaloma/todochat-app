@@ -42,60 +42,37 @@ export function getInitials(name: string): string {
  */
 export function calculateTeamStats(members: TeamMember[]) {
   const total = members.length;
-  const online = members.filter((m) => m.status === "online").length;
-  const offline = total - online;
 
   return {
     total,
-    online,
-    offline,
-    onlinePercentage: total > 0 ? Math.round((online / total) * 100) : 0,
+    online: 0,
+    offline: total,
+    onlinePercentage: 0,
   };
 }
 
 /**
- * Filter members based on search term and filters
+ * Filter members based on search term
  */
 export function filterMembers(
   members: TeamMember[],
-  searchTerm: string,
-  statusFilter: string,
-  roleFilter: string
+  searchTerm: string
 ): TeamMember[] {
   return members.filter((member) => {
     const matchesSearch =
       member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.email.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus =
-      statusFilter === "all" || member.status === statusFilter;
-
-    const matchesRole = roleFilter === "all" || member.role === roleFilter;
-
-    return matchesSearch && matchesStatus && matchesRole;
+    return matchesSearch;
   });
 }
 
 /**
- * Get unique roles from team members
- */
-export function getUniqueRoles(members: TeamMember[]): string[] {
-  const roles = members
-    .map((member) => member.role)
-    .filter((role): role is string => Boolean(role));
-  return Array.from(new Set(roles));
-}
-
-/**
- * Sort members by status (online first) and then by name
+ * Sort members by name
  */
 export function sortMembers(members: TeamMember[]): TeamMember[] {
   return [...members].sort((a, b) => {
-    // Sort by status first (online before offline)
-    if (a.status !== b.status) {
-      return a.status === "online" ? -1 : 1;
-    }
-    // Then sort by name
+    // Sort by name
     return a.name.localeCompare(b.name);
   });
 }

@@ -25,6 +25,9 @@ export interface MessageType {
   taskAssigneeName?: string;
   taskDueDate?: number;
   taskCreatedBy?: string;
+  taskRespondedBy?: string;
+  taskRespondedByName?: string;
+  taskRespondedAt?: number;
 }
 
 export interface ChatState {
@@ -40,7 +43,6 @@ export interface ChatState {
   // Estado para tarefas
   isTaskMode: boolean;
   taskAssigneeId: string | null;
-  taskDueDate: number | null;
 }
 
 export interface TabConfig {
