@@ -87,7 +87,7 @@ export function EditTaskDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!task || !title.trim() || !assigneeId) return;
+    if (!task || !title.trim() || !assigneeId || !dueDate) return;
 
     setIsLoading(true);
 
@@ -178,12 +178,13 @@ export function EditTaskDialog({
             </div>
 
             <div>
-              <Label>Priority</Label>
+              <Label>Priority *</Label>
               <Select
                 value={priority}
                 onValueChange={(value: "low" | "medium" | "high") =>
                   setPriority(value)
                 }
+                required
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -198,7 +199,7 @@ export function EditTaskDialog({
           </div>
 
           <div>
-            <Label>Due Date</Label>
+            <Label>Due Date *</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -217,6 +218,7 @@ export function EditTaskDialog({
                   selected={dueDate}
                   onSelect={setDueDate}
                   initialFocus
+                  disabled={(date) => date < new Date()}
                 />
               </PopoverContent>
             </Popover>
@@ -232,7 +234,7 @@ export function EditTaskDialog({
             </Button>
             <Button
               type="submit"
-              disabled={isLoading || !title.trim() || !assigneeId}
+              disabled={isLoading || !title.trim() || !assigneeId || !dueDate}
               className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
             >
               {isLoading ? "Updating..." : "Update Task"}

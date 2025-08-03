@@ -62,7 +62,7 @@ export function CreateManualTaskDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !assigneeId) return;
+    if (!title.trim() || !assigneeId || !dueDate) return;
 
     setIsLoading(true);
 
@@ -158,12 +158,13 @@ export function CreateManualTaskDialog({
             </div>
 
             <div>
-              <Label>Priority</Label>
+              <Label>Priority *</Label>
               <Select
                 value={priority}
                 onValueChange={(value: "low" | "medium" | "high") =>
                   setPriority(value)
                 }
+                required
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -196,7 +197,7 @@ export function CreateManualTaskDialog({
           </div>
 
           <div>
-            <Label>Due Date</Label>
+            <Label>Due Date *</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -231,7 +232,7 @@ export function CreateManualTaskDialog({
             </Button>
             <Button
               type="submit"
-              disabled={isLoading || !title.trim() || !assigneeId}
+              disabled={isLoading || !title.trim() || !assigneeId || !dueDate}
             >
               {isLoading ? "Creating..." : "Create Task"}
             </Button>

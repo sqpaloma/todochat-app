@@ -1,8 +1,6 @@
 "use client";
 
-import type React from "react";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import {
@@ -65,13 +63,14 @@ export function CreateTaskDialog({
   const [description, setDescription] = useState("");
   const [assigneeId, setAssigneeId] = useState("");
   const [dueDate, setDueDate] = useState<Date>();
+  const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
   const [isLoading, setIsLoading] = useState(false);
 
   const createTask = useMutation(api.tasks.createTask);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !assigneeId) return;
+    if (!title.trim() || !assigneeId || !dueDate) return;
 
     setIsLoading(true);
 
@@ -88,6 +87,7 @@ export function CreateTaskDialog({
         createdBy: "user-1", // In real app, get from auth
         dueDate: dueDate?.getTime(),
         originalMessage: message?.content,
+        priority,
       });
 
       // Reset form
@@ -95,6 +95,7 @@ export function CreateTaskDialog({
       setDescription("");
       setAssigneeId("");
       setDueDate(undefined);
+      setPriority("medium");
       onOpenChange(false);
     } catch (error) {
       console.error("Error creating task:", error);
@@ -104,14 +105,14 @@ export function CreateTaskDialog({
   };
 
   // Auto-fill title from message when dialog opens
-  useState(() => {
+  useEffect(() => {
     if (message && open) {
       setTitle(
         message.content.slice(0, 50) +
           (message.content.length > 50 ? "..." : "")
       );
     }
-  });
+  }, [message, open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -156,24 +157,46 @@ export function CreateTaskDialog({
             />
           </div>
 
-          <div>
-            <Label>Assignee</Label>
-            <Select value={assigneeId} onValueChange={setAssigneeId} required>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a team member" />
-              </SelectTrigger>
-              <SelectContent>
-                {teamMembers.map((member) => (
-                  <SelectItem key={member._id} value={member._id}>
-                    {member.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Assignee *</Label>
+              <Select value={assigneeId} onValueChange={setAssigneeId} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a team member" />
+                </SelectTrigger>
+                <SelectContent>
+                  {teamMembers.map((member) => (
+                    <SelectItem key={member._id} value={member._id}>
+                      {member.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label>Priority *</Label>
+              <Select
+                value={priority}
+                onValueChange={(value: "low" | "medium" | "high") =>
+                  setPriority(value)
+                }
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div>
-            <Label>Due Date (optional)</Label>
+            <Label>Due Date *</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -192,6 +215,7 @@ export function CreateTaskDialog({
                   selected={dueDate}
                   onSelect={setDueDate}
                   initialFocus
+                  disabled={(date) => date < new Date()}
                 />
               </PopoverContent>
             </Popover>
@@ -207,7 +231,7 @@ export function CreateTaskDialog({
             </Button>
             <Button
               type="submit"
-              disabled={isLoading || !title.trim() || !assigneeId}
+              disabled={isLoading || !title.trim() || !assigneeId || !dueDate}
             >
               {isLoading ? "Creating..." : "Create Task"}
             </Button>
