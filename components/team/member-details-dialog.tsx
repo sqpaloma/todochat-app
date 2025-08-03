@@ -19,8 +19,6 @@ import {
   Calendar,
   User,
   Shield,
-  Clock,
-  MessageSquare,
   Edit,
 } from "lucide-react";
 
@@ -114,11 +112,8 @@ export function MemberDetailsDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span>Member Details</span>
-            <Badge variant="outline" className="text-xs">
-              ID: {member._id}
-            </Badge>
+          <DialogTitle className="text-2xl font-bold text-gray-900">
+            Member Details
           </DialogTitle>
         </DialogHeader>
 
@@ -127,7 +122,7 @@ export function MemberDetailsDialog({
           <div className="flex items-start space-x-4">
             <div className="relative">
               <Avatar className="w-20 h-20">
-                <AvatarFallback className="bg-gradient-to-br from-purple-400 to-pink-500 text-white font-bold text-xl">
+                <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold text-xl">
                   {member.name
                     .split(" ")
                     .map((n) => n[0])
@@ -151,7 +146,11 @@ export function MemberDetailsDialog({
               <div className="flex items-center space-x-3">
                 <Badge
                   variant={member.status === "online" ? "default" : "secondary"}
-                  className="flex items-center space-x-1"
+                  className={`flex items-center space-x-1 ${
+                    member.status === "online"
+                      ? "bg-green-100 text-green-800 hover:bg-green-200"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
                 >
                   <div
                     className={`w-2 h-2 rounded-full ${getStatusColor(member.status)}`}
@@ -162,7 +161,7 @@ export function MemberDetailsDialog({
                 {member.role && (
                   <Badge
                     variant="outline"
-                    className="flex items-center space-x-1"
+                    className="flex items-center space-x-1 border-purple-200 text-purple-700"
                   >
                     {getRoleIcon(member.role)}
                     <span className="capitalize">{member.role}</span>
@@ -174,10 +173,10 @@ export function MemberDetailsDialog({
 
           {/* Informações detalhadas */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card>
+            <Card className="border-0 shadow-sm bg-gradient-to-br from-purple-50 to-pink-50">
               <CardContent className="p-4">
                 <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
-                  <User className="w-4 h-4 mr-2 text-blue-500" />
+                  <User className="w-4 h-4 mr-2 text-purple-500" />
                   Personal Information
                 </h3>
                 <div className="space-y-3 text-sm">
@@ -198,7 +197,7 @@ export function MemberDetailsDialog({
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-0 shadow-sm bg-gradient-to-br from-purple-50 to-pink-50">
               <CardContent className="p-4">
                 <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
                   <Shield className="w-4 h-4 mr-2 text-purple-500" />
@@ -238,51 +237,14 @@ export function MemberDetailsDialog({
             </Card>
           </div>
 
-          {/* Estatísticas rápidas */}
-          <Card className="bg-gradient-to-r from-blue-50 to-purple-50">
-            <CardContent className="p-4">
-              <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
-                <Clock className="w-4 h-4 mr-2 text-orange-500" />
-                Quick Statistics
-              </h3>
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-lg font-bold text-blue-600">
-                    {daysSinceJoined}
-                  </div>
-                  <div className="text-xs text-gray-600">Days in team</div>
-                </div>
-                <div>
-                  <div className="text-lg font-bold text-green-600">
-                    {member.status === "online" ? "Active" : "Inactive"}
-                  </div>
-                  <div className="text-xs text-gray-600">Current status</div>
-                </div>
-                <div>
-                  <div className="text-lg font-bold text-purple-600">
-                    {member.role?.charAt(0).toUpperCase() || "N/A"}
-                  </div>
-                  <div className="text-xs text-gray-600">Access level</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Botões de ação */}
-          <div className="flex justify-between pt-4 border-t">
+          <div className="flex justify-end pt-4 border-t border-gray-100">
             <div className="flex space-x-2">
               <Button
                 variant="outline"
-                size="sm"
-                className="flex items-center space-x-2"
+                onClick={() => onOpenChange(false)}
+                className="border-gray-200 text-gray-600 hover:bg-gray-50"
               >
-                <MessageSquare className="w-4 h-4" />
-                <span>Message</span>
-              </Button>
-            </div>
-
-            <div className="flex space-x-2">
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
                 Close
               </Button>
               {onEdit && (
@@ -291,7 +253,7 @@ export function MemberDetailsDialog({
                     onEdit(member);
                     onOpenChange(false);
                   }}
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-semibold"
                 >
                   <Edit className="w-4 h-4 mr-2" />
                   Edit
