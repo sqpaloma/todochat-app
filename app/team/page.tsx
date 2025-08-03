@@ -86,7 +86,7 @@ function TeamPageContent() {
         </div>
         <Button
           onClick={handleAddMember}
-          className="bg-purple-600 hover:bg-purple-700"
+          className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
           aria-label="Add new team member"
         >
           <Plus className="w-4 h-4 mr-2" />

@@ -129,7 +129,7 @@ export function EditTaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] border-purple-200">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Edit className="w-5 h-5 text-purple-500" />
@@ -146,6 +146,7 @@ export function EditTaskDialog({
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ex: Review commercial proposal..."
               required
+              className="border-purple-200 focus:border-purple-500 focus:ring-purple-500"
             />
           </div>
 
@@ -157,6 +158,7 @@ export function EditTaskDialog({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe task details, objectives and acceptance criteria..."
               rows={4}
+              className="border-purple-200 focus:border-purple-500 focus:ring-purple-500"
             />
           </div>
 
@@ -164,7 +166,7 @@ export function EditTaskDialog({
             <div>
               <Label>Assignee *</Label>
               <Select value={assigneeId} onValueChange={setAssigneeId} required>
-                <SelectTrigger>
+                <SelectTrigger className="border-purple-200 focus:border-purple-500 focus:ring-purple-500">
                   <SelectValue placeholder="Select a team member" />
                 </SelectTrigger>
                 <SelectContent>
@@ -186,7 +188,7 @@ export function EditTaskDialog({
                 }
                 required
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-purple-200 focus:border-purple-500 focus:ring-purple-500">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -204,7 +206,7 @@ export function EditTaskDialog({
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full justify-start text-left font-normal bg-transparent"
+                  className="w-full justify-start text-left font-normal bg-transparent border-purple-200 focus:border-purple-500 focus:ring-purple-500"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {dueDate

@@ -153,38 +153,11 @@ export function AcceptTaskDialog({
   };
 
   const dueDateOptions = [
-    {
-      value: "today",
-      label: "Hoje",
-      description: formatDueDate(getDueDateFromOption("today")),
-    },
-    {
-      value: "tomorrow",
-      label: "Amanhã",
-      description: formatDueDate(getDueDateFromOption("tomorrow")),
-    },
-    {
-      value: "1week",
-      label: "1 Semana",
-      description: formatDueDate(getDueDateFromOption("1week")),
-    },
-    {
-      value: "2weeks",
-      label: "2 Semanas",
-      description: formatDueDate(getDueDateFromOption("2weeks")),
-    },
-    {
-      value: "1month",
-      label: "1 Mês",
-      description: formatDueDate(getDueDateFromOption("1month")),
-    },
+    { value: "today", label: "Hoje" },
+    { value: "tomorrow", label: "Amanhã" },
+    { value: "2weeks", label: "2 Semanas" },
+    { value: "1month", label: "1 Mês" },
   ];
-
-  const priorityColors = {
-    low: "text-green-600 bg-green-50",
-    medium: "text-yellow-600 bg-yellow-50",
-    high: "text-red-600 bg-red-50",
-  };
 
   const priorityLabels = {
     low: "Baixa",
@@ -206,10 +179,12 @@ export function AcceptTaskDialog({
 
         <div className="space-y-6">
           {/* Task Content */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <p className="text-sm text-gray-600 mb-1">Tarefa:</p>
-            <p className="text-sm font-medium">"{message.content}"</p>
-            <p className="text-xs text-gray-500 mt-1">
+          <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
+            <p className="text-sm text-purple-700 mb-1">Tarefa:</p>
+            <p className="text-sm font-medium text-purple-900">
+              "{message.content}"
+            </p>
+            <p className="text-xs text-purple-600 mt-1">
               Por {message.authorName}
             </p>
           </div>
@@ -217,7 +192,7 @@ export function AcceptTaskDialog({
           {/* Due Date Selection */}
           <div className="space-y-3">
             <Label className="text-base font-medium">Data de Entrega *</Label>
-            <div className="grid gap-2">
+            <div className="flex flex-wrap gap-2">
               {dueDateOptions.map((option) => (
                 <Button
                   key={option.value}
@@ -225,27 +200,14 @@ export function AcceptTaskDialog({
                     dueDateOption === option.value ? "default" : "outline"
                   }
                   onClick={() => setDueDateOption(option.value)}
-                  className={`justify-start h-auto p-4 ${
+                  size="sm"
+                  className={`rounded-full px-4 py-2 text-sm font-medium ${
                     dueDateOption === option.value
-                      ? "bg-purple-500 text-white border-purple-500"
-                      : "bg-white border-gray-200 hover:bg-gray-50"
+                      ? "bg-purple-500 text-white border-purple-500 hover:bg-purple-600"
+                      : "bg-white border-purple-200 text-purple-600 hover:bg-purple-50 hover:border-purple-300"
                   }`}
                 >
-                  <div className="flex items-center space-x-3 w-full">
-                    <Clock className="w-4 h-4" />
-                    <div className="text-left">
-                      <div className="font-medium">{option.label}</div>
-                      <div
-                        className={`text-xs ${
-                          dueDateOption === option.value
-                            ? "text-purple-100"
-                            : "text-gray-500"
-                        }`}
-                      >
-                        {option.description}
-                      </div>
-                    </div>
-                  </div>
+                  {option.label}
                 </Button>
               ))}
             </div>
@@ -254,39 +216,44 @@ export function AcceptTaskDialog({
           {/* Priority Selection */}
           <div className="space-y-3">
             <Label className="text-base font-medium">Prioridade *</Label>
-            <Select
-              value={priority}
-              onValueChange={(value: "low" | "medium" | "high") =>
-                setPriority(value)
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="low">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${priorityColors.low}`}
-                  >
-                    🟢 {priorityLabels.low}
-                  </span>
-                </SelectItem>
-                <SelectItem value="medium">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${priorityColors.medium}`}
-                  >
-                    🟡 {priorityLabels.medium}
-                  </span>
-                </SelectItem>
-                <SelectItem value="high">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${priorityColors.high}`}
-                  >
-                    🔴 {priorityLabels.high}
-                  </span>
-                </SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant={priority === "low" ? "default" : "outline"}
+                onClick={() => setPriority("low")}
+                size="sm"
+                className={`rounded-full px-4 py-2 text-sm font-medium ${
+                  priority === "low"
+                    ? "bg-purple-500 text-white border-purple-500 hover:bg-purple-600"
+                    : "bg-white border-purple-200 text-purple-600 hover:bg-purple-50 hover:border-purple-300"
+                }`}
+              >
+                {priorityLabels.low}
+              </Button>
+              <Button
+                variant={priority === "medium" ? "default" : "outline"}
+                onClick={() => setPriority("medium")}
+                size="sm"
+                className={`rounded-full px-4 py-2 text-sm font-medium ${
+                  priority === "medium"
+                    ? "bg-purple-500 text-white border-purple-500 hover:bg-purple-600"
+                    : "bg-white border-purple-200 text-purple-600 hover:bg-purple-50 hover:border-purple-300"
+                }`}
+              >
+                {priorityLabels.medium}
+              </Button>
+              <Button
+                variant={priority === "high" ? "default" : "outline"}
+                onClick={() => setPriority("high")}
+                size="sm"
+                className={`rounded-full px-4 py-2 text-sm font-medium ${
+                  priority === "high"
+                    ? "bg-purple-500 text-white border-purple-500 hover:bg-purple-600"
+                    : "bg-white border-purple-200 text-purple-600 hover:bg-purple-50 hover:border-purple-300"
+                }`}
+              >
+                {priorityLabels.high}
+              </Button>
+            </div>
           </div>
 
           {/* Action Buttons */}

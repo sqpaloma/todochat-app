@@ -32,7 +32,7 @@ export function TeamFilters({
     filters.roleFilter !== "all";
 
   return (
-    <Card>
+    <Card className="border-purple-200">
       <CardContent className="p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
@@ -45,7 +45,7 @@ export function TeamFilters({
                 onChange={(e) =>
                   onFiltersChange({ searchTerm: e.target.value })
                 }
-                className="pl-10"
+                className="pl-10 border-purple-200 focus:border-purple-500 focus:ring-purple-500"
                 aria-label="Search team members"
               />
             </div>
@@ -58,7 +58,10 @@ export function TeamFilters({
                 onFiltersChange({ statusFilter: value })
               }
             >
-              <SelectTrigger className="w-32" aria-label="Filter by status">
+              <SelectTrigger
+                className="w-32 border-purple-200 focus:border-purple-500 focus:ring-purple-500"
+                aria-label="Filter by status"
+              >
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -72,7 +75,10 @@ export function TeamFilters({
               value={filters.roleFilter}
               onValueChange={(value) => onFiltersChange({ roleFilter: value })}
             >
-              <SelectTrigger className="w-32" aria-label="Filter by role">
+              <SelectTrigger
+                className="w-32 border-purple-200 focus:border-purple-500 focus:ring-purple-500"
+                aria-label="Filter by role"
+              >
                 <SelectValue placeholder="Role" />
               </SelectTrigger>
               <SelectContent>

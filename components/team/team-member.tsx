@@ -33,7 +33,7 @@ interface TeamMemberProps {
 export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
   return (
     <Card
-      className="group border-0 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105 bg-white rounded-2xl overflow-hidden"
+      className="group border-purple-200 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105 bg-white rounded-2xl overflow-hidden"
       role="article"
       aria-labelledby={`member-name-${member._id}`}
     >

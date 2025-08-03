@@ -50,7 +50,7 @@ export function TeamStats({ stats }: TeamStatsProps) {
         return (
           <Card
             key={card.label}
-            className="transition-all duration-200 hover:shadow-md"
+            className="transition-all duration-200 hover:shadow-md border-purple-200"
           >
             <CardContent className="p-4 flex items-center space-x-3">
               <div

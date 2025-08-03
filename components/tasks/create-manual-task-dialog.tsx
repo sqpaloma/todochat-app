@@ -95,12 +95,6 @@ export function CreateManualTaskDialog({
     }
   };
 
-  const priorityColors = {
-    low: "text-green-600 bg-green-50",
-    medium: "text-yellow-600 bg-yellow-50",
-    high: "text-red-600 bg-red-50",
-  };
-
   const priorityLabels = {
     low: "Low",
     medium: "Medium",
@@ -109,10 +103,10 @@ export function CreateManualTaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] border-purple-200">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
-            <Plus className="w-5 h-5 text-blue-500" />
+            <Plus className="w-5 h-5 text-purple-500" />
             <span>New Task</span>
           </DialogTitle>
         </DialogHeader>
@@ -126,6 +120,7 @@ export function CreateManualTaskDialog({
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ex: Review commercial proposal..."
               required
+              className="border-purple-200 focus:border-purple-500 focus:ring-purple-500"
             />
           </div>
 
@@ -137,6 +132,7 @@ export function CreateManualTaskDialog({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe task details, objectives and acceptance criteria..."
               rows={4}
+              className="border-purple-200 focus:border-purple-500 focus:ring-purple-500"
             />
           </div>
 
@@ -144,7 +140,7 @@ export function CreateManualTaskDialog({
             <div>
               <Label>Assignee *</Label>
               <Select value={assigneeId} onValueChange={setAssigneeId} required>
-                <SelectTrigger>
+                <SelectTrigger className="border-purple-200 focus:border-purple-500 focus:ring-purple-500">
                   <SelectValue placeholder="Select person" />
                 </SelectTrigger>
                 <SelectContent>
@@ -166,31 +162,13 @@ export function CreateManualTaskDialog({
                 }
                 required
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-purple-200 focus:border-purple-500 focus:ring-purple-500">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="low">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${priorityColors.low}`}
-                    >
-                      🟢 Low
-                    </span>
-                  </SelectItem>
-                  <SelectItem value="medium">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${priorityColors.medium}`}
-                    >
-                      🟡 Medium
-                    </span>
-                  </SelectItem>
-                  <SelectItem value="high">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${priorityColors.high}`}
-                    >
-                      🔴 High
-                    </span>
-                  </SelectItem>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -202,7 +180,7 @@ export function CreateManualTaskDialog({
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full justify-start text-left font-normal bg-transparent"
+                  className="w-full justify-start text-left font-normal bg-transparent border-purple-200 focus:border-purple-500 focus:ring-purple-500"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {dueDate
@@ -233,6 +211,7 @@ export function CreateManualTaskDialog({
             <Button
               type="submit"
               disabled={isLoading || !title.trim() || !assigneeId || !dueDate}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
             >
               {isLoading ? "Creating..." : "Create Task"}
             </Button>
