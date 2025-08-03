@@ -10,6 +10,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useDraggable } from "@dnd-kit/core";
 import { useState } from "react";
 import { EditTaskDialog } from "./edit-task-dialog";
+import { useModalManager } from '@/hooks/use-modal-manager';
 
 interface TaskType {
   _id: Id<"tasks">;
@@ -38,7 +39,7 @@ interface TaskProps {
 }
 
 export function Task({ task, teamMembers }: TaskProps) {
-  const [showEditDialog, setShowEditDialog] = useState(false);
+  const { modals, openModal, closeModal } = useModalManager();
   const updateTaskStatus = useMutation(api.tasks.updateTaskStatus);
   const deleteTask = useMutation(api.tasks.deleteTask);
 
@@ -82,7 +83,7 @@ export function Task({ task, teamMembers }: TaskProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setShowEditDialog(true)}
+                  onClick={() => openModal('edit')}
                   className="p-1 h-auto text-purple-400 hover:text-purple-600 hover:bg-purple-50 rounded-full"
                 >
                   <Edit className="w-3 h-3" />
@@ -176,8 +177,8 @@ export function Task({ task, teamMembers }: TaskProps) {
       </Card>
 
       <EditTaskDialog
-        open={showEditDialog}
-        onOpenChange={setShowEditDialog}
+        open={modals.edit.isOpen}
+        onOpenChange={(open) => !open && closeModal('edit')}
         task={task}
         teamMembers={teamMembers}
       />

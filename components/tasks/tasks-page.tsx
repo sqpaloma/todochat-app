@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { gradientClasses } from '@/lib/gradient-classes';
+import { TaskCompletionShare } from '@/components/social/task-completion-share';
+import { useModalManager } from '@/hooks/use-modal-manager';
 import {
   DndContext,
   DragEndEvent,
@@ -39,9 +42,10 @@ interface TaskType {
 
 export function TasksPage() {
   const [selectedTeam] = useState("team-1");
-  const [showManualTaskDialog, setShowManualTaskDialog] = useState(false);
+  const { modals, openModal, closeModal } = useModalManager();
   const [showCalendar, setShowCalendar] = useState(false);
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
+  const [completedTask, setCompletedTask] = useState<{title: string, show: boolean}>({title: "", show: false});
 
   const tasks = useQuery(api.tasks.getTasks, { teamId: selectedTeam });
   const deleteTask = useMutation(api.tasks.deleteTask);
@@ -105,6 +109,11 @@ export function TasksPage() {
 
     try {
       await updateTaskStatus({ taskId: task._id, status: newStatus });
+      
+      // Trigger social share notification when task is completed
+      if (newStatus === "done" && task.status !== "done") {
+        setCompletedTask({ title: task.title, show: true });
+      }
     } catch (error) {
       console.error("Error updating task status:", error);
     }
@@ -136,8 +145,8 @@ export function TasksPage() {
               {/* Right side - Action Buttons */}
               <div className="flex flex-col lg:flex-row gap-3">
                 <Button
-                  onClick={() => setShowManualTaskDialog(true)}
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                  onClick={() => openModal('add')}
+                  className={`${gradientClasses.primaryButton} text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200`}
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Task
@@ -146,7 +155,7 @@ export function TasksPage() {
                 {/* Calendar Toggle - Mobile and Medium */}
                 <Button
                   onClick={() => setShowCalendar(!showCalendar)}
-                  className="lg:hidden bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 min-w-[120px]"
+                  className={`lg:hidden ${gradientClasses.primaryButton} text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 min-w-[120px]`}
                 >
                   <Calendar className="w-4 h-4 mr-2" />
                   {showCalendar ? "Hide" : "Show"}
@@ -155,7 +164,7 @@ export function TasksPage() {
                 {/* Calendar Toggle - Desktop */}
                 <Button
                   onClick={() => setShowCalendar(!showCalendar)}
-                  className="hidden lg:flex bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                  className={`hidden lg:flex ${gradientClasses.primaryButton} text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200`}
                 >
                   <Calendar className="w-4 h-4 mr-2" />
                   {showCalendar ? "Hide Calendar" : "Show Calendar"}
@@ -227,8 +236,8 @@ export function TasksPage() {
         </div>
 
         <CreateManualTaskDialog
-          open={showManualTaskDialog}
-          onOpenChange={setShowManualTaskDialog}
+          open={modals.add.isOpen}
+          onOpenChange={(open) => !open && closeModal('add')}
           teamMembers={teamMembers || []}
           teamId={selectedTeam}
         />
@@ -254,6 +263,13 @@ export function TasksPage() {
           </div>
         ) : null}
       </DragOverlay>
+
+      {/* Social Share for Task Completion */}
+      <TaskCompletionShare
+        taskTitle={completedTask.title}
+        isVisible={completedTask.show}
+        onClose={() => setCompletedTask({ title: "", show: false })}
+      />
     </DndContext>
   );
 }

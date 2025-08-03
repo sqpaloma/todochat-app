@@ -12,6 +12,8 @@ import { Users, Plus, Search, Filter } from "lucide-react";
 import { AddMemberDialog } from "./add-member-dialog";
 import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
 import { Input } from "@/components/ui/input";
+import { gradientClasses } from '@/lib/gradient-classes';
+import { useModalManager } from '@/hooks/use-modal-manager';
 
 interface TeamMemberType {
   _id: string;
@@ -23,7 +25,7 @@ interface TeamMemberType {
 
 export function TeamPageComponent() {
   const [selectedTeam] = useState("team-1");
-  const [showAddMemberDialog, setShowAddMemberDialog] = useState(false);
+  const { modals, openModal, closeModal } = useModalManager();
   const [searchTerm, setSearchTerm] = useState("");
 
   const { members: teamMembers, stats } =
@@ -51,8 +53,8 @@ export function TeamPageComponent() {
             </div>
 
             <Button
-              onClick={() => setShowAddMemberDialog(true)}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-semibold px-4 sm:px-6 py-2 sm:py-3 w-full sm:w-auto"
+              onClick={() => openModal('add')}
+              className={`${gradientClasses.primaryButton} text-white rounded-xl font-semibold px-4 sm:px-6 py-2 sm:py-3 w-full sm:w-auto`}
             >
               <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Add Member
@@ -104,7 +106,7 @@ export function TeamPageComponent() {
                       >
                         <div className="flex items-center space-x-4">
                           <div className="relative">
-                            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-semibold">
+                            <div className={`w-10 h-10 ${gradientClasses.primaryBr} rounded-full flex items-center justify-center text-white font-semibold`}>
                               {member.name
                                 .split(" ")
                                 .map((n) => n[0])
@@ -163,8 +165,8 @@ export function TeamPageComponent() {
       </div>
 
       <AddMemberDialog
-        open={showAddMemberDialog}
-        onOpenChange={setShowAddMemberDialog}
+        open={modals.add.isOpen}
+        onOpenChange={(open) => !open && closeModal('add')}
         teamId={selectedTeam}
       />
     </div>

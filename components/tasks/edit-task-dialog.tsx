@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { gradientClasses } from '@/lib/gradient-classes';
 import {
   Dialog,
   DialogContent,
@@ -237,7 +238,7 @@ export function EditTaskDialog({
             <Button
               type="submit"
               disabled={isLoading || !title.trim() || !assigneeId || !dueDate}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+              className={`${gradientClasses.primaryButton} text-white`}
             >
               {isLoading ? "Updating..." : "Update Task"}
             </Button>

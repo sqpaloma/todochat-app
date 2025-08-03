@@ -2,9 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import {
-  createContext,
-  useContext,
-  useState,
   ReactNode,
   useEffect,
 } from "react";
@@ -19,23 +16,18 @@ import {
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
 import { MobileMenuButton } from "@/components/mobile-menu-button";
+import { useAppContext } from "@/contexts/app-context";
 
-// Layout Context
-interface LayoutContextType {
-  sidebarOpen: boolean;
-  toggleSidebar: () => void;
-  closeSidebar: () => void;
-  openSidebar: () => void;
-}
-
-const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
-
+// Layout hook using AppContext
 export function useLayout() {
-  const context = useContext(LayoutContext);
-  if (!context) {
-    throw new Error("useLayout must be used within a LayoutProvider");
-  }
-  return context;
+  const { state, setSidebarOpen, toggleSidebar } = useAppContext();
+  
+  return {
+    sidebarOpen: state.sidebarOpen,
+    toggleSidebar,
+    closeSidebar: () => setSidebarOpen(false),
+    openSidebar: () => setSidebarOpen(true),
+  };
 }
 
 // Conditional Auth Header Component
@@ -87,7 +79,6 @@ function HomeLayoutContent({ children }: { children: ReactNode }) {
 // Sidebar Layout Component
 function SidebarLayoutContent({
   children,
-  activeView,
 }: {
   children: ReactNode;
   activeView?: "chat" | "tasks" | "team";
@@ -130,50 +121,24 @@ function SidebarLayoutContent({
   );
 }
 
-// Main Layout Provider Component
-function LayoutProvider({ children }: { children: ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+// Layout initialization component
+function LayoutInitializer({ children }: { children: ReactNode }) {
+  const { setSidebarOpen } = useAppContext();
 
   // Initialize sidebar state based on screen size
   useEffect(() => {
     const handleResize = () => {
       const isDesktop = window.innerWidth >= 1024;
-      if (isDesktop) {
-        setSidebarOpen(true); // Open sidebar on desktop
-      } else {
-        setSidebarOpen(false); // Ensure it's closed on mobile
-      }
+      setSidebarOpen(isDesktop);
     };
 
     handleResize(); // Set initial state
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array to avoid infinite loop
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
-  const closeSidebar = () => {
-    setSidebarOpen(false);
-  };
-
-  const openSidebar = () => {
-    setSidebarOpen(true);
-  };
-
-  return (
-    <LayoutContext.Provider
-      value={{
-        sidebarOpen,
-        toggleSidebar,
-        closeSidebar,
-        openSidebar,
-      }}
-    >
-      {children}
-    </LayoutContext.Provider>
-  );
+  return <>{children}</>;
 }
 
 // Layout Content Router
@@ -186,13 +151,6 @@ function LayoutContent({ children }: { children: ReactNode }) {
     pathname.startsWith(page)
   );
 
-  // Get active view for sidebar pages
-  const getActiveView = (): "chat" | "tasks" | "team" | undefined => {
-    if (pathname.startsWith("/chat")) return "chat";
-    if (pathname.startsWith("/tasks")) return "tasks";
-    if (pathname.startsWith("/team")) return "team";
-    return undefined;
-  };
 
   if (isHomePage) {
     return <HomeLayoutContent>{children}</HomeLayoutContent>;
@@ -200,7 +158,7 @@ function LayoutContent({ children }: { children: ReactNode }) {
 
   if (isSidebarPage) {
     return (
-      <SidebarLayoutContent activeView={getActiveView()}>
+      <SidebarLayoutContent>
         {children}
       </SidebarLayoutContent>
     );
@@ -217,8 +175,8 @@ function LayoutContent({ children }: { children: ReactNode }) {
 
 export function LayoutWrapper({ children }: { children: ReactNode }) {
   return (
-    <LayoutProvider>
+    <LayoutInitializer>
       <LayoutContent>{children}</LayoutContent>
-    </LayoutProvider>
+    </LayoutInitializer>
   );
 }

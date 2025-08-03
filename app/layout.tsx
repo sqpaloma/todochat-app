@@ -2,6 +2,7 @@ import type React from "react";
 import "./globals.css";
 import { ConvexClientProvider } from "./convex-provider";
 import { LayoutWrapper } from "./layout-wrapper";
+import { AppProvider } from "@/contexts/app-context";
 
 export const metadata = {
   title: "Chat Do ✨ - Transform conversations into incredible results",
@@ -30,7 +31,9 @@ export default function RootLayout({
       </head>
       <body className="font-jakarta">
         <ConvexClientProvider>
-          <LayoutWrapper>{children}</LayoutWrapper>
+          <AppProvider>
+            <LayoutWrapper>{children}</LayoutWrapper>
+          </AppProvider>
         </ConvexClientProvider>
       </body>
     </html>

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, Paperclip, Smile, Calendar, User } from "lucide-react";
 import { ChatTab } from "@/types/chat";
+import { gradientClasses } from '@/lib/gradient-classes';
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -155,8 +156,8 @@ export function ChatInput({
           }
           className={`p-3 rounded-xl shadow-md flex-shrink-0 ${
             isTaskMode
-              ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
-              : "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+              ? `${gradientClasses.primaryButton} text-white`
+              : `${gradientClasses.primaryButton} text-white`
           } disabled:opacity-50 disabled:bg-gray-400`}
         >
           {isTaskMode ? (
@@ -175,7 +176,7 @@ export function ChatInput({
         <div className="bg-purple-50 border-t border-purple-200 px-4 py-3 mt-3">
           <div className="flex items-center justify-between p-3 bg-white/80 backdrop-blur-sm rounded-lg border border-purple-200 shadow-sm">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+              <div className={`w-8 h-8 ${gradientClasses.primary} rounded-lg flex items-center justify-center`}>
                 <Paperclip className="w-4 h-4 text-white" />
               </div>
               <div>
@@ -201,7 +202,7 @@ export function ChatInput({
                 size="sm"
                 onClick={onFileUpload}
                 disabled={isUploading}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-3 py-1 text-xs"
+                className={`${gradientClasses.primaryButton} px-3 py-1 text-xs`}
               >
                 {isUploading ? "Uploading..." : "Send"}
               </Button>

@@ -4,6 +4,8 @@ import { useState, useCallback } from "react";
 import { AddMemberDialog } from "@/components/team/add-member-dialog";
 import { EditMemberDialog } from "@/components/team/edit-member-dialog";
 import { MemberDetailsDialog } from "@/components/team/member-details-dialog";
+import { gradientClasses } from '@/lib/gradient-classes';
+import { useModalManager } from '@/hooks/use-modal-manager';
 
 import { TeamFilters } from "@/components/team/team-filters";
 import { TeamMembersGrid } from "@/components/team/team-members-grid";
@@ -17,12 +19,7 @@ import type { TeamMember as TeamMemberType } from "@/types/team";
 
 function TeamPageContent() {
   const [selectedTeam] = useState("team-1");
-  const [showAddMemberDialog, setShowAddMemberDialog] = useState(false);
-  const [showEditMemberDialog, setShowEditMemberDialog] = useState(false);
-  const [showMemberDetailsDialog, setShowMemberDetailsDialog] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<TeamMemberType | null>(
-    null
-  );
+  const { modals, openModal, closeModal } = useModalManager<TeamMemberType>();
 
   // Use the new presence-enabled hook
   const {
@@ -37,32 +34,16 @@ function TeamPageContent() {
 
   // Memoized event handlers
   const handleEditMember = useCallback((member: TeamMemberType) => {
-    setSelectedMember(member);
-    setShowEditMemberDialog(true);
-  }, []);
+    openModal('edit', member);
+  }, [openModal]);
 
   const handleViewProfile = useCallback((member: TeamMemberType) => {
-    setSelectedMember(member);
-    setShowMemberDetailsDialog(true);
-  }, []);
+    openModal('details', member);
+  }, [openModal]);
 
   const handleAddMember = useCallback(() => {
-    setShowAddMemberDialog(true);
-  }, []);
-
-  const handleCloseAddDialog = useCallback(() => {
-    setShowAddMemberDialog(false);
-  }, []);
-
-  const handleCloseEditDialog = useCallback(() => {
-    setShowEditMemberDialog(false);
-    setSelectedMember(null);
-  }, []);
-
-  const handleCloseDetailsDialog = useCallback(() => {
-    setShowMemberDetailsDialog(false);
-    setSelectedMember(null);
-  }, []);
+    openModal('add');
+  }, [openModal]);
 
   if (isLoading) {
     return (
@@ -86,7 +67,7 @@ function TeamPageContent() {
         </div>
         <Button
           onClick={handleAddMember}
-          className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+          className={`${gradientClasses.primaryButton} text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200`}
           aria-label="Add new team member"
         >
           <Plus className="w-4 h-4 mr-2" />
@@ -110,22 +91,22 @@ function TeamPageContent() {
 
       {/* Dialogs */}
       <AddMemberDialog
-        open={showAddMemberDialog}
-        onOpenChange={handleCloseAddDialog}
+        open={modals.add.isOpen}
+        onOpenChange={(open) => !open && closeModal('add')}
         teamId={selectedTeam}
       />
 
       <EditMemberDialog
-        open={showEditMemberDialog}
-        onOpenChange={handleCloseEditDialog}
-        member={selectedMember}
+        open={modals.edit.isOpen}
+        onOpenChange={(open) => !open && closeModal('edit')}
+        member={modals.edit.data || null}
         teamId={selectedTeam}
       />
 
       <MemberDetailsDialog
-        open={showMemberDetailsDialog}
-        onOpenChange={handleCloseDetailsDialog}
-        member={selectedMember}
+        open={modals.details.isOpen}
+        onOpenChange={(open) => !open && closeModal('details')}
+        member={modals.details.data || null}
       />
     </div>
   );

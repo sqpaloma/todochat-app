@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -16,10 +16,19 @@ import {
   ChevronRight,
   MoreHorizontal,
 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { GradientIcon } from "@/components/ui/gradient-icon";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { UserAvatar } from "@/components/ui/user-avatar";
+import { NavigationItem } from "./sidebar/navigation-item";
+import { MemberActionsMenu } from "./sidebar/member-actions-menu";
+
+// Hooks otimizados
+import { useSidebarState } from "@/hooks/use-sidebar-state";
+import { useTeamPresenceOptimized } from "@/hooks/use-team-presence-optimized";
+import { useConvexQuery } from "@/hooks/use-convex-query";
+import { useSelectedTeam } from "@/contexts/app-context";
 
 import {
   SignedIn,
@@ -29,92 +38,48 @@ import {
   UserButton,
   SignOutButton,
 } from "@clerk/nextjs";
-import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
-import { useResponsiveSSR } from "@/hooks/use-responsive-ssr";
-import { NavigationItem } from "./sidebar/navigation-item";
-import { MemberActionsMenu } from "./sidebar/member-actions-menu";
 
-interface SidebarProps {
+interface SidebarOptimizedProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function SidebarOptimized({ isOpen, onClose }: SidebarOptimizedProps) {
   const pathname = usePathname();
-  const [activeTeam] = useState("My Team");
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [showTeamDropdown, setShowTeamDropdown] = useState(false);
-  const [activeMemberMenu, setActiveMemberMenu] = useState<string | null>(null);
+  const [selectedTeam] = useSelectedTeam();
+  
+  // Estado do sidebar otimizado
+  const { state, actions } = useSidebarState({ isOpen, onClose });
+  const { isCollapsed, showTeamDropdown, activeMemberMenu, isMobile } = state;
+  const { toggleCollapse, toggleTeamDropdown, toggleMemberMenu } = actions;
 
-  // Use responsive hook
-  const { isMobile } = useResponsiveSSR();
+  // Dados da equipe otimizados
+  const { members: teamMembers } = useTeamPresenceOptimized(selectedTeam);
+  
+  // Query de tarefas com hook otimizado
+  const { data: tasks, isLoading: tasksLoading } = useConvexQuery(
+    api.tasks.getTasks,
+    { teamId: selectedTeam }
+  );
 
-  // Use the new presence-enabled hook
-  const { members: teamMembers } = useTeamMembersWithPresence("team-1");
+  // Handlers memoizados
+  const handleMemberAction = useMemo(() => 
+    (action: string, memberName: string) => {
+      console.log(`${action} for ${memberName}`);
+      actions.closeMemberMenu();
+    }, [actions]
+  );
 
-  // Fetch real tasks count
-  const tasks = useQuery(api.tasks.getTasks, { teamId: "team-1" }) || [];
-  const taskCount = tasks.length;
-
-  // Fecha a sidebar no mobile apenas quando a rota mudar
-  useEffect(() => {
-    if (isMobile) {
-      onClose();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
-
-  // Prevent body scroll when sidebar is open on mobile
-  useEffect(() => {
-    if (isOpen && isMobile) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen, isMobile]);
-
-  // Close sidebar when window is resized to desktop
-  useEffect(() => {
-    if (!isMobile && !isOpen) {
-      // Auto-open sidebar on desktop if it was closed
-      // This is optional - you can remove this if you want sidebar to stay closed
-    }
-  }, [isMobile, isOpen]);
-
-  const toggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
-  const toggleTeamDropdown = () => {
-    setShowTeamDropdown(!showTeamDropdown);
-    setActiveMemberMenu(null); // Close any open member menu
-  };
-
-  const toggleMemberMenu = (memberId: string) => {
-    setActiveMemberMenu(activeMemberMenu === memberId ? null : memberId);
-  };
-
-  const handleMemberAction = (action: string, memberName: string) => {
-    console.log(`${action} for ${memberName}`);
-    setActiveMemberMenu(null);
-    // Here you can implement the actual actions
-  };
-
-  const navigationItems = [
+  // Itens de navegação memoizados
+  const navigationItems = useMemo(() => [
     {
       name: "Tasks",
       href: "/tasks",
       icon: CheckSquare,
       active: pathname === "/tasks",
       gradient: "from-blue-500 to-cyan-500",
-      badge: taskCount > 0 ? taskCount.toString() : undefined,
+      badge: tasks?.length > 0 ? tasks.length.toString() : undefined,
     },
     {
       name: "Chat",
@@ -138,11 +103,16 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       active: pathname === "/analytics",
       gradient: "from-purple-500 to-pink-500",
     },
-  ];
+  ], [pathname, tasks]);
+
+  // Render condicional para mobile sem hydration issues
+  if (!state.isMobile && typeof window === 'undefined') {
+    return null; // Skip SSR for mobile detection
+  }
 
   return (
     <>
-      {/* Backdrop for mobile */}
+      {/* Mobile Backdrop */}
       {isOpen && isMobile && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-[999] lg:hidden"
@@ -173,10 +143,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               </div>
             </Link>
           ) : (
-            <Link
-              href="/"
-              className="hidden lg:flex hover:opacity-80 transition-opacity"
-            >
+            <Link href="/" className="hidden lg:flex hover:opacity-80 transition-opacity">
               <GradientIcon icon={Sparkles} size="sm" />
             </Link>
           )}
@@ -210,6 +177,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           </div>
         </div>
 
+        {/* Team Section */}
         {!isCollapsed && (
           <div className="px-4 mb-4">
             <Button
@@ -220,16 +188,16 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               <div className="flex items-center space-x-3">
                 <GradientIcon icon={Users} size="sm" variant="secondary" />
                 <div className="text-left">
-                  <p className="text-sm font-semibold text-gray-900">
-                    {activeTeam}
-                  </p>
+                  <p className="text-sm font-semibold text-gray-900">My Team</p>
                   <p className="text-xs text-gray-500">
                     {teamMembers.length} members
                   </p>
                 </div>
               </div>
               <ChevronDown
-                className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${showTeamDropdown ? "rotate-180" : ""}`}
+                className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
+                  showTeamDropdown ? "rotate-180" : ""
+                }`}
               />
             </Button>
 
@@ -240,7 +208,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <div key={member._id} className="relative">
                     <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 group">
                       <div className="flex items-center space-x-3">
-                        <UserAvatar 
+                        <UserAvatar
                           name={member.name}
                           imageUrl={member.imageUrl}
                           size="md"
@@ -299,11 +267,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             {isCollapsed ? (
               <div className="flex flex-col space-y-2">
                 <SignInButton>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full text-xs"
-                  >
+                  <Button variant="outline" size="sm" className="w-full text-xs">
                     Sign In
                   </Button>
                 </SignInButton>

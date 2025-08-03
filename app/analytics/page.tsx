@@ -2,6 +2,7 @@
 
 import { EmailStats } from "@/components/email-analytics/email-stats";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { gradientClasses } from '@/lib/gradient-classes';
 
 export default function AnalyticsPage() {
   return (
@@ -51,7 +52,7 @@ export default function AnalyticsPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <button className="w-full p-3 text-left bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all">
+                <button className={`w-full p-3 text-left ${gradientClasses.primary} text-white rounded-lg hover:${gradientClasses.primaryHover} transition-all`}>
                   Send Team Announcement
                 </button>
                 <button className="w-full p-3 text-left bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all">

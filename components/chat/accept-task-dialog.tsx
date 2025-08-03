@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { gradientClasses } from '@/lib/gradient-classes';
 import {
   Dialog,
   DialogContent,
@@ -269,7 +270,7 @@ export function AcceptTaskDialog({
               type="button"
               onClick={handleAccept}
               disabled={isLoading || !dueDateOption}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+              className={`${gradientClasses.primaryButton} text-white`}
             >
               {isLoading ? "Aceitando..." : "Aceitar Tarefa"}
             </Button>

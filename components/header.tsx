@@ -9,6 +9,7 @@ import {
   Sparkles,
   Search,
 } from "lucide-react";
+import { gradientClasses } from '@/lib/gradient-classes';
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -39,7 +40,7 @@ export function Header({ activeView }: HeaderProps) {
     <header className="bg-white border-b border-gray-100 px-4 sm:px-6 py-4 relative">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+          <div className={`w-8 h-8 ${gradientClasses.primaryBr} rounded-xl flex items-center justify-center`}>
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           <h1 className="text-lg sm:text-xl font-bold gradient-text">
@@ -54,7 +55,7 @@ export function Header({ activeView }: HeaderProps) {
               variant={currentView === "home" ? "default" : "ghost"}
               className={`px-4 lg:px-6 py-2.5 rounded-2xl font-semibold transition-all duration-300 ${
                 currentView === "home"
-                  ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+                  ? `${gradientClasses.primary} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
                   : "text-gray-600 hover:text-purple-600 hover:bg-purple-50"
               }`}
             >

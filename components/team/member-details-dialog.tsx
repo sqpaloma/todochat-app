@@ -21,6 +21,7 @@ import {
   Shield,
   Edit,
 } from "lucide-react";
+import { gradientClasses } from '@/lib/gradient-classes';
 
 interface TeamMemberType {
   _id: string;
@@ -72,7 +73,7 @@ export function MemberDetailsDialog({
           <div className="flex items-start space-x-4">
             <div className="relative">
               <Avatar className="w-20 h-20">
-                <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold text-xl">
+                <AvatarFallback className={`${gradientClasses.primaryBr} text-white font-bold text-xl`}>
                   {member.name
                     .split(" ")
                     .map((n) => n[0])
@@ -159,7 +160,7 @@ export function MemberDetailsDialog({
                     onEdit(member);
                     onOpenChange(false);
                   }}
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-semibold"
+                  className={`${gradientClasses.primaryButton} text-white rounded-xl font-semibold`}
                 >
                   <Edit className="w-4 h-4 mr-2" />
                   Edit

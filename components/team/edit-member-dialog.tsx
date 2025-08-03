@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { gradientClasses } from '@/lib/gradient-classes';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -186,7 +187,7 @@ export function EditMemberDialog({
               <Button
                 type="submit"
                 disabled={isLoading || !name.trim() || !email.trim()}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-semibold"
+                className={`${gradientClasses.primaryButton} text-white rounded-xl font-semibold`}
               >
                 {isLoading ? "Saving..." : "Save Changes"}
               </Button>
