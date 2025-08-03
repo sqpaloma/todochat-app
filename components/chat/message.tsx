@@ -22,6 +22,7 @@ import { useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { MessageType } from "@/types/chat";
+import { AcceptTaskDialog } from "./accept-task-dialog";
 
 interface MessageProps {
   message: MessageType;
@@ -41,6 +42,7 @@ export function Message({
   const [showReactions, setShowReactions] = useState(false);
   const [showNudgeConfirm, setShowNudgeConfirm] = useState(false);
   const [isNudging, setIsNudging] = useState(false);
+  const [showAcceptDialog, setShowAcceptDialog] = useState(false);
 
   const addReaction = useMutation(api.messages.addReaction);
   const nudgeUser = useMutation(api.messages.nudgeUser);
@@ -169,6 +171,11 @@ export function Message({
   const handleTaskResponse = async (status: "accepted" | "rejected") => {
     if (!message._id) return;
 
+    if (status === "accepted") {
+      setShowAcceptDialog(true);
+      return;
+    }
+
     setIsResponding(true);
     try {
       await respondToTask({
@@ -256,18 +263,217 @@ export function Message({
   // Current user's message - Right aligned
   if (isCurrentUser) {
     return (
-      <div
-        className={`flex items-start justify-end space-x-3 ${isGrouped ? "mt-1" : "mt-4"}`}
-      >
-        <div className="flex items-end space-x-3 flex-1 justify-end">
-          {/* Timestamp outside bubble */}
-          <span className="text-xs text-muted-foreground flex-shrink-0 pb-2">
-            {formatTime(message.timestamp)}
-          </span>
+      <>
+        <div
+          className={`flex items-start justify-end space-x-3 ${isGrouped ? "mt-1" : "mt-4"}`}
+        >
+          <div className="flex items-end space-x-3 flex-1 justify-end">
+            {/* Timestamp outside bubble */}
+            <span className="text-xs text-muted-foreground flex-shrink-0 pb-2">
+              {formatTime(message.timestamp)}
+            </span>
 
+            <div className="max-w-[75%] group relative">
+              {/* Reaction bar for current user */}
+              <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <div className="flex items-center space-x-2 bg-background rounded-xl shadow-lg border border-border px-3 py-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowReactions(!showReactions)}
+                    className="p-2 h-auto hover:bg-muted rounded-lg"
+                  >
+                    <Smile className="w-4 h-4 text-muted-foreground" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onCreateTask}
+                    className="p-2 h-auto hover:bg-muted rounded-lg"
+                  >
+                    <Plus className="w-4 h-4 text-muted-foreground" />
+                  </Button>
+                </div>
+
+                {/* Quick reaction popup */}
+                {showReactions && (
+                  <div className="absolute top-full left-0 mt-2 bg-background rounded-xl shadow-lg border border-border px-3 py-2 flex space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleReaction("👍")}
+                      className="p-2 h-auto hover:bg-muted rounded-lg text-lg"
+                    >
+                      👍
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleReaction("❤️")}
+                      className="p-2 h-auto hover:bg-muted rounded-lg text-lg"
+                    >
+                      ❤️
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleReaction("😂")}
+                      className="p-2 h-auto hover:bg-muted rounded-lg text-lg"
+                    >
+                      😂
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleReaction("😮")}
+                      className="p-2 h-auto hover:bg-muted rounded-lg text-lg"
+                    >
+                      😮
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              <div className="relative">
+                {/* Tail for first message only */}
+                {!isGrouped && (
+                  <div
+                    className="absolute top-3 -right-2 w-0 h-0"
+                    style={{
+                      borderStyle: "solid",
+                      borderWidth: "8px 0 8px 12px",
+                      borderColor:
+                        "transparent transparent transparent hsl(var(--primary))",
+                    }}
+                  />
+                )}
+                <div
+                  className={`
+                  bg-primary text-primary-foreground 
+                  px-4 py-3 shadow-md relative
+                  ${
+                    isGrouped
+                      ? "rounded-2xl rounded-br-lg"
+                      : "rounded-2xl rounded-br-md"
+                  }
+                `}
+                >
+                  {/* Indicador do tipo de mensagem */}
+                  {!isGrouped &&
+                    message.messageType &&
+                    message.messageType !== "general" && (
+                      <div
+                        className={`flex items-center space-x-2 mb-2 text-xs ${typeConfig.bgColor} px-3 py-2 rounded-full w-fit`}
+                      >
+                        <TypeIcon className={`w-3 h-3 ${typeConfig.color}`} />
+                        <span className={typeConfig.color}>
+                          {typeConfig.label}
+                        </span>
+                        {message.messageType === "direct" &&
+                          message.recipientName && (
+                            <span className="text-muted-foreground">
+                              → {message.recipientName}
+                            </span>
+                          )}
+                      </div>
+                    )}
+
+                  {!hasFile && (
+                    <p className="text-sm leading-relaxed break-words">
+                      {message.content}
+                    </p>
+                  )}
+                  {hasFile && isImageFile && renderFileContent()}
+
+                  {/* Task Status - Minimalista e integrado */}
+                  {message.isTask && (
+                    <div className="flex items-center space-x-1 mt-3 pt-2 border-t border-primary/20">
+                      {message.taskStatus === "pending" && (
+                        <>
+                          <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                          <span className="text-xs opacity-80">Pendente</span>
+                        </>
+                      )}
+                      {message.taskStatus === "accepted" && (
+                        <>
+                          <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                          <span className="text-xs opacity-80">Aceita</span>
+                        </>
+                      )}
+                      {message.taskStatus === "rejected" && (
+                        <>
+                          <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                          <span className="text-xs opacity-80">Rejeitada</span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* File content outside bubble for non-images */}
+                {hasFile && !isImageFile && (
+                  <div className="mt-3">{renderFileContent()}</div>
+                )}
+
+                {/* Show reactions below message */}
+                {message.reactions && message.reactions.length > 0 && (
+                  <div className="flex items-center space-x-2 mt-2 justify-end">
+                    {message.reactions.map((reaction, index) => (
+                      <div
+                        key={`${message._id}-reaction-${index}`}
+                        className="bg-background/90 backdrop-blur-sm rounded-full px-3 py-2 text-xs flex items-center space-x-2 shadow-sm border border-border cursor-pointer hover:bg-background"
+                        onClick={() => handleReaction(reaction.emoji)}
+                      >
+                        <span className="text-base">{reaction.emoji}</span>
+                        <span className="text-primary font-semibold">
+                          {reaction.users.length}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <AcceptTaskDialog
+          open={showAcceptDialog}
+          onOpenChange={setShowAcceptDialog}
+          message={message}
+          currentUserId={currentUserId}
+          currentUserName={currentUserName}
+        />
+      </>
+    );
+  }
+
+  // Other user's message - Left aligned
+  return (
+    <>
+      <div
+        className={`flex items-start space-x-3 ${isGrouped ? "mt-1" : "mt-4"}`}
+      >
+        <div className="flex-shrink-0">
+          {!isGrouped ? (
+            <Avatar className="w-10 h-10">
+              <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold">
+                {message.authorName
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .slice(0, 2)}
+              </AvatarFallback>
+            </Avatar>
+          ) : (
+            <div className="w-10 h-10" />
+          )}
+        </div>
+
+        <div className="flex items-end space-x-3 flex-1">
           <div className="max-w-[75%] group relative">
-            {/* Reaction bar for current user */}
-            <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            {/* Reaction bar for other users */}
+            <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-full ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
               <div className="flex items-center space-x-2 bg-background rounded-xl shadow-lg border border-border px-3 py-2">
                 <Button
                   variant="ghost"
@@ -276,6 +482,18 @@ export function Message({
                   className="p-2 h-auto hover:bg-muted rounded-lg"
                 >
                   <Smile className="w-4 h-4 text-muted-foreground" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleNudge}
+                  className="p-2 h-auto hover:bg-muted rounded-lg"
+                  title="Nudge user"
+                  disabled={isNudging}
+                >
+                  <Zap
+                    className={`w-4 h-4 ${isNudging ? "text-muted-foreground" : "text-primary"}`}
+                  />
                 </Button>
                 <Button
                   variant="ghost"
@@ -289,7 +507,7 @@ export function Message({
 
               {/* Quick reaction popup */}
               {showReactions && (
-                <div className="absolute top-full left-0 mt-2 bg-background rounded-xl shadow-lg border border-border px-3 py-2 flex space-x-2">
+                <div className="absolute top-full right-0 mt-2 bg-background rounded-xl shadow-lg border border-border px-3 py-2 flex space-x-2">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -330,26 +548,31 @@ export function Message({
               {/* Tail for first message only */}
               {!isGrouped && (
                 <div
-                  className="absolute top-3 -right-2 w-0 h-0"
+                  className="absolute top-3 -left-2 w-0 h-0"
                   style={{
                     borderStyle: "solid",
-                    borderWidth: "8px 0 8px 12px",
-                    borderColor:
-                      "transparent transparent transparent hsl(var(--primary))",
+                    borderWidth: "8px 12px 8px 0",
+                    borderColor: "transparent white transparent transparent",
                   }}
                 />
               )}
               <div
                 className={`
-                  bg-primary text-primary-foreground 
-                  px-4 py-3 shadow-md relative
-                  ${
-                    isGrouped
-                      ? "rounded-2xl rounded-br-lg"
-                      : "rounded-2xl rounded-br-md"
-                  }
-                `}
+                bg-background border border-border 
+                px-4 py-3 shadow-md relative
+                ${
+                  isGrouped
+                    ? "rounded-2xl rounded-bl-lg"
+                    : "rounded-2xl rounded-bl-md"
+                }
+              `}
               >
+                {!isGrouped && (
+                  <p className="text-xs font-bold text-primary mb-2">
+                    {message.authorName}
+                  </p>
+                )}
+
                 {/* Indicador do tipo de mensagem */}
                 {!isGrouped &&
                   message.messageType &&
@@ -371,7 +594,7 @@ export function Message({
                   )}
 
                 {!hasFile && (
-                  <p className="text-sm leading-relaxed break-words">
+                  <p className="text-sm text-foreground leading-relaxed break-words">
                     {message.content}
                   </p>
                 )}
@@ -379,27 +602,53 @@ export function Message({
 
                 {/* Task Status - Minimalista e integrado */}
                 {message.isTask && (
-                  <div className="flex items-center space-x-1 mt-3 pt-2 border-t border-primary/20">
+                  <div className="flex items-center space-x-1 mt-3 pt-2 border-t border-border/20">
                     {message.taskStatus === "pending" && (
                       <>
                         <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-                        <span className="text-xs opacity-80">Pendente</span>
+                        <span className="text-xs text-gray-600">Pendente</span>
                       </>
                     )}
                     {message.taskStatus === "accepted" && (
                       <>
                         <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                        <span className="text-xs opacity-80">Aceita</span>
+                        <span className="text-xs text-gray-600">Aceita</span>
                       </>
                     )}
                     {message.taskStatus === "rejected" && (
                       <>
                         <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                        <span className="text-xs opacity-80">Rejeitada</span>
+                        <span className="text-xs text-gray-600">Rejeitada</span>
                       </>
                     )}
                   </div>
                 )}
+
+                {/* Task Response Buttons */}
+                {message.isTask &&
+                  message.taskStatus === "pending" &&
+                  message.taskAssigneeId === currentUserId && (
+                    <div className="flex space-x-2 mt-3">
+                      <Button
+                        size="sm"
+                        onClick={() => handleTaskResponse("accepted")}
+                        disabled={isResponding}
+                        className="bg-transparent border border-primary/20 hover:bg-primary/5 text-primary px-2 py-1 text-xs rounded-full"
+                      >
+                        <Check className="w-3 h-3 mr-1" />
+                        Aceitar
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => handleTaskResponse("rejected")}
+                        disabled={isResponding}
+                        className="bg-transparent border border-destructive/20 hover:bg-destructive/5 text-destructive px-2 py-1 text-xs rounded-full"
+                      >
+                        <X className="w-3 h-3 mr-1" />
+                        Recusar
+                      </Button>
+                    </div>
+                  )}
               </div>
 
               {/* File content outside bubble for non-images */}
@@ -409,11 +658,11 @@ export function Message({
 
               {/* Show reactions below message */}
               {message.reactions && message.reactions.length > 0 && (
-                <div className="flex items-center space-x-2 mt-2 justify-end">
+                <div className="flex items-center space-x-2 mt-2">
                   {message.reactions.map((reaction, index) => (
                     <div
                       key={`${message._id}-reaction-${index}`}
-                      className="bg-background/90 backdrop-blur-sm rounded-full px-3 py-2 text-xs flex items-center space-x-2 shadow-sm border border-border cursor-pointer hover:bg-background"
+                      className="bg-muted rounded-full px-3 py-2 text-xs flex items-center space-x-2 shadow-sm border border-border cursor-pointer hover:bg-muted/80"
                       onClick={() => handleReaction(reaction.emoji)}
                     >
                       <span className="text-base">{reaction.emoji}</span>
@@ -426,241 +675,21 @@ export function Message({
               )}
             </div>
           </div>
+
+          {/* Timestamp outside bubble */}
+          <span className="text-xs text-muted-foreground flex-shrink-0 pb-2">
+            {formatTime(message.timestamp)}
+          </span>
         </div>
       </div>
-    );
-  }
 
-  // Other user's message - Left aligned
-  return (
-    <div
-      className={`flex items-start space-x-3 ${isGrouped ? "mt-1" : "mt-4"}`}
-    >
-      <div className="flex-shrink-0">
-        {!isGrouped ? (
-          <Avatar className="w-10 h-10">
-            <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold">
-              {message.authorName
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-                .slice(0, 2)}
-            </AvatarFallback>
-          </Avatar>
-        ) : (
-          <div className="w-10 h-10" />
-        )}
-      </div>
-
-      <div className="flex items-end space-x-3 flex-1">
-        <div className="max-w-[75%] group relative">
-          {/* Reaction bar for other users */}
-          <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-full ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <div className="flex items-center space-x-2 bg-background rounded-xl shadow-lg border border-border px-3 py-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowReactions(!showReactions)}
-                className="p-2 h-auto hover:bg-muted rounded-lg"
-              >
-                <Smile className="w-4 h-4 text-muted-foreground" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleNudge}
-                className="p-2 h-auto hover:bg-muted rounded-lg"
-                title="Nudge user"
-                disabled={isNudging}
-              >
-                <Zap
-                  className={`w-4 h-4 ${isNudging ? "text-muted-foreground" : "text-primary"}`}
-                />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onCreateTask}
-                className="p-2 h-auto hover:bg-muted rounded-lg"
-              >
-                <Plus className="w-4 h-4 text-muted-foreground" />
-              </Button>
-            </div>
-
-            {/* Quick reaction popup */}
-            {showReactions && (
-              <div className="absolute top-full right-0 mt-2 bg-background rounded-xl shadow-lg border border-border px-3 py-2 flex space-x-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleReaction("👍")}
-                  className="p-2 h-auto hover:bg-muted rounded-lg text-lg"
-                >
-                  👍
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleReaction("❤️")}
-                  className="p-2 h-auto hover:bg-muted rounded-lg text-lg"
-                >
-                  ❤️
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleReaction("😂")}
-                  className="p-2 h-auto hover:bg-muted rounded-lg text-lg"
-                >
-                  😂
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleReaction("😮")}
-                  className="p-2 h-auto hover:bg-muted rounded-lg text-lg"
-                >
-                  😮
-                </Button>
-              </div>
-            )}
-          </div>
-
-          <div className="relative">
-            {/* Tail for first message only */}
-            {!isGrouped && (
-              <div
-                className="absolute top-3 -left-2 w-0 h-0"
-                style={{
-                  borderStyle: "solid",
-                  borderWidth: "8px 12px 8px 0",
-                  borderColor: "transparent white transparent transparent",
-                }}
-              />
-            )}
-            <div
-              className={`
-                bg-background border border-border 
-                px-4 py-3 shadow-md relative
-                ${
-                  isGrouped
-                    ? "rounded-2xl rounded-bl-lg"
-                    : "rounded-2xl rounded-bl-md"
-                }
-              `}
-            >
-              {!isGrouped && (
-                <p className="text-xs font-bold text-primary mb-2">
-                  {message.authorName}
-                </p>
-              )}
-
-              {/* Indicador do tipo de mensagem */}
-              {!isGrouped &&
-                message.messageType &&
-                message.messageType !== "general" && (
-                  <div
-                    className={`flex items-center space-x-2 mb-2 text-xs ${typeConfig.bgColor} px-3 py-2 rounded-full w-fit`}
-                  >
-                    <TypeIcon className={`w-3 h-3 ${typeConfig.color}`} />
-                    <span className={typeConfig.color}>{typeConfig.label}</span>
-                    {message.messageType === "direct" &&
-                      message.recipientName && (
-                        <span className="text-muted-foreground">
-                          → {message.recipientName}
-                        </span>
-                      )}
-                  </div>
-                )}
-
-              {!hasFile && (
-                <p className="text-sm text-foreground leading-relaxed break-words">
-                  {message.content}
-                </p>
-              )}
-              {hasFile && isImageFile && renderFileContent()}
-
-              {/* Task Status - Minimalista e integrado */}
-              {message.isTask && (
-                <div className="flex items-center space-x-1 mt-3 pt-2 border-t border-border/20">
-                  {message.taskStatus === "pending" && (
-                    <>
-                      <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-                      <span className="text-xs text-gray-600">Pendente</span>
-                    </>
-                  )}
-                  {message.taskStatus === "accepted" && (
-                    <>
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span className="text-xs text-gray-600">Aceita</span>
-                    </>
-                  )}
-                  {message.taskStatus === "rejected" && (
-                    <>
-                      <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                      <span className="text-xs text-gray-600">Rejeitada</span>
-                    </>
-                  )}
-                </div>
-              )}
-
-              {/* Task Response Buttons */}
-              {message.isTask &&
-                message.taskStatus === "pending" &&
-                message.taskAssigneeId === currentUserId && (
-                  <div className="flex space-x-2 mt-3">
-                    <Button
-                      size="sm"
-                      onClick={() => handleTaskResponse("accepted")}
-                      disabled={isResponding}
-                      className="bg-transparent border border-primary/20 hover:bg-primary/5 text-primary px-2 py-1 text-xs rounded-full"
-                    >
-                      <Check className="w-3 h-3 mr-1" />
-                      Aceitar
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => handleTaskResponse("rejected")}
-                      disabled={isResponding}
-                      className="bg-transparent border border-destructive/20 hover:bg-destructive/5 text-destructive px-2 py-1 text-xs rounded-full"
-                    >
-                      <X className="w-3 h-3 mr-1" />
-                      Recusar
-                    </Button>
-                  </div>
-                )}
-            </div>
-
-            {/* File content outside bubble for non-images */}
-            {hasFile && !isImageFile && (
-              <div className="mt-3">{renderFileContent()}</div>
-            )}
-
-            {/* Show reactions below message */}
-            {message.reactions && message.reactions.length > 0 && (
-              <div className="flex items-center space-x-2 mt-2">
-                {message.reactions.map((reaction, index) => (
-                  <div
-                    key={`${message._id}-reaction-${index}`}
-                    className="bg-muted rounded-full px-3 py-2 text-xs flex items-center space-x-2 shadow-sm border border-border cursor-pointer hover:bg-muted/80"
-                    onClick={() => handleReaction(reaction.emoji)}
-                  >
-                    <span className="text-base">{reaction.emoji}</span>
-                    <span className="text-primary font-semibold">
-                      {reaction.users.length}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Timestamp outside bubble */}
-        <span className="text-xs text-muted-foreground flex-shrink-0 pb-2">
-          {formatTime(message.timestamp)}
-        </span>
-      </div>
-    </div>
+      <AcceptTaskDialog
+        open={showAcceptDialog}
+        onOpenChange={setShowAcceptDialog}
+        message={message}
+        currentUserId={currentUserId}
+        currentUserName={currentUserName}
+      />
+    </>
   );
 }

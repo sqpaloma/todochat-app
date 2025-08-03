@@ -194,6 +194,10 @@ export const respondToTask = mutation({
     status: v.union(v.literal("accepted"), v.literal("rejected")),
     currentUserId: v.string(),
     currentUserName: v.string(),
+    dueDate: v.optional(v.number()),
+    priority: v.optional(
+      v.union(v.literal("low"), v.literal("medium"), v.literal("high"))
+    ),
   },
   handler: async (ctx, args) => {
     const message = await ctx.db.get(args.messageId);
@@ -229,10 +233,10 @@ export const respondToTask = mutation({
         assigneeName: message.taskAssigneeName!,
         createdBy: message.taskCreatedBy!,
         createdAt: Date.now(),
-        dueDate: message.taskDueDate,
+        dueDate: args.dueDate || message.taskDueDate,
         originalMessage: message.content,
         teamId: message.teamId,
-        priority: "medium" as const,
+        priority: args.priority || "medium",
       });
     }
 
