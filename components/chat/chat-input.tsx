@@ -79,10 +79,10 @@ export function ChatInput({
 
       {/* Task Assignment Fields - Only show in group chat when task mode is on */}
       {isTaskMode && !selectedDirectContact && (
-        <div className="mb-3 space-y-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
+        <div className="mb-3 space-y-3 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
           {/* Assignee Selection */}
           <div className="flex items-center space-x-3">
-            <User className="w-4 h-4 text-orange-600" />
+            <User className="w-4 h-4 text-purple-600" />
             <span className="text-sm font-medium text-gray-700">
               Designar para:
             </span>
@@ -155,7 +155,7 @@ export function ChatInput({
           }
           className={`p-3 rounded-xl shadow-md flex-shrink-0 ${
             isTaskMode
-              ? "bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
+              ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
               : "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
           } disabled:opacity-50 disabled:bg-gray-400`}
         >
@@ -175,7 +175,7 @@ export function ChatInput({
         <div className="bg-purple-50 border-t border-purple-200 px-4 py-3 mt-3">
           <div className="flex items-center justify-between p-3 bg-white/80 backdrop-blur-sm rounded-lg border border-purple-200 shadow-sm">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                 <Paperclip className="w-4 h-4 text-white" />
               </div>
               <div>
