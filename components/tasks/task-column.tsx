@@ -35,8 +35,8 @@ export function TaskColumn({ title, count, tasks, status }: TaskColumnProps) {
   });
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 h-full flex flex-col">
+      <div className="flex items-center justify-between flex-shrink-0">
         <h3 className="text-lg font-semibold text-purple-900">{title}</h3>
         <div className="flex items-center gap-2">
           {/* Mobile Collapse Button */}
@@ -58,13 +58,23 @@ export function TaskColumn({ title, count, tasks, status }: TaskColumnProps) {
 
       <div
         ref={setNodeRef}
-        className={`space-y-4 min-h-[200px] p-2 rounded-lg transition-all duration-300 ${
+        className={`flex-1 space-y-4 min-h-[200px] p-2 rounded-lg transition-all duration-300 ${
           isOver ? "bg-purple-50 border-2 border-purple-200 border-dashed" : ""
         } ${isCollapsed ? "lg:hidden hidden" : "block"}`}
       >
-        {tasks.map((task) => (
-          <Task key={task._id} task={task} />
-        ))}
+        {/* Mobile: Normal layout */}
+        <div className="lg:hidden space-y-4">
+          {tasks.map((task) => (
+            <Task key={task._id} task={task} />
+          ))}
+        </div>
+
+        {/* Desktop: Scrollable layout */}
+        <div className="hidden lg:block max-h-[calc(100vh-300px)] overflow-y-auto pr-2 space-y-4">
+          {tasks.map((task) => (
+            <Task key={task._id} task={task} />
+          ))}
+        </div>
       </div>
     </div>
   );

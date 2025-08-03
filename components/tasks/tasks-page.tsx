@@ -116,9 +116,9 @@ export function TasksPage() {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white flex flex-col">
+      <div className="h-screen bg-gradient-to-br from-purple-50 to-white flex flex-col overflow-hidden">
         {/* Header Section */}
-        <div className="bg-white/80 backdrop-blur-sm border-b border-purple-100">
+        <div className="bg-white/80 backdrop-blur-sm border-b border-purple-100 flex-shrink-0">
           <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-4">
             <div className="flex items-center justify-between">
               {/* Left side - Title */}
@@ -166,7 +166,7 @@ export function TasksPage() {
         </div>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-1 overflow-hidden">
           {/* Calendar - Appears below header on all screen sizes */}
           {showCalendar && (
             <div className="mb-6">
@@ -176,11 +176,11 @@ export function TasksPage() {
             </div>
           )}
 
-          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 h-full">
             {/* Task Board */}
-            <div className="flex-1">
+            <div className="flex-1 h-full">
               {/* Mobile: Vertical scroll with proper height */}
-              <div className="md:hidden space-y-4 overflow-y-auto max-h-[calc(100vh-250px)] pr-6">
+              <div className="md:hidden space-y-4 overflow-y-auto h-full pr-6">
                 {statusConfig.map((config) => (
                   <TaskColumn
                     key={config.status}
@@ -193,7 +193,7 @@ export function TasksPage() {
               </div>
 
               {/* Medium screens: 2-column grid layout */}
-              <div className="hidden md:grid md:grid-cols-2 lg:hidden gap-4 md:gap-6">
+              <div className="hidden md:grid md:grid-cols-2 lg:hidden gap-4 md:gap-6 h-full">
                 {statusConfig.map((config) => (
                   <TaskColumn
                     key={config.status}
@@ -206,7 +206,7 @@ export function TasksPage() {
               </div>
 
               {/* Desktop: 3-column grid layout */}
-              <div className="hidden lg:grid grid-cols-3 gap-6">
+              <div className="hidden lg:grid grid-cols-3 gap-6 h-full">
                 {statusConfig.map((config) => (
                   <TaskColumn
                     key={config.status}
