@@ -188,6 +188,7 @@ export function TasksPage() {
                     count={config.count}
                     tasks={tasksByStatus[config.status]}
                     status={config.status}
+                    teamMembers={teamMembers || []}
                   />
                 ))}
               </div>
@@ -201,6 +202,7 @@ export function TasksPage() {
                     count={config.count}
                     tasks={tasksByStatus[config.status]}
                     status={config.status}
+                    teamMembers={teamMembers || []}
                   />
                 ))}
               </div>
@@ -214,6 +216,7 @@ export function TasksPage() {
                     count={config.count}
                     tasks={tasksByStatus[config.status]}
                     status={config.status}
+                    teamMembers={teamMembers || []}
                   />
                 ))}
               </div>

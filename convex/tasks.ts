@@ -96,6 +96,34 @@ export const updateTaskStatus = mutation({
   },
 });
 
+export const updateTask = mutation({
+  args: {
+    taskId: v.id("tasks"),
+    title: v.string(),
+    description: v.optional(v.string()),
+    assigneeId: v.string(),
+    assigneeName: v.string(),
+    assigneeEmail: v.string(),
+    dueDate: v.optional(v.number()),
+    priority: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+  },
+  handler: async (ctx, args) => {
+    const task = await ctx.db.get(args.taskId);
+    if (!task) throw new Error("Task not found");
+
+    await ctx.db.patch(args.taskId, {
+      title: args.title,
+      description: args.description || "",
+      assigneeId: args.assigneeId,
+      assigneeName: args.assigneeName,
+      dueDate: args.dueDate,
+      priority: args.priority,
+    });
+
+    return args.taskId;
+  },
+});
+
 export const deleteTask = mutation({
   args: {
     taskId: v.id("tasks"),

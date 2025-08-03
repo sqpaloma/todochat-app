@@ -21,14 +21,27 @@ interface TaskType {
   priority: "low" | "medium" | "high";
 }
 
+interface TeamMember {
+  _id: string;
+  name: string;
+  email: string;
+}
+
 interface TaskColumnProps {
   title: string;
   count: number;
   tasks: TaskType[];
   status: "todo" | "in-progress" | "done";
+  teamMembers: TeamMember[];
 }
 
-export function TaskColumn({ title, count, tasks, status }: TaskColumnProps) {
+export function TaskColumn({
+  title,
+  count,
+  tasks,
+  status,
+  teamMembers,
+}: TaskColumnProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { setNodeRef, isOver } = useDroppable({
     id: status,
@@ -65,14 +78,14 @@ export function TaskColumn({ title, count, tasks, status }: TaskColumnProps) {
         {/* Mobile: Normal layout */}
         <div className="lg:hidden space-y-4">
           {tasks.map((task) => (
-            <Task key={task._id} task={task} />
+            <Task key={task._id} task={task} teamMembers={teamMembers} />
           ))}
         </div>
 
         {/* Desktop: Scrollable layout */}
         <div className="hidden lg:block max-h-[calc(100vh-300px)] overflow-y-auto pr-2 space-y-4">
           {tasks.map((task) => (
-            <Task key={task._id} task={task} />
+            <Task key={task._id} task={task} teamMembers={teamMembers} />
           ))}
         </div>
       </div>
