@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+
 import { Edit, Mail, User, MapPin, Phone, Trash2 } from "lucide-react";
 
 interface TeamMemberType {
@@ -52,7 +52,6 @@ export function EditMemberDialog({
   const [role, setRole] = useState("member");
   const [phone, setPhone] = useState("");
 
-  const [status, setStatus] = useState<"online" | "offline">("offline");
   const [isLoading, setIsLoading] = useState(false);
 
   // Simulate update member mutation (in real app, this would be implemented in convex/teams.ts)
@@ -64,8 +63,6 @@ export function EditMemberDialog({
       setEmail(member.email);
       setRole(member.role || "member");
       setPhone(member.phone || "");
-
-      setStatus(member.status || "offline");
     }
   }, [member]);
 
@@ -128,25 +125,15 @@ export function EditMemberDialog({
     },
   ];
 
-  const statusOptions = [
-    { value: "online", label: "Online", color: "bg-green-100 text-green-800" },
-    { value: "offline", label: "Offline", color: "bg-gray-100 text-gray-800" },
-  ];
-
   if (!member) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Edit className="w-5 h-5 text-blue-500" />
-              <span>Edit Member</span>
-            </div>
-            <Badge variant="outline" className="text-xs">
-              ID: {member._id}
-            </Badge>
+          <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
+            <Edit className="w-5 h-5 text-purple-500" />
+            <span>Edit Member</span>
           </DialogTitle>
         </DialogHeader>
 
@@ -155,13 +142,13 @@ export function EditMemberDialog({
             <div>
               <Label htmlFor="name">Full Name *</Label>
               <div className="relative">
-                <User className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                <User className="absolute left-3 top-3 w-4 h-4 text-purple-400" />
                 <Input
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. John Smith"
-                  className="pl-10"
+                  className="pl-10 border-purple-200 focus:border-purple-500 focus:ring-purple-500"
                   required
                 />
               </div>
@@ -170,14 +157,14 @@ export function EditMemberDialog({
             <div>
               <Label htmlFor="email">Email *</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                <Mail className="absolute left-3 top-3 w-4 h-4 text-purple-400" />
                 <Input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="john@company.com"
-                  className="pl-10"
+                  className="pl-10 border-purple-200 focus:border-purple-500 focus:ring-purple-500"
                   required
                 />
               </div>
@@ -188,7 +175,7 @@ export function EditMemberDialog({
             <div>
               <Label>Team Role</Label>
               <Select value={role} onValueChange={setRole}>
-                <SelectTrigger>
+                <SelectTrigger className="border-purple-200 focus:border-purple-500 focus:ring-purple-500">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -207,58 +194,23 @@ export function EditMemberDialog({
             </div>
 
             <div>
-              <Label>Status</Label>
-              <Select
-                value={status}
-                onValueChange={(value: "online" | "offline") =>
-                  setStatus(value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {statusOptions.map((statusOption) => (
-                    <SelectItem
-                      key={statusOption.value}
-                      value={statusOption.value}
-                    >
-                      <div className="flex items-center space-x-2">
-                        <div
-                          className={`w-2 h-2 rounded-full ${
-                            statusOption.value === "online"
-                              ? "bg-green-500"
-                              : "bg-gray-400"
-                          }`}
-                        />
-                        <span>{statusOption.label}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
               <Label htmlFor="phone">Phone</Label>
               <div className="relative">
-                <Phone className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                <Phone className="absolute left-3 top-3 w-4 h-4 text-purple-400" />
                 <Input
                   id="phone"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="+1 (555) 123-4567"
-                  className="pl-10"
+                  className="pl-10 border-purple-200 focus:border-purple-500 focus:ring-purple-500"
                 />
               </div>
             </div>
           </div>
 
           {member.joinDate && (
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <p className="text-sm text-gray-600">
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl border-0 shadow-sm">
+              <p className="text-sm text-gray-700">
                 <strong>Member since:</strong>{" "}
                 {new Date(member.joinDate).toLocaleDateString("en-US", {
                   year: "numeric",
@@ -269,16 +221,15 @@ export function EditMemberDialog({
             </div>
           )}
 
-          <div className="flex justify-between pt-4 border-t">
+          <div className="flex justify-between pt-4 border-t border-purple-200">
             <Button
               type="button"
-              variant="destructive"
+              variant="outline"
               size="sm"
               onClick={handleRemoveMember}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 border-purple-200 text-purple-700 hover:bg-purple-50"
             >
               <Trash2 className="w-4 h-4" />
-              <span>Remove</span>
             </Button>
 
             <div className="flex space-x-2">
@@ -286,12 +237,14 @@ export function EditMemberDialog({
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
+                className="border-purple-200 text-purple-700 hover:bg-purple-50"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={isLoading || !name.trim() || !email.trim()}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-semibold"
               >
                 {isLoading ? "Saving..." : "Save Changes"}
               </Button>
