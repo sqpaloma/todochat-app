@@ -21,7 +21,7 @@ import {
   Edit,
 } from "lucide-react";
 import type { TeamMember as TeamMemberType } from "@/types/team";
-import { formatJoinDate, getStatusText, getInitials } from "@/utils/team-utils";
+import { formatJoinDate, getInitials } from "@/utils/team-utils";
 
 interface TeamMemberProps {
   member: TeamMemberType;
@@ -48,13 +48,6 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
                   {getInitials(member.name)}
                 </AvatarFallback>
               </Avatar>
-              <div className="absolute -bottom-1 -right-1">
-                <PresenceIndicator
-                  status={member.status || "offline"}
-                  size="md"
-                  showIcon={true}
-                />
-              </div>
             </div>
 
             <div>
@@ -64,24 +57,6 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
               >
                 {member.name}
               </h3>
-              <div className="flex items-center space-x-2">
-                <Badge
-                  variant={member.status === "online" ? "default" : "secondary"}
-                  className={`text-xs ${
-                    member.status === "online"
-                      ? "bg-green-100 text-green-800 hover:bg-green-200"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                  aria-label={`Status: ${getStatusText(member.status)}`}
-                >
-                  {getStatusText(member.status)}
-                </Badge>
-                {member.role && (
-                  <Badge variant="outline" className="text-xs">
-                    {member.role}
-                  </Badge>
-                )}
-              </div>
             </div>
           </div>
 
@@ -137,40 +112,6 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
             <span className="text-gray-600">
               Joined {formatJoinDate(member.joinDate)}
             </span>
-          </div>
-        </div>
-
-        {/* Real-time status indicator */}
-        <div className="mt-4 pt-4 border-t border-gray-100">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <PresenceIndicator
-                status={member.status || "offline"}
-                size="sm"
-                showIcon={false}
-              />
-              <span className="text-xs text-gray-500">
-                {member.status === "online"
-                  ? "Active now"
-                  : "Last seen recently"}
-              </span>
-            </div>
-            {member.status === "online" && (
-              <div
-                className="flex items-center space-x-1"
-                aria-label="Online indicator"
-              >
-                <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
-                <div
-                  className="w-1 h-1 bg-green-500 rounded-full animate-pulse"
-                  style={{ animationDelay: "0.2s" }}
-                ></div>
-                <div
-                  className="w-1 h-1 bg-green-500 rounded-full animate-pulse"
-                  style={{ animationDelay: "0.4s" }}
-                ></div>
-              </div>
-            )}
           </div>
         </div>
       </CardContent>

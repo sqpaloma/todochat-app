@@ -2,8 +2,6 @@ export interface TeamMember {
   _id: string;
   name: string;
   email: string;
-  status: "online" | "offline";
-  role: string;
   joinDate: number;
   imageUrl?: string;
   phone?: string;
@@ -19,13 +17,8 @@ export interface TeamStats {
 
 export interface TeamFilters {
   searchTerm: string;
-  statusFilter: string;
-  roleFilter: string;
 }
 
 export interface TeamMemberWithPresence extends TeamMember {
   isCurrentUser?: boolean;
 }
-
-export type TeamMemberStatus = "online" | "offline";
-export type TeamMemberRole = "admin" | "member" | "moderator" | "viewer";

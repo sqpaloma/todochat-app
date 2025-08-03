@@ -43,8 +43,6 @@ interface TeamMember {
   _id: string;
   name: string;
   email: string;
-  status: "online" | "offline" | "away";
-  role: string;
   joinDate: number;
   phone?: string;
   imageUrl?: string;
@@ -126,30 +124,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     console.log(`${action} for ${memberName}`);
     setActiveMemberMenu(null);
     // Here you can implement the actual actions
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "online":
-        return "bg-green-400";
-      case "away":
-        return "bg-yellow-400";
-      case "offline":
-        return "bg-gray-400";
-      default:
-        return "bg-gray-400";
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "online":
-        return <Wifi className="w-3 h-3 text-green-500" />;
-      case "offline":
-        return <WifiOff className="w-3 h-3 text-gray-400" />;
-      default:
-        return <WifiOff className="w-3 h-3 text-gray-400" />;
-    }
   };
 
   const navigationItems = [
@@ -266,8 +240,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     {activeTeam}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {teamMembers.filter((m) => m.status === "online").length}{" "}
-                    members online
+                    {teamMembers.length} members
                   </p>
                 </div>
               </div>
@@ -299,15 +272,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                                 .toUpperCase()}
                             </div>
                           )}
-                          <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-white rounded-full border border-gray-200 flex items-center justify-center">
-                            {getStatusIcon(member.status)}
-                          </div>
                         </div>
                         <div>
                           <p className="text-sm font-medium text-gray-900">
                             {member.name}
                           </p>
-                          <p className="text-xs text-gray-500">{member.role}</p>
                         </div>
                       </div>
                       <Button

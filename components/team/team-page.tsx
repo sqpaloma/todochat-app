@@ -17,8 +17,6 @@ interface TeamMemberType {
   _id: string;
   name: string;
   email: string;
-  status?: "online" | "offline";
-  role?: string;
   joinDate?: number;
   phone?: string;
 }
@@ -59,35 +57,6 @@ export function TeamPageComponent() {
               <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Add Member
             </Button>
-          </div>
-
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8">
-            <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-0 shadow-sm">
-              <CardContent className="p-4 sm:p-6 text-center">
-                <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 mx-auto mb-3 sm:mb-4" />
-                <h3 className="text-xl sm:text-2xl font-bold text-blue-900 mb-1">
-                  {stats.total}
-                </h3>
-                <p className="text-blue-600 text-xs sm:text-sm font-medium">
-                  Total Members
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-0 shadow-sm">
-              <CardContent className="p-4 sm:p-6 text-center">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-purple-500 rounded-xl mx-auto mb-3 sm:mb-4 flex items-center justify-center text-white text-xs font-bold">
-                  %
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-purple-900 mb-1">
-                  {stats.onlinePercentage}%
-                </h3>
-                <p className="text-purple-600 text-xs sm:text-sm font-medium">
-                  Activity Rate
-                </p>
-              </CardContent>
-            </Card>
           </div>
 
           {/* Main Content */}
@@ -153,11 +122,6 @@ export function TeamPageComponent() {
                           </div>
                         </div>
                         <div className="flex items-center space-x-4">
-                          <div className="text-right">
-                            <p className="text-sm font-medium text-gray-900">
-                              {member.role || "Member"}
-                            </p>
-                          </div>
                           <Button variant="ghost" size="sm">
                             <span className="text-gray-400">•••</span>
                           </Button>

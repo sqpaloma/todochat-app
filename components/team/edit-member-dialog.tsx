@@ -14,13 +14,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import { Edit, Mail, User, MapPin, Phone, Trash2 } from "lucide-react";
 
@@ -28,8 +21,6 @@ interface TeamMemberType {
   _id: string;
   name: string;
   email: string;
-  status?: "online" | "offline";
-  role?: string;
   joinDate?: number;
   phone?: string;
 }
@@ -49,7 +40,6 @@ export function EditMemberDialog({
 }: EditMemberDialogProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("member");
   const [phone, setPhone] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +51,6 @@ export function EditMemberDialog({
     if (member) {
       setName(member.name);
       setEmail(member.email);
-      setRole(member.role || "member");
       setPhone(member.phone || "");
     }
   }, [member]);
@@ -77,7 +66,6 @@ export function EditMemberDialog({
       await updateMember({
         teamId,
         email: email.trim(),
-        role,
       });
 
       onOpenChange(false);
@@ -101,29 +89,6 @@ export function EditMemberDialog({
       onOpenChange(false);
     }
   };
-
-  const roles = [
-    {
-      value: "admin",
-      label: "Administrator",
-      description: "Full project access",
-    },
-    {
-      value: "manager",
-      label: "Manager",
-      description: "Can manage tasks and members",
-    },
-    {
-      value: "member",
-      label: "Member",
-      description: "Can create and edit tasks",
-    },
-    {
-      value: "viewer",
-      label: "Viewer",
-      description: "View only access",
-    },
-  ];
 
   if (!member) return null;
 
@@ -155,45 +120,6 @@ export function EditMemberDialog({
             </div>
 
             <div>
-              <Label htmlFor="email">Email *</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 w-4 h-4 text-purple-400" />
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="john@company.com"
-                  className="pl-10 border-purple-200 focus:border-purple-500 focus:ring-purple-500"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Team Role</Label>
-              <Select value={role} onValueChange={setRole}>
-                <SelectTrigger className="border-purple-200 focus:border-purple-500 focus:ring-purple-500">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {roles.map((roleOption) => (
-                    <SelectItem key={roleOption.value} value={roleOption.value}>
-                      <div>
-                        <div className="font-medium">{roleOption.label}</div>
-                        <div className="text-xs text-gray-500">
-                          {roleOption.description}
-                        </div>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
               <Label htmlFor="phone">Phone</Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-3 w-4 h-4 text-purple-400" />
@@ -205,6 +131,22 @@ export function EditMemberDialog({
                   className="pl-10 border-purple-200 focus:border-purple-500 focus:ring-purple-500"
                 />
               </div>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="email">Email *</Label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-3 w-4 h-4 text-purple-400" />
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="john@company.com"
+                className="pl-10 border-purple-200 focus:border-purple-500 focus:ring-purple-500"
+                required
+              />
             </div>
           </div>
 

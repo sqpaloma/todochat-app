@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import { AddMemberDialog } from "@/components/team/add-member-dialog";
 import { EditMemberDialog } from "@/components/team/edit-member-dialog";
 import { MemberDetailsDialog } from "@/components/team/member-details-dialog";
-import { TeamStats } from "@/components/team/team-stats";
+
 import { TeamFilters } from "@/components/team/team-filters";
 import { TeamMembersGrid } from "@/components/team/team-members-grid";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,7 @@ function TeamPageContent() {
   } = useTeamMembersWithPresence(selectedTeam);
 
   // Use the new filters hook
-  const { filters, filteredMembers, uniqueRoles, updateFilters, clearFilters } =
+  const { filters, filteredMembers, updateFilters, clearFilters } =
     useTeamFilters(teamMembers);
 
   // Memoized event handlers
@@ -94,13 +94,9 @@ function TeamPageContent() {
         </Button>
       </header>
 
-      {/* Statistics Cards */}
-      <TeamStats stats={stats} />
-
       {/* Search and Filters */}
       <TeamFilters
         filters={filters}
-        uniqueRoles={uniqueRoles}
         onFiltersChange={updateFilters}
         onClearFilters={clearFilters}
       />

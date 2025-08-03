@@ -26,8 +26,6 @@ interface TeamMemberType {
   _id: string;
   name: string;
   email: string;
-  status?: "online" | "offline";
-  role?: string;
   joinDate?: number;
   phone?: string;
 }
@@ -56,54 +54,6 @@ export function MemberDetailsDialog({
     });
   };
 
-  const getStatusColor = (status?: string) => {
-    switch (status) {
-      case "online":
-        return "bg-green-500";
-      case "offline":
-        return "bg-gray-400";
-      default:
-        return "bg-gray-400";
-    }
-  };
-
-  const getStatusText = (status?: string) => {
-    switch (status) {
-      case "online":
-        return "Online";
-      case "offline":
-        return "Offline";
-      default:
-        return "Unknown";
-    }
-  };
-
-  const getRoleIcon = (role?: string) => {
-    switch (role) {
-      case "admin":
-        return <Shield className="w-4 h-4 text-red-500" />;
-      case "manager":
-        return <User className="w-4 h-4 text-blue-500" />;
-      default:
-        return <User className="w-4 h-4 text-gray-500" />;
-    }
-  };
-
-  const getRoleDescription = (role?: string) => {
-    switch (role) {
-      case "admin":
-        return "Administrator with full system access";
-      case "manager":
-        return "Manager responsible for tasks and members";
-      case "member":
-        return "Team member with standard access";
-      case "viewer":
-        return "Viewer with limited permissions";
-      default:
-        return "Role not defined";
-    }
-  };
-
   const daysSinceJoined = member.joinDate
     ? Math.floor((Date.now() - member.joinDate) / (1000 * 60 * 60 * 24))
     : 0;
@@ -130,11 +80,6 @@ export function MemberDetailsDialog({
                     .slice(0, 2)}
                 </AvatarFallback>
               </Avatar>
-              <div
-                className={`absolute -bottom-1 -right-1 w-6 h-6 ${getStatusColor(member.status)} rounded-full border-3 border-white flex items-center justify-center`}
-              >
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-              </div>
             </div>
 
             <div className="flex-1">
@@ -142,32 +87,6 @@ export function MemberDetailsDialog({
                 {member.name}
               </h2>
               <p className="text-gray-600 mb-2">{member.email}</p>
-
-              <div className="flex items-center space-x-3">
-                <Badge
-                  variant={member.status === "online" ? "default" : "secondary"}
-                  className={`flex items-center space-x-1 ${
-                    member.status === "online"
-                      ? "bg-green-100 text-green-800 hover:bg-green-200"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                >
-                  <div
-                    className={`w-2 h-2 rounded-full ${getStatusColor(member.status)}`}
-                  />
-                  <span>{getStatusText(member.status)}</span>
-                </Badge>
-
-                {member.role && (
-                  <Badge
-                    variant="outline"
-                    className="flex items-center space-x-1 border-purple-200 text-purple-700"
-                  >
-                    {getRoleIcon(member.role)}
-                    <span className="capitalize">{member.role}</span>
-                  </Badge>
-                )}
-              </div>
             </div>
           </div>
 
@@ -204,19 +123,6 @@ export function MemberDetailsDialog({
                   Professional Information
                 </h3>
                 <div className="space-y-3 text-sm">
-                  <div>
-                    <span className="text-gray-600">Role:</span>
-                    <div className="flex items-center space-x-2 mt-1">
-                      {getRoleIcon(member.role)}
-                      <span className="font-medium capitalize">
-                        {member.role || "Not defined"}
-                      </span>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {getRoleDescription(member.role)}
-                    </p>
-                  </div>
-
                   <div className="flex items-center space-x-2">
                     <Calendar className="w-4 h-4 text-gray-400" />
                     <span className="text-gray-600">Member since:</span>

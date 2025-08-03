@@ -17,11 +17,6 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
         <CardTitle className="text-sm font-medium flex items-center">
           <Users className="w-4 h-4 mr-2" />
           Team ({stats.total})
-          {stats.online > 0 && (
-            <span className="ml-2 text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">
-              {stats.online} online
-            </span>
-          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
@@ -45,29 +40,12 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
                     </AvatarFallback>
                   )}
                 </Avatar>
-                <div className="absolute -bottom-0.5 -right-0.5">
-                  <PresenceIndicator
-                    status={member.status || "offline"}
-                    size="sm"
-                    showIcon={true}
-                  />
-                </div>
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
                   {member.name}
                 </p>
                 <p className="text-xs text-gray-500 truncate">{member.email}</p>
-              </div>
-              <div className="flex items-center space-x-1">
-                <PresenceIndicator
-                  status={member.status || "offline"}
-                  size="sm"
-                  showIcon={false}
-                />
-                <span className="text-xs text-gray-500">
-                  {member.status === "online" ? "Active" : "Offline"}
-                </span>
               </div>
             </div>
           ))}
