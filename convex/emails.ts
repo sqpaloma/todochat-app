@@ -1,14 +1,15 @@
 import { components } from "./_generated/api";
 import { Resend } from "@convex-dev/resend";
-import { internalMutation, internalAction } from "./_generated/server";
+import { internalMutation } from "./_generated/server";
 import { v } from "convex/values";
+
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://chatdo.upcraftcrew.com/";
 
 export const resend: Resend = new Resend(components.resend, {
   // Keep testMode as false to allow sending to real email addresses
   testMode: false,
 });
 
-// Function to send nudge email
 export const sendNudgeEmail = internalMutation({
   args: {
     to: v.string(),
@@ -19,61 +20,71 @@ export const sendNudgeEmail = internalMutation({
     teamName: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const appUrl =
-      process.env.NEXT_PUBLIC_APP_URL || "https://chatdo.upcraftcrew.com/";
-
-    await resend.sendEmail(ctx, {
-      from: "Acme <onboarding@resend.dev>",
-      to: args.to,
-      subject: `🔔 ${args.fromName} is calling you on TodoChat`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: #7c3aed; margin: 0; font-size: 28px;">🔔</h1>
-            <h2 style="color: #7c3aed; margin: 10px 0;">Someone is calling you!</h2>
+    const subject = `🔔 ${args.fromName} is calling you on TodoChat`;
+    
+    try {
+      const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+          <div style="text-align: center; margin-bottom: 40px;">
+            <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+              <span style="color: white; font-size: 36px; font-weight: bold;">🔔</span>
+            </div>
+            <h1 style="color: #1e293b; margin: 0; font-size: 28px; font-weight: bold;">Someone is calling you!</h1>
+            <p style="color: #64748b; margin: 10px 0 0 0; font-size: 16px;">${args.fromName} nudged you in a message</p>
           </div>
           
-          <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); padding: 20px; border-radius: 12px; margin: 20px 0;">
-            <p style="color: white; margin: 0; text-align: center; font-size: 18px;">
+          <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); padding: 25px; border-radius: 16px; margin: 30px 0; text-align: center;">
+            <p style="color: white; margin: 0; font-size: 18px; line-height: 1.5;">
               <strong>${args.fromName}</strong> nudged you in a message
             </p>
           </div>
 
-          <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; border-left: 4px solid #7c3aed; margin: 20px 0;">
+          <div style="background-color: #f8fafc; padding: 25px; border-radius: 12px; border-left: 4px solid #7c3aed; margin: 30px 0;">
             <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 16px;">Message:</h3>
-            <p style="margin: 0; color: #64748b; font-style: italic; font-size: 14px;">
+            <p style="margin: 0; color: #64748b; font-style: italic; font-size: 14px; padding: 10px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0;">
               "${args.messageContent.length > 100 ? args.messageContent.substring(0, 100) + "..." : args.messageContent}"
             </p>
-            ${
-              args.teamName
-                ? `<p style="margin: 10px 0 0 0; color: #7c3aed; font-size: 12px;">
-              In: ${args.teamName}
-            </p>`
-                : ""
-            }
-            <p style="margin: 10px 0 0 0; color: #7c3aed; font-size: 12px;">
-              To: ${args.toName} (${args.to})
-            </p>
+            ${args.teamName ? `<p style="margin: 10px 0 0 0; color: #7c3aed; font-size: 12px;">In: ${args.teamName}</p>` : ""}
           </div>
 
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${appUrl}/chat" 
-               style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
+          <div style="text-align: center; margin: 40px 0;">
+            <a href="${appUrl}/chat" style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 30px; display: inline-block; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);">
               View Message
             </a>
           </div>
 
-          <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-            <p style="color: #64748b; font-size: 12px; margin: 0;">
-              You received this email because someone nudged you on TodoChat.
-            </p>
-            <p style="color: #dc2626; font-size: 10px; margin: 5px 0 0 0;">
-              [TEST MODE] This email was sent to delivered@resend.dev for testing
-            </p>
+          <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+            <p style="color: #64748b; font-size: 12px; margin: 0;">You received this email because someone nudged you on TodoChat.</p>
           </div>
         </div>
-      `,
-    });
+      `;
+
+      await resend.sendEmail(ctx, {
+        from: "TodoChat <onboarding@resend.dev>",
+        to: args.to,
+        subject,
+        html,
+      });
+
+      await ctx.db.insert("emailAnalytics", {
+        type: "nudge",
+        to: args.to,
+        subject,
+        status: "sent",
+        sentAt: Date.now(),
+        messageId: args.messageId,
+      });
+    } catch (error) {
+      await ctx.db.insert("emailAnalytics", {
+        type: "nudge",
+        to: args.to,
+        status: "error",
+        sentAt: Date.now(),
+        error: String(error),
+        messageId: args.messageId,
+      });
+      throw error;
+    }
   },
 });
 
@@ -351,6 +362,180 @@ export const sendTaskCompletionEmail = internalMutation({
           </div>
         `,
       });
+    }
+  },
+});
+
+export const sendTaskReminderBatch = internalMutation({
+  args: {
+    to: v.string(),
+    assigneeName: v.string(),
+    tasks: v.array(
+      v.object({
+        _id: v.id("tasks"),
+        title: v.string(),
+        description: v.optional(v.string()),
+        dueDate: v.optional(v.number()),
+        priority: v.optional(
+          v.union(v.literal("low"), v.literal("medium"), v.literal("high"))
+        ),
+      })
+    ),
+    customMessage: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const subject = `⏰ ${args.tasks.length} overdue task${args.tasks.length > 1 ? 's' : ''} need attention`;
+    
+    try {
+      const tasksList = args.tasks.map((task) => {
+        const priorityColor = {
+          high: "#dc2626",
+          medium: "#f59e0b", 
+          low: "#16a34a",
+        }[task.priority || "medium"];
+
+        const dueDateText = task.dueDate
+          ? new Date(task.dueDate).toLocaleDateString("en-US")
+          : null;
+
+        return `
+          <div style="margin: 10px 0; padding: 15px; background-color: #fef2f2; border-left: 4px solid ${priorityColor}; border-radius: 4px;">
+            <strong style="color: #1e293b;">${task.title}</strong>
+            ${task.description ? `<div style="color: #64748b; font-size: 14px; margin: 5px 0;">${task.description}</div>` : ""}
+            ${dueDateText ? `<div style="color: #dc2626; font-size: 12px; margin: 5px 0; font-weight: bold;">📅 Was due: ${dueDateText}</div>` : ""}
+            <div style="color: #6b7280; font-size: 11px;">Priority: ${(task.priority || "medium").toUpperCase()}</div>
+          </div>
+        `;
+      }).join("");
+
+      const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+          <div style="text-align: center; margin-bottom: 40px;">
+            <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+              <span style="color: white; font-size: 36px; font-weight: bold;">⏰</span>
+            </div>
+            <h1 style="color: #1e293b; margin: 0; font-size: 28px; font-weight: bold;">Task Reminders</h1>
+            <p style="color: #64748b; margin: 10px 0 0 0; font-size: 16px;">Hello ${args.assigneeName}!</p>
+          </div>
+          
+          ${args.customMessage ? `
+            <div style="background-color: #f8fafc; padding: 25px; border-radius: 12px; border-left: 4px solid #7c3aed; margin: 30px 0;">
+              <p style="margin: 0; color: #64748b; font-size: 14px; line-height: 1.6;">${args.customMessage}</p>
+            </div>
+          ` : ""}
+
+          <div style="background-color: #fef3c7; padding: 25px; border-radius: 12px; border-left: 4px solid #f59e0b; margin: 30px 0;">
+            <h3 style="color: #dc2626; margin: 0 0 15px 0;">🚨 Overdue Tasks (${args.tasks.length})</h3>
+            <p style="margin: 0 0 15px 0; color: #92400e; font-size: 14px;">The following tasks are past their due date and need your attention:</p>
+            ${tasksList}
+          </div>
+
+          <div style="text-align: center; margin: 40px 0;">
+            <a href="${appUrl}/tasks" style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 30px; display: inline-block; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);">
+              View All Tasks
+            </a>
+          </div>
+
+          <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+            <p style="color: #64748b; font-size: 12px; margin: 0;">Complete your overdue tasks to stay on track with your team's goals.</p>
+          </div>
+        </div>
+      `;
+
+      await resend.sendEmail(ctx, {
+        from: "TodoChat <noreply@resend.dev>",
+        to: args.to,
+        subject,
+        html,
+      });
+
+      await ctx.db.insert("emailAnalytics", {
+        type: "task_notification",
+        to: args.to,
+        subject,
+        status: "sent",
+        sentAt: Date.now(),
+      });
+    } catch (error) {
+      await ctx.db.insert("emailAnalytics", {
+        type: "task_notification",
+        to: args.to,
+        status: "error",
+        sentAt: Date.now(),
+        error: String(error),
+      });
+      throw error;
+    }
+  },
+});
+
+export const sendAnnouncementEmail = internalMutation({
+  args: {
+    to: v.string(),
+    subject: v.string(),
+    message: v.string(),
+    fromName: v.string(),
+    teamName: v.string(),
+    recipientName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const emailSubject = `📢 ${args.subject}`;
+    
+    try {
+      const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+          <div style="text-align: center; margin-bottom: 40px;">
+            <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+              <span style="color: white; font-size: 36px; font-weight: bold;">📢</span>
+            </div>
+            <h1 style="color: #1e293b; margin: 0; font-size: 28px; font-weight: bold;">Team Announcement</h1>
+            <p style="color: #64748b; margin: 10px 0 0 0; font-size: 16px;">Hello ${args.recipientName}!</p>
+          </div>
+          
+          <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); padding: 25px; border-radius: 16px; margin: 30px 0; text-align: center;">
+            <h2 style="color: white; margin: 0; font-size: 20px; font-weight: bold;">${args.subject}</h2>
+            <p style="color: white; margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">From ${args.fromName} • ${args.teamName}</p>
+          </div>
+
+          <div style="background-color: #f8fafc; padding: 25px; border-radius: 12px; border-left: 4px solid #7c3aed; margin: 30px 0;">
+            <div style="color: #1e293b; font-size: 16px; line-height: 1.6; white-space: pre-wrap;">${args.message}</div>
+          </div>
+
+          <div style="text-align: center; margin: 40px 0;">
+            <a href="${appUrl}/team" style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 30px; display: inline-block; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);">
+              View Team
+            </a>
+          </div>
+
+          <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+            <p style="color: #64748b; font-size: 12px; margin: 0;">This announcement was sent by ${args.fromName} to the ${args.teamName} team.</p>
+          </div>
+        </div>
+      `;
+
+      await resend.sendEmail(ctx, {
+        from: "TodoChat <noreply@resend.dev>",
+        to: args.to,
+        subject: emailSubject,
+        html,
+      });
+
+      await ctx.db.insert("emailAnalytics", {
+        type: "team_invitation",
+        to: args.to,
+        subject: emailSubject,
+        status: "sent",
+        sentAt: Date.now(),
+      });
+    } catch (error) {
+      await ctx.db.insert("emailAnalytics", {
+        type: "team_invitation",
+        to: args.to,
+        status: "error",
+        sentAt: Date.now(),
+        error: String(error),
+      });
+      throw error;
     }
   },
 });

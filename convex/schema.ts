@@ -78,4 +78,23 @@ export default defineSchema({
     lastName: v.optional(v.string()),
     imageUrl: v.optional(v.string()),
   }).index("by_clerkUserId", ["clerkUserId"]),
+
+  emailAnalytics: defineTable({
+    type: v.union(
+      v.literal("nudge"),
+      v.literal("team_invitation"), 
+      v.literal("task_notification"),
+      v.literal("daily_digest"),
+      v.literal("task_completion")
+    ),
+    to: v.string(),
+    subject: v.optional(v.string()),
+    status: v.union(v.literal("sent"), v.literal("error")),
+    sentAt: v.number(),
+    error: v.optional(v.string()),
+    messageId: v.optional(v.id("messages")),
+    taskId: v.optional(v.id("tasks")),
+    teamId: v.optional(v.string()),
+  }).index("by_type", ["type"])
+    .index("by_sentAt", ["sentAt"]),
 });

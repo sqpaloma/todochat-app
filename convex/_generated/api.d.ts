@@ -9,6 +9,8 @@
  */
 
 import type * as crons from "../crons.js";
+import type * as emailAnalytics from "../emailAnalytics.js";
+import type * as emailBatch from "../emailBatch.js";
 import type * as emails from "../emails.js";
 import type * as http from "../http.js";
 import type * as messages from "../messages.js";
@@ -34,6 +36,8 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   crons: typeof crons;
+  emailAnalytics: typeof emailAnalytics;
+  emailBatch: typeof emailBatch;
   emails: typeof emails;
   http: typeof http;
   messages: typeof messages;

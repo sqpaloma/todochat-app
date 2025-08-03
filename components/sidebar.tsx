@@ -8,19 +8,18 @@ import {
   CheckSquare,
   Users,
   LogOut,
-  Plus,
+  BarChart3,
   ChevronDown,
   Sparkles,
   X,
   ChevronLeft,
   ChevronRight,
   MoreHorizontal,
-  Edit,
-  Send,
-  Wifi,
-  WifiOff,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { GradientIcon } from "@/components/ui/gradient-icon";
+import { GradientButton } from "@/components/ui/gradient-button";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 import {
   SignedIn,
@@ -33,50 +32,32 @@ import {
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
+import { useResponsive } from "@/hooks/use-responsive";
+import { NavigationItem } from "./sidebar/navigation-item";
+import { MemberActionsMenu } from "./sidebar/member-actions-menu";
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-interface TeamMember {
-  _id: string;
-  name: string;
-  email: string;
-  joinDate: number;
-  phone?: string;
-  imageUrl?: string;
-}
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeTeam, setActiveTeam] = useState("My Team");
+  const [activeTeam] = useState("My Team");
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(0);
   const [showTeamDropdown, setShowTeamDropdown] = useState(false);
   const [activeMemberMenu, setActiveMemberMenu] = useState<string | null>(null);
 
+  // Use responsive hook
+  const { isMobile } = useResponsive();
+
   // Use the new presence-enabled hook
-  const { members: teamMembers, stats } = useTeamMembersWithPresence("team-1");
+  const { members: teamMembers } = useTeamMembersWithPresence("team-1");
 
   // Fetch real tasks count
   const tasks = useQuery(api.tasks.getTasks, { teamId: "team-1" }) || [];
   const taskCount = tasks.length;
-
-  // Handle window resize
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    handleResize(); // Set initial value
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Helper function to check if we're on mobile
-  const isMobile = windowWidth > 0 && windowWidth < 1024;
 
   // Fecha a sidebar no mobile apenas quando a rota mudar
   useEffect(() => {
@@ -150,6 +131,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       active: pathname === "/team",
       gradient: "from-orange-500 to-red-500",
     },
+    {
+      name: "Analytics",
+      href: "/analytics",
+      icon: BarChart3,
+      active: pathname === "/analytics",
+      gradient: "from-purple-500 to-pink-500",
+    },
   ];
 
   return (
@@ -178,9 +166,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               href="/"
               className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
             >
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
+              <GradientIcon icon={Sparkles} size="lg" />
               <div>
                 <h2 className="font-bold text-lg gradient-text">✨ Chat do</h2>
                 <p className="text-xs text-gray-500">Workspace</p>
@@ -191,9 +177,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               href="/"
               className="hidden lg:flex hover:opacity-80 transition-opacity"
             >
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
+              <GradientIcon icon={Sparkles} size="sm" />
             </Link>
           )}
 
@@ -234,9 +218,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               onClick={toggleTeamDropdown}
             >
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                  <Users className="w-4 h-4 text-white" />
-                </div>
+                <GradientIcon icon={Users} size="sm" variant="secondary" />
                 <div className="text-left">
                   <p className="text-sm font-semibold text-gray-900">
                     {activeTeam}
@@ -258,23 +240,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <div key={member._id} className="relative">
                     <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 group">
                       <div className="flex items-center space-x-3">
-                        <div className="relative">
-                          {member.imageUrl ? (
-                            <img
-                              src={member.imageUrl}
-                              alt={member.name}
-                              className="w-8 h-8 rounded-full"
-                            />
-                          ) : (
-                            <div className="w-8 h-8 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">
-                              {member.name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")
-                                .toUpperCase()}
-                            </div>
-                          )}
-                        </div>
+                        <UserAvatar 
+                          name={member.name}
+                          imageUrl={member.imageUrl}
+                          size="md"
+                        />
                         <div>
                           <p className="text-sm font-medium text-gray-900">
                             {member.name}
@@ -293,35 +263,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
                     {/* Member Actions Menu */}
                     {activeMemberMenu === member._id && (
-                      <div className="absolute right-0 top-full mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                        <button
-                          className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
-                          onClick={() =>
-                            handleMemberAction("Add Task", member.name)
-                          }
-                        >
-                          <Plus className="w-4 h-4" />
-                          <span>Add Task</span>
-                        </button>
-                        <button
-                          className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
-                          onClick={() =>
-                            handleMemberAction("Send Message", member.name)
-                          }
-                        >
-                          <Send className="w-4 h-4" />
-                          <span>Send Message</span>
-                        </button>
-                        <button
-                          className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
-                          onClick={() =>
-                            handleMemberAction("Edit", member.name)
-                          }
-                        >
-                          <Edit className="w-4 h-4" />
-                          <span>Edit</span>
-                        </button>
-                      </div>
+                      <MemberActionsMenu
+                        memberName={member.name}
+                        onAction={handleMemberAction}
+                      />
                     )}
                   </div>
                 ))}
@@ -338,59 +283,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 Navigation
               </p>
             )}
-            {navigationItems.map((item) => {
-              const IconComponent = item.icon;
-              return (
-                <Link key={item.name} href={item.href}>
-                  <div
-                    className={`flex items-center rounded-xl transition-all duration-200 group relative ${
-                      isCollapsed
-                        ? "justify-center p-3"
-                        : "space-x-3 px-3 py-2.5"
-                    } ${
-                      item.active
-                        ? `bg-gradient-to-r ${item.gradient} text-white shadow-lg`
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                    }`}
-                    title={isCollapsed ? item.name : ""}
-                  >
-                    <IconComponent
-                      className={`w-5 h-5 ${
-                        item.active ? "text-white" : "text-gray-400"
-                      } group-hover:scale-110 transition-transform duration-200`}
-                    />
-                    {!isCollapsed && (
-                      <>
-                        <span className="font-medium">{item.name}</span>
-                        {item.badge && (
-                          <span
-                            className={`ml-auto px-2 py-0.5 text-xs font-bold rounded-full ${
-                              item.active
-                                ? "bg-white/20 text-white"
-                                : "bg-blue-100 text-blue-600"
-                            }`}
-                          >
-                            {item.badge}
-                          </span>
-                        )}
-                        {item.indicator && (
-                          <div className="ml-auto w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                        )}
-                      </>
-                    )}
-                    {/* Collapsed indicators */}
-                    {isCollapsed && item.badge && (
-                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center">
-                        {item.badge}
-                      </div>
-                    )}
-                    {isCollapsed && item.indicator && (
-                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse" />
-                    )}
-                  </div>
-                </Link>
-              );
-            })}
+            {navigationItems.map((item) => (
+              <NavigationItem
+                key={item.name}
+                {...item}
+                isCollapsed={isCollapsed}
+              />
+            ))}
           </div>
         </nav>
 
@@ -409,9 +308,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   </Button>
                 </SignInButton>
                 <SignUpButton>
-                  <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xs">
+                  <GradientButton size="sm" className="w-full text-xs">
                     Register
-                  </Button>
+                  </GradientButton>
                 </SignUpButton>
               </div>
             ) : (
@@ -422,9 +321,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   </Button>
                 </SignInButton>
                 <SignUpButton>
-                  <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
+                  <GradientButton className="w-full">
                     Create Account
-                  </Button>
+                  </GradientButton>
                 </SignUpButton>
               </div>
             )}
