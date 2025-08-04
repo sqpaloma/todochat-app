@@ -753,7 +753,6 @@ export const sendOverdueTaskReminder = internalMutation({
         subject,
         status: "sent",
         sentAt: Date.now(),
-        teamId: args.teamName,
       });
     } catch (error) {
       await ctx.db.insert("emailAnalytics", {
@@ -762,7 +761,6 @@ export const sendOverdueTaskReminder = internalMutation({
         status: "error",
         sentAt: Date.now(),
         error: String(error),
-        teamId: args.teamName,
       });
       throw error;
     }

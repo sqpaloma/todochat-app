@@ -130,7 +130,7 @@ export function UserTasksPanel({
               <div
                 key={task._id}
                 className={`p-4 border rounded-lg ${
-                  isOverdue(task.dueDate!)
+                  task.dueDate && isOverdue(task.dueDate)
                     ? "border-red-200 bg-red-50"
                     : "border-gray-200"
                 }`}

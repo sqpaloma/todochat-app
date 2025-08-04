@@ -1,6 +1,42 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
+import { Doc, Id } from "./_generated/dataModel";
+
+// Type definitions for better type safety
+interface Task {
+  _id: Id<"tasks">;
+  _creationTime: number;
+  title: string;
+  description: string;
+  status: "todo" | "in-progress" | "done";
+  assigneeId: string;
+  assigneeName: string;
+  createdBy: string;
+  createdAt: number;
+  dueDate?: number;
+  originalMessage?: string;
+  teamId: string;
+  priority: "low" | "medium" | "high";
+}
+
+interface User {
+  _id: Id<"users">;
+  _creationTime: number;
+  email: string;
+  clerkUserId: string;
+  firstName?: string;
+  lastName?: string;
+  imageUrl?: string;
+}
+
+interface Team {
+  _id: Id<"teams">;
+  _creationTime: number;
+  name: string;
+  members: string[];
+  createdAt: number;
+}
 
 export const getMessages = query({
   args: {
@@ -287,11 +323,11 @@ export const getFileUrl = query({
 // Helper function to determine if a nudge is task-related
 const isTaskRelatedNudge = (
   messageContent: string | undefined,
-  relatedTasks: any[],
-  overdueTasks: any[],
-  mostRelevantTask: any,
+  relatedTasks: Task[],
+  overdueTasks: Task[],
+  mostRelevantTask: Task | null,
   isSelfNudge: boolean,
-  notificationRecipient: any
+  notificationRecipient: User
 ): boolean => {
   const taskKeywords = [
     "tarefa",
@@ -339,7 +375,7 @@ export const nudgeUser = mutation({
     const isSelfNudge = message.authorId === args.nudgerUserId;
 
     // Get the message author's details
-    const messageAuthor = await ctx.db
+    const messageAuthor: User | null = await ctx.db
       .query("users")
       .filter((q) => q.eq(q.field("_id"), message.authorId))
       .unique();
@@ -349,13 +385,13 @@ export const nudgeUser = mutation({
     }
 
     // Get team details for context
-    const team = await ctx.db
+    const team: Team | null = await ctx.db
       .query("teams")
       .filter((q) => q.eq(q.field("_id"), message.teamId))
       .unique();
 
     // Helper function to get user display name
-    const getDisplayName = (user: any) => {
+    const getDisplayName = (user: User | null) => {
       if (!user) return "Anonymous";
 
       // Try to get name from firstName and lastName
@@ -379,7 +415,7 @@ export const nudgeUser = mutation({
 
     // Check if this message is related to a task
     // Look for tasks that reference this message or have similar content
-    let relatedTasks = await ctx.db
+    let relatedTasks: Task[] = await ctx.db
       .query("tasks")
       .filter((q) =>
         q.and(
@@ -394,7 +430,7 @@ export const nudgeUser = mutation({
 
     // If it's a self-nudge, also look for tasks created by the nudger
     if (isSelfNudge) {
-      const tasksCreatedByNudger = await ctx.db
+      const tasksCreatedByNudger: Task[] = await ctx.db
         .query("tasks")
         .filter((q) =>
           q.and(
@@ -412,14 +448,14 @@ export const nudgeUser = mutation({
       relatedTasks = [...relatedTasks, ...uniqueNewTasks];
     }
     // Determine who should receive the notification
-    let notificationRecipient = messageAuthor;
+    let notificationRecipient: User = messageAuthor;
     let recipientDisplayName = authorDisplayName;
 
     // If it's a self-nudge, find the task assignee to notify them
     if (isSelfNudge && relatedTasks.length > 0) {
       // Find the most recent task created by the nudger
       const tasksCreatedByNudger = relatedTasks.filter(
-        (task) => task.createdBy === args.nudgerUserName
+        (task) => task.createdBy === args.nudgerUserId
       );
 
       if (tasksCreatedByNudger.length > 0) {
@@ -428,7 +464,7 @@ export const nudgeUser = mutation({
         const mostRecentTask = tasksCreatedByNudger[0];
 
         // Get the assignee's details
-        const assignee = await ctx.db
+        const assignee: User | null = await ctx.db
           .query("users")
           .filter((q) =>
             q.eq(q.field("clerkUserId"), mostRecentTask.assigneeId)
@@ -446,7 +482,7 @@ export const nudgeUser = mutation({
     // but allow the nudge to proceed
 
     // Find the most relevant task based on content similarity or recent creation
-    let mostRelevantTask = null;
+    let mostRelevantTask: Task | null = null;
     if (relatedTasks.length > 0) {
       // Sort by creation date (most recent first) and look for content similarity
       relatedTasks.sort((a, b) => b.createdAt - a.createdAt);
@@ -465,7 +501,7 @@ export const nudgeUser = mutation({
     }
 
     // Check for overdue tasks for the notification recipient
-    const overdueTasks = await ctx.db
+    const overdueTasks: Task[] = await ctx.db
       .query("tasks")
       .filter((q) =>
         q.and(
