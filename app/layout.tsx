@@ -66,25 +66,6 @@ function ConditionalAuthHeader() {
 function HomeLayoutContent({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen">
-      {/* Simple Header with Logo and Start Button */}
-      <div className="flex justify-between items-center p-2 sm:p-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
-          <h1 className="text-lg sm:text-xl font-bold gradient-text">
-            Chat do ✨
-          </h1>
-        </div>
-
-        <Button
-          onClick={() => (window.location.href = "/tasks")}
-          className="px-6 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-        >
-          Start
-        </Button>
-      </div>
-
       {/* Content Area - Full width, full height */}
       <main className="min-h-screen">{children}</main>
     </div>

@@ -95,8 +95,40 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen">
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+      {/* Pink Radio Effect Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+        <div
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"
+          style={{ animationDelay: "2s" }}
+        ></div>
+        <div
+          className="absolute top-40 left-40 w-60 h-60 bg-orange-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"
+          style={{ animationDelay: "4s" }}
+        ></div>
+      </div>
+
+      <div className="relative w-full px-4 sm:px-6 lg:px-8 py-2 sm:py-4 lg:py-8">
+        {/* Header */}
+        <div className="flex justify-between items-center px-2 sm:px-4 py-1 sm:py-2 relative z-10 mb-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <h1 className="text-lg sm:text-xl font-bold gradient-text">
+              Chat do ✨
+            </h1>
+          </div>
+
+          <Button
+            onClick={() => (window.location.href = "/tasks")}
+            className="px-6 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+          >
+            Start
+          </Button>
+        </div>
+
         {/* Hero Section with Video Side by Side */}
         <div className="mb-16 lg:mb-24 pt-2 sm:pt-4 lg:pt-0">
           <div className="w-full max-w-none">
@@ -166,7 +198,7 @@ export default function App() {
               return (
                 <Card
                   key={index}
-                  className={`group border-0 shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:scale-105 bg-gradient-to-br ${action.bgGradient} rounded-2xl sm:rounded-3xl overflow-hidden`}
+                  className={`group border-0 shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:scale-105 bg-gradient-to-br ${action.bgGradient} rounded-2xl sm:rounded-3xl overflow-hidden backdrop-blur-sm bg-white/80`}
                 >
                   <CardContent className="p-4 sm:p-6 lg:p-8 text-center">
                     <div
@@ -247,7 +279,7 @@ export default function App() {
               return (
                 <div
                   key={index}
-                  className="group p-4 sm:p-6 bg-white/60 backdrop-blur-sm border border-white/30 rounded-xl sm:rounded-2xl hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+                  className="group p-4 sm:p-6 bg-white/80 backdrop-blur-sm border border-white/40 rounded-xl sm:rounded-2xl hover:shadow-lg transition-all duration-300 transform hover:scale-105"
                 >
                   <div
                     className={`w-10 h-10 sm:w-12 sm:h-12 ${feature.bg} rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300`}
@@ -271,7 +303,7 @@ export default function App() {
 
         {/* Call to Action */}
         <div className="text-center px-4 pb-8 sm:pb-12">
-          <div className="bg-white/50 backdrop-blur-sm border border-white/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 shadow-xl">
+          <div className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 shadow-xl">
             <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
               Ready to start the{" "}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
