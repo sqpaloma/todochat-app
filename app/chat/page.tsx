@@ -46,7 +46,6 @@ export default function ChatPage() {
     handleSendMessage,
     handleFileSelect,
     handleFileUpload,
-    handleCreateTask,
     handleClearChat,
   } = useChat();
 
@@ -100,7 +99,6 @@ export default function ChatPage() {
                 activeTab={activeTab}
                 selectedDirectContact={selectedDirectContact}
                 directContacts={directContacts || []}
-                onCreateTask={handleCreateTask}
                 messagesEndRef={messagesEndRef}
               />
 

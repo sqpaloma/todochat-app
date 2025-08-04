@@ -132,3 +132,133 @@ export const deleteTask = mutation({
     await ctx.db.delete(args.taskId);
   },
 });
+
+export const getTasksForUser = query({
+  args: {
+    userId: v.string(),
+    teamId: v.string(),
+    status: v.optional(
+      v.union(v.literal("todo"), v.literal("in-progress"), v.literal("done"))
+    ),
+  },
+  handler: async (ctx, args) => {
+    let query = ctx.db
+      .query("tasks")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("assigneeId"), args.userId),
+          q.eq(q.field("teamId"), args.teamId)
+        )
+      );
+
+    if (args.status) {
+      query = query.filter((q) => q.eq(q.field("status"), args.status));
+    }
+
+    return await query.order("desc").collect();
+  },
+});
+
+export const getOverdueTasks = query({
+  args: {
+    userId: v.string(),
+    teamId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("tasks")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("assigneeId"), args.userId),
+          q.eq(q.field("teamId"), args.teamId),
+          q.neq(q.field("status"), "done"),
+          q.lt(q.field("dueDate"), Date.now())
+        )
+      )
+      .order("asc")
+      .collect();
+  },
+});
+
+export const sendOverdueTaskNotification = mutation({
+  args: {
+    userId: v.string(),
+    teamId: v.string(),
+    nudgerUserName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Get overdue tasks for the user
+    const overdueTasks = await ctx.db
+      .query("tasks")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("assigneeId"), args.userId),
+          q.eq(q.field("teamId"), args.teamId),
+          q.neq(q.field("status"), "done"),
+          q.lt(q.field("dueDate"), Date.now())
+        )
+      )
+      .order("asc")
+      .collect();
+
+    if (overdueTasks.length === 0) {
+      return { message: "No overdue tasks found" };
+    }
+
+    // Get user details
+    const user = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("clerkUserId"), args.userId))
+      .unique();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Get team details
+    const team = await ctx.db
+      .query("teams")
+      .filter((q) => q.eq(q.field("_id"), args.teamId))
+      .unique();
+
+    // Helper function to get user display name
+    const getDisplayName = (user: any) => {
+      if (!user) return "Anonymous";
+
+      const fullName = [user.firstName, user.lastName]
+        .filter(Boolean)
+        .join(" ");
+
+      if (fullName.trim()) return fullName;
+
+      if (user.email) {
+        const emailUsername = user.email.split("@")[0];
+        return emailUsername.charAt(0).toUpperCase() + emailUsername.slice(1);
+      }
+
+      return "Anonymous";
+    };
+
+    const userDisplayName = getDisplayName(user);
+
+    // Send overdue task reminder email
+    await ctx.scheduler.runAfter(0, internal.emails.sendOverdueTaskReminder, {
+      to: user.email,
+      toName: userDisplayName,
+      tasks: overdueTasks.map((task) => ({
+        _id: task._id,
+        title: task.title,
+        description: task.description,
+        dueDate: task.dueDate!,
+        priority: task.priority,
+      })),
+      teamName: team?.name || "Team Chat",
+    });
+
+    return {
+      success: true,
+      overdueTasksCount: overdueTasks.length,
+      message: `Sent overdue task notification to ${userDisplayName}`,
+    };
+  },
+});

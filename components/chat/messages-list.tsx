@@ -12,7 +12,6 @@ interface MessagesListProps {
   activeTab: ChatTab;
   selectedDirectContact: string | null;
   directContacts: any[];
-  onCreateTask: (message: MessageType) => void;
   messagesEndRef: React.RefObject<HTMLDivElement>;
 }
 
@@ -22,7 +21,6 @@ export function MessagesList({
   activeTab,
   selectedDirectContact,
   directContacts,
-  onCreateTask,
   messagesEndRef,
 }: MessagesListProps) {
   const currentUserName = getDisplayName(currentUser);
@@ -90,7 +88,6 @@ export function MessagesList({
                   currentUserId={currentUser._id}
                   currentUserName={currentUserName}
                   isGrouped={isGrouped}
-                  onCreateTask={() => onCreateTask(message)}
                 />
               );
             })}

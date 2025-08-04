@@ -16,7 +16,6 @@ interface MessageReactionsProps {
   showNudge?: boolean;
   onNudge?: () => void;
   isNudging?: boolean;
-  onCreateTask?: () => void;
 }
 
 export function MessageReactions({
@@ -26,7 +25,6 @@ export function MessageReactions({
   showNudge = false,
   onNudge,
   isNudging = false,
-  onCreateTask,
 }: MessageReactionsProps) {
   const [showReactions, setShowReactions] = useState(false);
 
@@ -56,19 +54,8 @@ export function MessageReactions({
           onClick={() => setShowReactions(!showReactions)}
           className="p-2 h-auto hover:bg-muted rounded-lg"
         >
-          <Smile className="w-4 h-4 text-muted-foreground" />
+          <Smile className="w-4 h-4 text-primary" />
         </Button>
-
-        {onCreateTask && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onCreateTask}
-            className="p-2 h-auto hover:bg-muted rounded-lg"
-          >
-            <span className="text-muted-foreground">Task</span>
-          </Button>
-        )}
 
         {showNudge && onNudge && (
           <Button
@@ -76,7 +63,7 @@ export function MessageReactions({
             size="sm"
             onClick={onNudge}
             className="p-2 h-auto hover:bg-muted rounded-lg"
-            title="Nudge user"
+            title="Nudge user about tasks"
             disabled={isNudging}
           >
             <span
@@ -97,7 +84,7 @@ export function MessageReactions({
             variant="ghost"
             size="sm"
             onClick={() => handleReaction("👍")}
-            className="p-2 h-auto hover:bg-muted rounded-lg text-lg"
+            className="p-2 h-auto hover:bg-muted rounded-lg text-lg text-primary"
             aria-label="React with thumbs up"
           >
             👍
@@ -106,7 +93,7 @@ export function MessageReactions({
             variant="ghost"
             size="sm"
             onClick={() => handleReaction("❤️")}
-            className="p-2 h-auto hover:bg-muted rounded-lg text-lg"
+            className="p-2 h-auto hover:bg-muted rounded-lg text-lg text-primary"
             aria-label="React with heart"
           >
             ❤️
@@ -115,7 +102,7 @@ export function MessageReactions({
             variant="ghost"
             size="sm"
             onClick={() => handleReaction("😂")}
-            className="p-2 h-auto hover:bg-muted rounded-lg text-lg"
+            className="p-2 h-auto hover:bg-muted rounded-lg text-lg text-primary"
             aria-label="React with laughing face"
           >
             😂
@@ -124,7 +111,7 @@ export function MessageReactions({
             variant="ghost"
             size="sm"
             onClick={() => handleReaction("😮")}
-            className="p-2 h-auto hover:bg-muted rounded-lg text-lg"
+            className="p-2 h-auto hover:bg-muted rounded-lg text-lg text-primary"
             aria-label="React with surprised face"
           >
             😮
@@ -155,7 +142,7 @@ export function ReactionDisplay({
           tabIndex={0}
           aria-label={`${reaction.emoji} reaction by ${reaction.users.length} user${reaction.users.length !== 1 ? "s" : ""}`}
         >
-          <span className="text-base">{reaction.emoji}</span>
+          <span className="text-base text-primary">{reaction.emoji}</span>
           <span className="text-primary font-semibold">
             {reaction.users.length}
           </span>

@@ -284,6 +284,44 @@ export const getFileUrl = query({
   },
 });
 
+// Helper function to determine if a nudge is task-related
+const isTaskRelatedNudge = (
+  messageContent: string | undefined,
+  relatedTasks: any[],
+  overdueTasks: any[],
+  mostRelevantTask: any,
+  isSelfNudge: boolean,
+  notificationRecipient: any
+): boolean => {
+  const taskKeywords = [
+    "tarefa",
+    "task",
+    "responsável",
+    "assign",
+    "deadline",
+    "prazo",
+    "concluir",
+    "complete",
+  ];
+
+  const hasTaskKeywords = messageContent
+    ? taskKeywords.some((keyword) =>
+        messageContent.toLowerCase().includes(keyword)
+      )
+    : false;
+
+  const recipientHasAssignedTasks = relatedTasks.some(
+    (task) => task.assigneeId === notificationRecipient.clerkUserId
+  );
+
+  const hasOverdueTasks = overdueTasks.length > 0;
+
+  return (
+    (mostRelevantTask || isSelfNudge) &&
+    (hasTaskKeywords || recipientHasAssignedTasks || hasOverdueTasks)
+  );
+};
+
 export const nudgeUser = mutation({
   args: {
     messageId: v.id("messages"),
@@ -297,10 +335,8 @@ export const nudgeUser = mutation({
       throw new Error("Message not found");
     }
 
-    // Don't allow nudging yourself
-    if (message.authorId === args.nudgerUserId) {
-      throw new Error("You cannot nudge yourself");
-    }
+    // Check if this is a self-nudge (nudging your own message)
+    const isSelfNudge = message.authorId === args.nudgerUserId;
 
     // Get the message author's details
     const messageAuthor = await ctx.db
@@ -341,17 +377,172 @@ export const nudgeUser = mutation({
     // Get the author's display name
     const authorDisplayName = getDisplayName(messageAuthor);
 
-    // Send the nudge email
-    await ctx.scheduler.runAfter(0, internal.emails.sendNudgeEmail, {
-      to: messageAuthor.email,
-      toName: authorDisplayName,
-      fromName: args.nudgerUserName,
-      messageContent: message.content,
-      messageId: args.messageId,
-      teamName: team?.name || "Team Chat",
-    });
+    // Check if this message is related to a task
+    // Look for tasks that reference this message or have similar content
+    let relatedTasks = await ctx.db
+      .query("tasks")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("teamId"), message.teamId),
+          q.or(
+            q.eq(q.field("assigneeId"), message.authorId),
+            q.eq(q.field("createdBy"), message.authorId)
+          )
+        )
+      )
+      .collect();
 
-    return { success: true };
+    // If it's a self-nudge, also look for tasks created by the nudger
+    if (isSelfNudge) {
+      const tasksCreatedByNudger = await ctx.db
+        .query("tasks")
+        .filter((q) =>
+          q.and(
+            q.eq(q.field("teamId"), message.teamId),
+            q.eq(q.field("createdBy"), args.nudgerUserId)
+          )
+        )
+        .collect();
+
+      // Use a Set for efficient deduplication
+      const taskIds = new Set(relatedTasks.map((task) => task._id));
+      const uniqueNewTasks = tasksCreatedByNudger.filter(
+        (task) => !taskIds.has(task._id)
+      );
+      relatedTasks = [...relatedTasks, ...uniqueNewTasks];
+    }
+    // Determine who should receive the notification
+    let notificationRecipient = messageAuthor;
+    let recipientDisplayName = authorDisplayName;
+
+    // If it's a self-nudge, find the task assignee to notify them
+    if (isSelfNudge && relatedTasks.length > 0) {
+      // Find the most recent task created by the nudger
+      const tasksCreatedByNudger = relatedTasks.filter(
+        (task) => task.createdBy === args.nudgerUserName
+      );
+
+      if (tasksCreatedByNudger.length > 0) {
+        // Sort by creation date and get the most recent
+        tasksCreatedByNudger.sort((a, b) => b.createdAt - a.createdAt);
+        const mostRecentTask = tasksCreatedByNudger[0];
+
+        // Get the assignee's details
+        const assignee = await ctx.db
+          .query("users")
+          .filter((q) =>
+            q.eq(q.field("clerkUserId"), mostRecentTask.assigneeId)
+          )
+          .unique();
+
+        if (assignee) {
+          notificationRecipient = assignee;
+          recipientDisplayName = getDisplayName(assignee);
+        }
+      }
+    }
+
+    // If no specific assignee found for self-nudge, keep the original behavior
+    // but allow the nudge to proceed
+
+    // Find the most relevant task based on content similarity or recent creation
+    let mostRelevantTask = null;
+    if (relatedTasks.length > 0) {
+      // Sort by creation date (most recent first) and look for content similarity
+      relatedTasks.sort((a, b) => b.createdAt - a.createdAt);
+
+      // Check if any task has similar content to the message
+      const taskWithSimilarContent = relatedTasks.find(
+        (task) =>
+          task.originalMessage &&
+          (task.originalMessage
+            .toLowerCase()
+            .includes(message.content.toLowerCase().substring(0, 20)) ||
+            message.content.toLowerCase().includes(task.title.toLowerCase()))
+      );
+
+      mostRelevantTask = taskWithSimilarContent || relatedTasks[0];
+    }
+
+    // Check for overdue tasks for the notification recipient
+    const overdueTasks = await ctx.db
+      .query("tasks")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("assigneeId"), notificationRecipient.clerkUserId),
+          q.eq(q.field("teamId"), message.teamId),
+          q.neq(q.field("status"), "done"),
+          q.lt(q.field("dueDate"), Date.now())
+        )
+      )
+      .order("asc")
+      .collect();
+
+    // Determine if this is a task-related nudge
+    const isTaskRelated = isTaskRelatedNudge(
+      message.content,
+      relatedTasks,
+      overdueTasks,
+      mostRelevantTask,
+      isSelfNudge,
+      notificationRecipient
+    );
+
+    if (
+      isTaskRelated &&
+      (mostRelevantTask || overdueTasks.length > 0 || isSelfNudge)
+    ) {
+      // Send task-specific nudge email
+      await ctx.scheduler.runAfter(0, internal.emails.sendTaskNudgeEmail, {
+        to: notificationRecipient.email,
+        toName: recipientDisplayName,
+        fromName: args.nudgerUserName,
+        messageContent: message.content,
+        messageId: args.messageId,
+        teamName: team?.name || "Team Chat",
+        taskTitle: mostRelevantTask?.title,
+        taskId: mostRelevantTask?._id,
+      });
+
+      // If there are overdue tasks, also send a specific overdue task notification
+      if (overdueTasks.length > 0) {
+        await ctx.scheduler.runAfter(
+          1000,
+          internal.emails.sendOverdueTaskReminder,
+          {
+            to: notificationRecipient.email,
+            toName: recipientDisplayName,
+            tasks: overdueTasks.map((task) => ({
+              _id: task._id,
+              title: task.title,
+              description: task.description,
+              dueDate: task.dueDate!,
+              priority: task.priority,
+            })),
+            teamName: team?.name || "Team Chat",
+          }
+        );
+      }
+    } else {
+      // Send regular nudge email
+      await ctx.scheduler.runAfter(0, internal.emails.sendNudgeEmail, {
+        to: notificationRecipient.email,
+        toName: recipientDisplayName,
+        fromName: args.nudgerUserName,
+        messageContent: message.content,
+        messageId: args.messageId,
+        teamName: team?.name || "Team Chat",
+      });
+    }
+
+    return {
+      success: true,
+      isSelfNudge,
+      recipientEmail: notificationRecipient.email,
+      recipientName: recipientDisplayName,
+      hasRelatedTasks: relatedTasks.length > 0,
+      hasOverdueTasks: overdueTasks.length > 0,
+    };
   },
 });
 

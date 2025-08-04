@@ -15,7 +15,6 @@ interface MessageProps {
   currentUserId: string;
   currentUserName: string;
   isGrouped: boolean;
-  onCreateTask: () => void;
 }
 
 export function Message({
@@ -23,7 +22,6 @@ export function Message({
   currentUserId,
   currentUserName,
   isGrouped,
-  onCreateTask,
 }: MessageProps) {
   const [isNudging, setIsNudging] = useState(false);
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
@@ -62,11 +60,6 @@ export function Message({
   };
 
   const handleNudge = async () => {
-    if (isCurrentUser) {
-      alert("You cannot nudge yourself!");
-      return;
-    }
-
     setIsNudging(true);
     try {
       await nudgeUser({
@@ -75,18 +68,13 @@ export function Message({
         nudgerUserName: currentUserName,
       });
 
-      const successMessage = `🔔 Nudged ${message.authorName}! They'll receive an email notification.`;
+      const successMessage = isCurrentUser
+        ? `🔔 Nudged your own message! The person assigned to your task will receive an email notification.`
+        : `🔔 Nudged ${message.authorName}! They'll receive an email notification about their assigned tasks and any overdue items.`;
       alert(successMessage);
     } catch (error) {
       console.error("Error nudging user:", error);
-      if (
-        error instanceof Error &&
-        error.message === "You cannot nudge yourself"
-      ) {
-        alert("You cannot nudge yourself!");
-      } else {
-        alert("Failed to nudge user. Please try again.");
-      }
+      alert("Failed to nudge user. Please try again.");
     } finally {
       setIsNudging(false);
     }
@@ -135,7 +123,9 @@ export function Message({
                 reactions={message.reactions}
                 onReaction={handleReaction}
                 position="right"
-                onCreateTask={onCreateTask}
+                showNudge={true}
+                onNudge={handleNudge}
+                isNudging={isNudging}
               />
 
               <div className="relative">
