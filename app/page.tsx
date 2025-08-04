@@ -52,6 +52,15 @@ export default function App() {
       gradient: "from-orange-500 to-red-400",
       bgGradient: "from-orange-50 to-red-50",
     },
+    {
+      icon: Mail,
+      title: "Notifications & Nudges",
+      description: "Get automatic email reminders",
+      href: "/chat",
+      stats: "5 active",
+      gradient: "from-purple-500 to-pink-400",
+      bgGradient: "from-purple-50 to-pink-50",
+    },
   ];
 
   const features = [
@@ -151,7 +160,7 @@ export default function App() {
             happy
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {quickActions.map((action, index) => {
               const Icon = action.icon;
               return (
@@ -187,7 +196,8 @@ export default function App() {
                       </div>
                     </div>
 
-                    {action.title === "Chat" ? (
+                    {action.title === "Chat" ||
+                    action.title === "Notifications & Nudges" ? (
                       isLoaded && isSignedIn ? (
                         <Link href={action.href}>
                           <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl sm:rounded-2xl font-semibold py-2.5 sm:py-3 text-sm sm:text-base transition-all duration-300 group-hover:shadow-lg">
