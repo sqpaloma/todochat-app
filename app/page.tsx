@@ -83,10 +83,10 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen">
       <div className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
         {/* Hero Section with Video Side by Side */}
-        <div className="mb-16 lg:mb-24 pt-8 sm:pt-12 lg:pt-0">
+        <div className="mb-16 lg:mb-24 pt-2 sm:pt-4 lg:pt-0">
           <div className="w-full max-w-none">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-center">
               {/* Text Content */}
@@ -119,7 +119,7 @@ export default function App() {
                 <div className="flex flex-col sm:flex-row gap-6 justify-center xl:justify-start">
                   <Button
                     onClick={() => (window.location.href = "/tasks")}
-                    className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
                     Start building
                     <ArrowRight className="w-5 h-5 ml-2" />
@@ -185,9 +185,7 @@ export default function App() {
                     </div>
 
                     <Link href={action.href}>
-                      <Button
-                        className={`w-full bg-gradient-to-r ${action.gradient} hover:opacity-90 text-white rounded-xl sm:rounded-2xl font-semibold py-2.5 sm:py-3 text-sm sm:text-base transition-all duration-300 group-hover:shadow-lg`}
-                      >
+                      <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl sm:rounded-2xl font-semibold py-2.5 sm:py-3 text-sm sm:text-base transition-all duration-300 group-hover:shadow-lg">
                         Acessar
                         <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                       </Button>
@@ -255,7 +253,7 @@ export default function App() {
             </p>
             <Button
               onClick={() => (window.location.href = "/tasks")}
-              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               Let's get started! ✨
             </Button>
