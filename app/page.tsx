@@ -88,9 +88,9 @@ export default function App() {
         {/* Hero Section with Video Side by Side */}
         <div className="mb-16 lg:mb-24 pt-8 sm:pt-12 lg:pt-0">
           <div className="w-full max-w-none">
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-16 items-center">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-center">
               {/* Text Content */}
-              <div className="text-center xl:text-left px-8 lg:px-16 xl:px-24">
+              <div className="text-center xl:text-left px-8 lg:px-16 xl:px-12">
                 <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 rounded-full text-base font-semibold mb-12 border border-blue-200">
                   <Sparkles className="w-5 h-5 mr-3" />
                   About Chat Do
@@ -98,16 +98,14 @@ export default function App() {
                 </div>
 
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-12 leading-tight">
-                  Pass tasks to others
-                  <br className="hidden sm:block" />
-                  <span className="block sm:inline">
-                    <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                      and let email handle the rest
-                    </span>
-                    <div className="inline-block ml-6 float-animation">
-                      <Star className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-yellow-400 fill-current" />
-                    </div>
+                  Pass tasks to <br /> others and let
+                  <br />
+                  <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    email handle the rest
                   </span>
+                  <div className="inline-block ml-6 float-animation">
+                    <Star className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-yellow-400 fill-current" />
+                  </div>
                 </h1>
 
                 <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-16 leading-relaxed font-medium">
@@ -130,7 +128,7 @@ export default function App() {
               </div>
 
               {/* Video Demo */}
-              <div className="px-8 lg:px-16 xl:px-24">
+              <div className="px-8 lg:px-16 xl:px-8">
                 <DemoVideo />
               </div>
             </div>
