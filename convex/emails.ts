@@ -61,7 +61,7 @@ export const sendNudgeEmail = internalMutation({
       `;
 
       await resend.sendEmail(ctx, {
-        from: "TodoChat <onboarding@resend.dev>",
+        from: "TodoChat <onboarding@chatdo.upcraftcrew.com>",
         to: args.to,
         subject,
         html,
@@ -113,7 +113,7 @@ export const sendTeamInvitationEmail = internalMutation({
 
     try {
       await resend.sendEmail(ctx, {
-        from: "Acme <onboarding@resend.dev>", // Using verified Resend domain for testing
+        from: "Acme <onboarding@chatdo.upcraftcrew.com>", // Using verified Resend domain for testing
         to: args.to,
         subject: `🎉 You're invited to join ${args.teamName || "our team"} on TodoChat`,
         html: `
@@ -450,7 +450,7 @@ export const sendTaskReminderBatch = internalMutation({
       `;
 
       await resend.sendEmail(ctx, {
-        from: "TodoChat <noreply@resend.dev>",
+        from: "TodoChat <noreply@chatdo.upcraftcrew.com>",
         to: args.to,
         subject,
         html,
@@ -521,7 +521,7 @@ export const sendAnnouncementEmail = internalMutation({
       `;
 
       await resend.sendEmail(ctx, {
-        from: "TodoChat <noreply@resend.dev>",
+        from: "TodoChat <noreply@chatdo.upcraftcrew.com>",
         to: args.to,
         subject: emailSubject,
         html,
@@ -623,7 +623,7 @@ export const sendTaskNudgeEmail = internalMutation({
       `;
 
       await resend.sendEmail(ctx, {
-        from: "TodoChat <onboarding@resend.dev>",
+        from: "TodoChat <onboarding@chatdo.upcraftcrew.com>",
         to: args.to,
         subject,
         html,
@@ -741,7 +741,7 @@ export const sendOverdueTaskReminder = internalMutation({
       `;
 
       await resend.sendEmail(ctx, {
-        from: "TodoChat <onboarding@resend.dev>",
+        from: "TodoChat <onboarding@chatdo.upcraftcrew.com>",
         to: args.to,
         subject,
         html,
