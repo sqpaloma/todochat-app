@@ -5,13 +5,14 @@ import type React from "react";
 import { useState, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { gradientClasses } from '@/lib/gradient-classes';
+import { gradientClasses } from "@/lib/gradient-classes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,7 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Edit, Mail, User, MapPin, Phone, Trash2 } from "lucide-react";
 
 interface TeamMemberType {
-  _id: string;
+  _id: Id<"users">;
   name: string;
   email: string;
   joinDate?: number;
@@ -47,6 +48,7 @@ export function EditMemberDialog({
 
   // Simulate update member mutation (in real app, this would be implemented in convex/teams.ts)
   const updateMember = useMutation(api.teams.addMember); // Using addMember as placeholder
+  const removeMember = useMutation(api.teams.removeMember);
 
   useEffect(() => {
     if (member) {
@@ -86,8 +88,22 @@ export function EditMemberDialog({
     );
 
     if (confirmed) {
-      console.log("🗑️ Member removed:", member.name);
-      onOpenChange(false);
+      setIsLoading(true);
+
+      try {
+        await removeMember({
+          teamId,
+          memberId: member._id,
+        });
+
+        console.log("🗑️ Member removed:", member.name);
+        onOpenChange(false);
+      } catch (error) {
+        console.error("Error removing member:", error);
+        alert("Failed to remove member. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 

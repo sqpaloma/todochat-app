@@ -1,5 +1,7 @@
+import { Id } from "@/convex/_generated/dataModel";
+
 export interface TeamMember {
-  _id: string;
+  _id: Id<"users">;
   name: string;
   email: string;
   joinDate: number;

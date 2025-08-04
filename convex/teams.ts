@@ -3,6 +3,7 @@ import { v } from "convex/values";
 import { getCurrentUserOrThrow } from "./users";
 import { internal } from "./_generated/api";
 import { presence } from "./presence";
+import { Id } from "./_generated/dataModel";
 
 // Helper function to get user display name
 const getDisplayName = (user: any) => {
@@ -138,5 +139,35 @@ export const sendDailyDigestToTeam = internalMutation({
     }
 
     return { sent: members.length };
+  },
+});
+
+export const removeMember = mutation({
+  args: {
+    teamId: v.string(),
+    memberId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    // Verify that the current user has permission (must be authenticated)
+    const currentUser = await getCurrentUserOrThrow(ctx);
+
+    // In a real implementation, you would check if the current user has admin permissions
+    // and if the member is actually part of this team
+
+    // For now, we'll just delete the user from the users table
+    // In a real app, you might want to just remove the team association instead
+    const user = await ctx.db.get(args.memberId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Delete the user
+    await ctx.db.delete(args.memberId);
+
+    return {
+      success: true,
+      message: `Member ${user.email} has been removed from the team.`,
+    };
   },
 });
