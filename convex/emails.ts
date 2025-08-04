@@ -28,14 +28,14 @@ export const sendNudgeEmail = internalMutation({
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
           <div style="text-align: center; margin-bottom: 40px;">
             <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(58, 71, 213, 0.3);">
-              <span style="color: white; font-size: 36px; font-weight: bold;">🔔</span>
+              <span style="color: black; font-size: 36px; font-weight: bold;">🔔</span>
             </div>
             <h1 style="color: #1a202c; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Someone's calling you!</h1>
             <p style="color: #718096; margin: 15px 0 0 0; font-size: 18px; font-weight: 400;">${args.fromName} nudged you in ChatDo</p>
           </div>
           
           <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); padding: 30px; border-radius: 20px; margin: 30px 0; text-align: center; box-shadow: 0 10px 40px rgba(58, 71, 213, 0.2);">
-            <p style="color: white; margin: 0; font-size: 20px; line-height: 1.6; font-weight: 500;">
+            <p style="color: black; margin: 0; font-size: 20px; line-height: 1.6; font-weight: 500;">
               <strong style="font-weight: 700;">${args.fromName}</strong> nudged you in a message
             </p>
           </div>
@@ -49,7 +49,7 @@ export const sendNudgeEmail = internalMutation({
           </div>
 
           <div style="text-align: center; margin: 50px 0;">
-            <a href="${appUrl}/chat" style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(58, 71, 213, 0.4); transition: all 0.3s ease; border: none;">
+            <a href="${appUrl}/chat" style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: black; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(58, 71, 213, 0.4); transition: all 0.3s ease; border: none;">
               View Message
             </a>
           </div>
@@ -122,15 +122,15 @@ export const sendTeamInvitationEmail = internalMutation({
         html: `
           <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
             <div style="text-align: center; margin-bottom: 40px;">
-              <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(58, 71, 213, 0.3);">
-                <span style="color: white; font-size: 36px; font-weight: bold;">👥</span>
-              </div>
+                          <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(58, 71, 213, 0.3);">
+              <span style="color: black; font-size: 36px; font-weight: bold;">👥</span>
+            </div>
               <h1 style="color: #1a202c; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">You're Invited!</h1>
               <p style="color: #718096; margin: 15px 0 0 0; font-size: 18px; font-weight: 400;">Join your team on ChatDo</p>
             </div>
             
             <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); padding: 30px; border-radius: 20px; margin: 30px 0; text-align: center; box-shadow: 0 10px 40px rgba(58, 71, 213, 0.2);">
-              <p style="color: white; margin: 0; font-size: 20px; line-height: 1.6; font-weight: 500;">
+              <p style="color: black; margin: 0; font-size: 20px; line-height: 1.6; font-weight: 500;">
                 <strong style="font-weight: 700;">${args.inviterName}</strong> has invited you to join<br>
                 <span style="font-size: 24px; font-weight: 700; margin-top: 8px; display: block;">${args.teamName || "the team"}</span>
               </p>
@@ -164,7 +164,7 @@ export const sendTeamInvitationEmail = internalMutation({
 
             <div style="text-align: center; margin: 50px 0;">
               <a href="${joinUrl}" 
-                 style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(58, 71, 213, 0.4);">
+                 style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: black; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(58, 71, 213, 0.4);">
                 Join Team Now
               </a>
             </div>
@@ -227,7 +227,7 @@ export const sendTaskNotificationEmail = internalMutation({
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
           <div style="text-align: center; margin-bottom: 40px;">
             <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(58, 71, 213, 0.3);">
-              <span style="color: white; font-size: 36px; font-weight: bold;">📋</span>
+              <span style="color: black; font-size: 36px; font-weight: bold;">📋</span>
             </div>
             <h1 style="color: #1a202c; margin: 0; font-size: 28px; font-weight: 700;">New Task Created</h1>
             <p style="color: #718096; margin: 15px 0 0 0; font-size: 16px;">Hello ${args.assigneeName}!</p>
@@ -244,11 +244,11 @@ export const sendTaskNotificationEmail = internalMutation({
 
           <div style="text-align: center; margin: 40px 0; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
             <a href="${appUrl}/tasks/${args.taskId}" 
-               style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: 600; font-size: 14px; box-shadow: 0 4px 20px rgba(58, 71, 213, 0.3);">
+               style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: black; padding: 14px 28px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: 600; font-size: 14px; box-shadow: 0 4px 20px rgba(58, 71, 213, 0.3);">
               View Task
             </a>
             <a href="${appUrl}/api/tasks/${args.taskId}/complete" 
-               style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: 600; font-size: 14px; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);">
+               style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: black; padding: 14px 28px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: 600; font-size: 14px; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);">
               Mark as Completed
             </a>
           </div>
@@ -326,7 +326,7 @@ export const sendDailyDigest = internalMutation({
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
           <div style="text-align: center; margin-bottom: 40px;">
             <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(58, 71, 213, 0.3);">
-              <span style="color: white; font-size: 36px; font-weight: bold;">📋</span>
+              <span style="color: black; font-size: 36px; font-weight: bold;">📋</span>
             </div>
             <h1 style="color: #1a202c; margin: 0; font-size: 28px; font-weight: 700;">Daily Summary</h1>
             <p style="color: #718096; margin: 15px 0 0 0; font-size: 16px;">Hello ${args.memberName}!</p>
@@ -352,7 +352,7 @@ export const sendDailyDigest = internalMutation({
 
           <div style="text-align: center; margin: 50px 0;">
             <a href="${appUrl}" 
-               style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(58, 71, 213, 0.4);">
+               style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: black; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(58, 71, 213, 0.4);">
               Open ChatDo
             </a>
           </div>
@@ -391,7 +391,7 @@ export const sendTaskCompletionEmail = internalMutation({
           <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
             <div style="text-align: center; margin-bottom: 40px;">
               <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);">
-                <span style="color: white; font-size: 36px; font-weight: bold;">✅</span>
+                <span style="color: black; font-size: 36px; font-weight: bold;">✅</span>
               </div>
               <h1 style="color: #1a202c; margin: 0; font-size: 28px; font-weight: 700;">Task Completed</h1>
             </div>
@@ -405,7 +405,7 @@ export const sendTaskCompletionEmail = internalMutation({
 
             <div style="text-align: center; margin: 50px 0;">
               <a href="${appUrl}/tasks/${args.taskId}" 
-                 style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; box-shadow: 0 8px 30px rgba(58, 71, 213, 0.4);">
+                 style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: black; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; box-shadow: 0 8px 30px rgba(58, 71, 213, 0.4);">
                 View Details
               </a>
             </div>
@@ -477,7 +477,7 @@ export const sendTaskReminderBatch = internalMutation({
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
           <div style="text-align: center; margin-bottom: 40px;">
             <div style="background: linear-gradient(135deg, #f59e0b 0%, #dc2626 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3);">
-              <span style="color: white; font-size: 36px; font-weight: bold;">⏰</span>
+              <span style="color: black; font-size: 36px; font-weight: bold;">⏰</span>
             </div>
             <h1 style="color: #1a202c; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Task Reminders</h1>
             <p style="color: #718096; margin: 15px 0 0 0; font-size: 18px; font-weight: 400;">Hello ${args.assigneeName}!</p>
@@ -500,7 +500,7 @@ export const sendTaskReminderBatch = internalMutation({
           </div>
 
           <div style="text-align: center; margin: 50px 0;">
-            <a href="${appUrl}/tasks" style="background: linear-gradient(135deg, #f59e0b 0%, #dc2626 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(220, 38, 38, 0.4);">
+            <a href="${appUrl}/tasks" style="background: linear-gradient(135deg, #f59e0b 0%, #dc2626 100%); color: black; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(220, 38, 38, 0.4);">
               View All Tasks
             </a>
           </div>
@@ -558,15 +558,15 @@ export const sendAnnouncementEmail = internalMutation({
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
           <div style="text-align: center; margin-bottom: 40px;">
             <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(58, 71, 213, 0.3);">
-              <span style="color: white; font-size: 36px; font-weight: bold;">📢</span>
+              <span style="color: black; font-size: 36px; font-weight: bold;">📢</span>
             </div>
             <h1 style="color: #1a202c; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Team Announcement</h1>
             <p style="color: #718096; margin: 15px 0 0 0; font-size: 18px; font-weight: 400;">Hello ${args.recipientName}!</p>
           </div>
           
           <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); padding: 30px; border-radius: 20px; margin: 30px 0; text-align: center; box-shadow: 0 10px 40px rgba(58, 71, 213, 0.2);">
-            <h2 style="color: white; margin: 0; font-size: 24px; font-weight: 700; margin-bottom: 8px;">${args.subject}</h2>
-            <p style="color: white; margin: 0; font-size: 16px; opacity: 0.9;">From ${args.fromName} • ${args.teamName}</p>
+            <h2 style="color: black; margin: 0; font-size: 24px; font-weight: 700; margin-bottom: 8px;">${args.subject}</h2>
+            <p style="color: black; margin: 0; font-size: 16px; opacity: 0.9;">From ${args.fromName} • ${args.teamName}</p>
           </div>
 
           <div style="background: linear-gradient(145deg, #f7fafc 0%, #edf2f7 100%); padding: 30px; border-radius: 16px; border-left: 5px solid #3A47D5; margin: 30px 0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
@@ -574,7 +574,7 @@ export const sendAnnouncementEmail = internalMutation({
           </div>
 
           <div style="text-align: center; margin: 50px 0;">
-            <a href="${appUrl}/team" style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(58, 71, 213, 0.4);">
+            <a href="${appUrl}/team" style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: black; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(58, 71, 213, 0.4);">
               View Team
             </a>
           </div>
@@ -647,14 +647,14 @@ export const sendTaskNudgeEmail = internalMutation({
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
           <div style="text-align: center; margin-bottom: 40px;">
             <div style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);">
-              <span style="color: white; font-size: 36px; font-weight: bold;">📋</span>
+              <span style="color: black; font-size: 36px; font-weight: bold;">📋</span>
             </div>
             <h1 style="color: #1a202c; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Task Reminder!</h1>
             <p style="color: #718096; margin: 15px 0 0 0; font-size: 18px; font-weight: 400;">${args.fromName} nudged you about a task</p>
           </div>
           
           <div style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); padding: 30px; border-radius: 20px; margin: 30px 0; text-align: center; box-shadow: 0 10px 40px rgba(239, 68, 68, 0.2);">
-            <p style="color: white; margin: 0; font-size: 20px; line-height: 1.6; font-weight: 500;">
+            <p style="color: black; margin: 0; font-size: 20px; line-height: 1.6; font-weight: 500;">
               <strong style="font-weight: 700;">${args.fromName}</strong> is calling your attention to a task
             </p>
           </div>
@@ -670,13 +670,13 @@ export const sendTaskNudgeEmail = internalMutation({
           </div>
 
           <div style="text-align: center; margin: 50px 0; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-            <a href="${appUrl}/chat" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 6px 25px rgba(245, 158, 11, 0.4);">
+            <a href="${appUrl}/chat" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); color: black; padding: 16px 32px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 6px 25px rgba(245, 158, 11, 0.4);">
               View Message
             </a>
             ${
               args.taskId
                 ? `
-              <a href="${appUrl}/tasks/${args.taskId}" style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 6px 25px rgba(58, 71, 213, 0.4);">
+              <a href="${appUrl}/tasks/${args.taskId}" style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: black; padding: 16px 32px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 6px 25px rgba(58, 71, 213, 0.4);">
                 View Task
               </a>
             `
@@ -781,17 +781,17 @@ export const sendOverdueTaskReminder = internalMutation({
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
           <div style="text-align: center; margin-bottom: 40px;">
             <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3);">
-              <span style="color: white; font-size: 36px; font-weight: bold;">⏰</span>
+              <span style="color: black; font-size: 36px; font-weight: bold;">⏰</span>
             </div>
             <h1 style="color: #1a202c; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Overdue Tasks Alert!</h1>
             <p style="color: #718096; margin: 15px 0 0 0; font-size: 18px; font-weight: 400;">Hello ${args.toName}, you have ${args.tasks.length} overdue task${args.tasks.length > 1 ? "s" : ""}</p>
           </div>
           
           <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 30px; border-radius: 20px; margin: 30px 0; text-align: center; box-shadow: 0 10px 40px rgba(220, 38, 38, 0.2);">
-            <p style="color: white; margin: 0; font-size: 20px; line-height: 1.6; font-weight: 600;">
+            <p style="color: black; margin: 0; font-size: 20px; line-height: 1.6; font-weight: 600;">
               <strong style="font-weight: 700;">${args.tasks.length} task${args.tasks.length > 1 ? "s" : ""} past due date</strong>
             </p>
-            ${args.teamName ? `<p style="color: white; margin: 12px 0 0 0; font-size: 16px; opacity: 0.9;">In: ${args.teamName}</p>` : ""}
+            ${args.teamName ? `<p style="color: black; margin: 12px 0 0 0; font-size: 16px; opacity: 0.9;">In: ${args.teamName}</p>` : ""}
           </div>
 
           <div style="margin: 30px 0;">
@@ -800,7 +800,7 @@ export const sendOverdueTaskReminder = internalMutation({
           </div>
 
           <div style="text-align: center; margin: 50px 0;">
-            <a href="${appUrl}/tasks" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(220, 38, 38, 0.4);">
+            <a href="${appUrl}/tasks" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: black; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(220, 38, 38, 0.4);">
               View All Tasks
             </a>
           </div>
