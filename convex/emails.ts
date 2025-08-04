@@ -21,47 +21,50 @@ export const sendNudgeEmail = internalMutation({
     teamName: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const subject = `🔔 ${args.fromName} is calling you on TodoChat`;
+    const subject = `🔔 ${args.fromName} is calling you on ChatDo`;
 
     try {
       const html = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
           <div style="text-align: center; margin-bottom: 40px;">
-            <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+            <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(58, 71, 213, 0.3);">
               <span style="color: white; font-size: 36px; font-weight: bold;">🔔</span>
             </div>
-            <h1 style="color: #1e293b; margin: 0; font-size: 28px; font-weight: bold;">Someone is calling you!</h1>
-            <p style="color: #64748b; margin: 10px 0 0 0; font-size: 16px;">${args.fromName} nudged you in a message</p>
+            <h1 style="color: #1a202c; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Someone's calling you!</h1>
+            <p style="color: #718096; margin: 15px 0 0 0; font-size: 18px; font-weight: 400;">${args.fromName} nudged you in ChatDo</p>
           </div>
           
-          <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); padding: 25px; border-radius: 16px; margin: 30px 0; text-align: center;">
-            <p style="color: white; margin: 0; font-size: 18px; line-height: 1.5;">
-              <strong>${args.fromName}</strong> nudged you in a message
+          <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); padding: 30px; border-radius: 20px; margin: 30px 0; text-align: center; box-shadow: 0 10px 40px rgba(58, 71, 213, 0.2);">
+            <p style="color: white; margin: 0; font-size: 20px; line-height: 1.6; font-weight: 500;">
+              <strong style="font-weight: 700;">${args.fromName}</strong> nudged you in a message
             </p>
           </div>
 
-          <div style="background-color: #f8fafc; padding: 25px; border-radius: 12px; border-left: 4px solid #7c3aed; margin: 30px 0;">
-            <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 16px;">Message:</h3>
-            <p style="margin: 0; color: #64748b; font-style: italic; font-size: 14px; padding: 10px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <div style="background: linear-gradient(145deg, #f7fafc 0%, #edf2f7 100%); padding: 30px; border-radius: 16px; border-left: 5px solid #3A47D5; margin: 30px 0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+            <h3 style="margin: 0 0 15px 0; color: #2d3748; font-size: 18px; font-weight: 600;">💬 Message:</h3>
+            <p style="margin: 0; color: #4a5568; font-style: italic; font-size: 16px; padding: 20px; background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; line-height: 1.6; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);">
               "${(args.messageContent || "").replace(/[<>&"']/g, (char) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#x27;" })[char] || "")}"
             </p>
-            ${args.teamName ? `<p style="margin: 10px 0 0 0; color: #7c3aed; font-size: 12px;">In: ${args.teamName}</p>` : ""}
+            ${args.teamName ? `<p style="margin: 15px 0 0 0; color: #3A47D5; font-size: 14px; font-weight: 600;">📁 In: ${args.teamName}</p>` : ""}
           </div>
 
-          <div style="text-align: center; margin: 40px 0;">
-            <a href="${appUrl}/chat" style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 30px; display: inline-block; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);">
+          <div style="text-align: center; margin: 50px 0;">
+            <a href="${appUrl}/chat" style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(58, 71, 213, 0.4); transition: all 0.3s ease; border: none;">
               View Message
             </a>
           </div>
 
-          <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-            <p style="color: #64748b; font-size: 12px; margin: 0;">You received this email because someone nudged you on TodoChat.</p>
+          <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e2e8f0;">
+            <div style="margin-bottom: 15px;">
+              <span style="color: #3A47D5; font-size: 24px; font-weight: 700;">ChatDo</span>
+            </div>
+            <p style="color: #718096; font-size: 13px; margin: 0; line-height: 1.5;">You received this email because someone nudged you on ChatDo.<br>Stay connected with your team in real-time.</p>
           </div>
         </div>
       `;
 
       await resend.sendEmail(ctx, {
-        from: "TodoChat <onboarding@chatdo.upcraftcrew.com>",
+        from: "ChatDo <onboarding@chatdo.upcraftcrew.com>",
         to: args.to,
         subject,
         html,
@@ -113,60 +116,75 @@ export const sendTeamInvitationEmail = internalMutation({
 
     try {
       await resend.sendEmail(ctx, {
-        from: "Acme <onboarding@chatdo.upcraftcrew.com>", // Using verified Resend domain for testing
+        from: "ChatDo <onboarding@chatdo.upcraftcrew.com>",
         to: args.to,
-        subject: `🎉 You're invited to join ${args.teamName || "our team"} on TodoChat`,
+        subject: `🎉 You're invited to join ${args.teamName || "our team"} on ChatDo`,
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+          <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
             <div style="text-align: center; margin-bottom: 40px;">
-              <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+              <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(58, 71, 213, 0.3);">
                 <span style="color: white; font-size: 36px; font-weight: bold;">👥</span>
               </div>
-              <h1 style="color: #1e293b; margin: 0; font-size: 28px; font-weight: bold;">You're Invited!</h1>
-              <p style="color: #64748b; margin: 10px 0 0 0; font-size: 16px;">Join your team on TodoChat</p>
+              <h1 style="color: #1a202c; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">You're Invited!</h1>
+              <p style="color: #718096; margin: 15px 0 0 0; font-size: 18px; font-weight: 400;">Join your team on ChatDo</p>
             </div>
             
-            <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); padding: 25px; border-radius: 16px; margin: 30px 0; text-align: center;">
-              <p style="color: white; margin: 0; font-size: 18px; line-height: 1.5;">
-                <strong>${args.inviterName}</strong> has invited you to join<br>
-                <span style="font-size: 20px; font-weight: bold;">${args.teamName || "the team"}</span>
+            <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); padding: 30px; border-radius: 20px; margin: 30px 0; text-align: center; box-shadow: 0 10px 40px rgba(58, 71, 213, 0.2);">
+              <p style="color: white; margin: 0; font-size: 20px; line-height: 1.6; font-weight: 500;">
+                <strong style="font-weight: 700;">${args.inviterName}</strong> has invited you to join<br>
+                <span style="font-size: 24px; font-weight: 700; margin-top: 8px; display: block;">${args.teamName || "the team"}</span>
               </p>
             </div>
 
-            <div style="background-color: #f8fafc; padding: 25px; border-radius: 12px; border-left: 4px solid #7c3aed; margin: 30px 0;">
-              <h3 style="margin: 0 0 15px 0; color: #1e293b; font-size: 18px;">Welcome to TodoChat!</h3>
-              <p style="margin: 0 0 15px 0; color: #64748b; font-size: 14px; line-height: 1.6;">
-                TodoChat is a collaborative platform where teams can chat, manage tasks, and stay organized. 
-                You'll be able to:
+            <div style="background: linear-gradient(145deg, #f7fafc 0%, #edf2f7 100%); padding: 30px; border-radius: 16px; border-left: 5px solid #3A47D5; margin: 30px 0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+              <h3 style="margin: 0 0 20px 0; color: #2d3748; font-size: 22px; font-weight: 700;">Welcome to ChatDo! 🚀</h3>
+              <p style="margin: 0 0 20px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
+                ChatDo is your team's collaborative workspace for seamless communication and task management. 
+                Here's what you can do:
               </p>
-              <ul style="margin: 0; padding-left: 20px; color: #64748b; font-size: 14px; line-height: 1.6;">
-                <li>Chat with your team members in real-time</li>
-                <li>Create and manage tasks collaboratively</li>
-                <li>Track project progress and deadlines</li>
-                <li>Get notified about important updates</li>
-              </ul>
+              <div style="margin: 20px 0;">
+                <div style="display: flex; align-items: center; margin: 12px 0; padding: 12px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);">
+                  <span style="color: #3A47D5; font-size: 18px; margin-right: 12px;">💬</span>
+                  <span style="color: #4a5568; font-size: 15px;">Chat with your team members in real-time</span>
+                </div>
+                <div style="display: flex; align-items: center; margin: 12px 0; padding: 12px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);">
+                  <span style="color: #3A47D5; font-size: 18px; margin-right: 12px;">✅</span>
+                  <span style="color: #4a5568; font-size: 15px;">Create and manage tasks collaboratively</span>
+                </div>
+                <div style="display: flex; align-items: center; margin: 12px 0; padding: 12px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);">
+                  <span style="color: #3A47D5; font-size: 18px; margin-right: 12px;">📊</span>
+                  <span style="color: #4a5568; font-size: 15px;">Track project progress and deadlines</span>
+                </div>
+                <div style="display: flex; align-items: center; margin: 12px 0; padding: 12px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);">
+                  <span style="color: #3A47D5; font-size: 18px; margin-right: 12px;">🔔</span>
+                  <span style="color: #4a5568; font-size: 15px;">Get notified about important updates</span>
+                </div>
+              </div>
             </div>
 
-            <div style="text-align: center; margin: 40px 0;">
+            <div style="text-align: center; margin: 50px 0;">
               <a href="${joinUrl}" 
-                 style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 30px; display: inline-block; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);">
+                 style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(58, 71, 213, 0.4);">
                 Join Team Now
               </a>
             </div>
 
-            <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 30px 0;">
-              <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.5;">
-                <strong>⏰ Getting Started:</strong><br>
+            <div style="background: linear-gradient(135deg, #fef5e7 0%, #fed7aa 20%); padding: 25px; border-radius: 16px; border-left: 5px solid #f59e0b; margin: 30px 0; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);">
+              <p style="margin: 0; color: #92400e; font-size: 15px; line-height: 1.6;">
+                <strong style="font-weight: 700;">⏰ Getting Started:</strong><br>
                 Click the button above to create your account and join the team. 
                 If you already have an account, just sign in and you'll be automatically added to the team.
               </p>
             </div>
 
-            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-              <p style="color: #64748b; font-size: 12px; margin: 0 0 5px 0;">
-                You received this invitation because ${args.inviterName} added your email to their TodoChat team.
+            <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e2e8f0;">
+              <div style="margin-bottom: 15px;">
+                <span style="color: #3A47D5; font-size: 24px; font-weight: 700;">ChatDo</span>
+              </div>
+              <p style="color: #718096; font-size: 13px; margin: 0 0 8px 0; line-height: 1.5;">
+                You received this invitation because ${args.inviterName} added your email to their ChatDo team.
               </p>
-              <p style="color: #94a3b8; font-size: 11px; margin: 0;">
+              <p style="color: #a0aec0; font-size: 12px; margin: 0;">
                 If you don't want to join this team, you can safely ignore this email.
               </p>
             </div>
@@ -198,36 +216,48 @@ export const sendTaskNotificationEmail = internalMutation({
       process.env.NEXT_PUBLIC_APP_URL || "https://chatdo.upcraftcrew.com/";
 
     const dueDateText = args.dueDate
-      ? `<br><small style="color: #dc2626;">Due: ${new Date(args.dueDate).toLocaleDateString("en-US")}</small>`
+      ? `<br><small style="color: #dc2626; font-weight: 600;">📅 Due: ${new Date(args.dueDate).toLocaleDateString("en-US")}</small>`
       : "";
 
     await resend.sendEmail(ctx, {
-      from: "TodoChat <noreply@todochat.com>",
+      from: "ChatDo <noreply@chatdo.upcraftcrew.com>",
       to: args.to,
-      subject: `New Task Assigned: ${args.taskTitle}`,
+      subject: `📋 New Task Assigned: ${args.taskTitle}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #2563eb;">📋 New Task Created</h2>
-          <p>Hello ${args.assigneeName}!</p>
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+          <div style="text-align: center; margin-bottom: 40px;">
+            <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(58, 71, 213, 0.3);">
+              <span style="color: white; font-size: 36px; font-weight: bold;">📋</span>
+            </div>
+            <h1 style="color: #1a202c; margin: 0; font-size: 28px; font-weight: 700;">New Task Created</h1>
+            <p style="color: #718096; margin: 15px 0 0 0; font-size: 16px;">Hello ${args.assigneeName}!</p>
+          </div>
           
-          <div style="margin: 20px 0; padding: 20px; background-color: #f8fafc; border-left: 4px solid #2563eb; border-radius: 8px;">
-            <h3 style="margin: 0 0 10px 0; color: #1e293b;">${args.taskTitle}</h3>
-            ${args.description ? `<p style="margin: 10px 0; color: #64748b;">${args.description}</p>` : ""}
+          <div style="background: linear-gradient(145deg, #f7fafc 0%, #edf2f7 100%); padding: 30px; border-radius: 16px; border-left: 5px solid #3A47D5; margin: 30px 0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+            <h3 style="margin: 0 0 15px 0; color: #2d3748; font-size: 20px; font-weight: 700;">${args.taskTitle}</h3>
+            ${args.description ? `<p style="margin: 15px 0; color: #4a5568; font-size: 15px; line-height: 1.6;">${args.description}</p>` : ""}
             ${dueDateText}
-            <p style="margin: 10px 0 0 0; color: #64748b; font-size: 14px;">
-              Created by: ${args.createdBy}
+            <p style="margin: 15px 0 0 0; color: #718096; font-size: 14px;">
+              👤 Created by: <strong>${args.createdBy}</strong>
             </p>
           </div>
 
-          <div style="margin: 20px 0; padding: 20px; background-color: #f3f4f6; border-radius: 8px;">
+          <div style="text-align: center; margin: 40px 0; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
             <a href="${appUrl}/tasks/${args.taskId}" 
-               style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+               style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: 600; font-size: 14px; box-shadow: 0 4px 20px rgba(58, 71, 213, 0.3);">
               View Task
             </a>
             <a href="${appUrl}/api/tasks/${args.taskId}/complete" 
-               style="background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; margin-left: 10px;">
+               style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: 600; font-size: 14px; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);">
               Mark as Completed
             </a>
+          </div>
+
+          <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e2e8f0;">
+            <div style="margin-bottom: 15px;">
+              <span style="color: #3A47D5; font-size: 24px; font-weight: 700;">ChatDo</span>
+            </div>
+            <p style="color: #718096; font-size: 13px; margin: 0;">Stay productive with your team on ChatDo</p>
           </div>
         </div>
       `,
@@ -264,36 +294,47 @@ export const sendDailyDigest = internalMutation({
         const priorityColor = {
           high: "#dc2626",
           medium: "#f59e0b",
-          low: "#16a34a",
+          low: "#10b981",
+        }[task.priority || "medium"];
+
+        const priorityIcon = {
+          high: "🔴",
+          medium: "🟡",
+          low: "🟢",
         }[task.priority || "medium"];
 
         const dueDateText = task.dueDate
-          ? `<br><small style="color: #dc2626;">Due: ${new Date(task.dueDate).toLocaleDateString("en-US")}</small>`
+          ? `<br><small style="color: #dc2626; font-weight: 600;">📅 Due: ${new Date(task.dueDate).toLocaleDateString("en-US")}</small>`
           : "";
 
         return `
-          <li style="margin: 10px 0; padding: 15px; background-color: #fef2f2; border-left: 4px solid ${priorityColor}; border-radius: 4px;">
-            <strong>${task.title}</strong>
-            ${task.description ? `<br><span style="color: #64748b;">${task.description}</span>` : ""}
+          <li style="margin: 15px 0; padding: 20px; background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%); border-left: 4px solid ${priorityColor}; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);">
+            <strong style="color: #2d3748; font-size: 16px;">${task.title}</strong>
+            ${task.description ? `<br><span style="color: #4a5568; font-size: 14px; line-height: 1.5; margin-top: 8px; display: block;">${task.description}</span>` : ""}
             ${dueDateText}
-            <br><small style="color: #6b7280;">Priority: ${(task.priority || "medium").toUpperCase()}</small>
+            <br><small style="color: #718096; font-size: 12px; margin-top: 8px; display: block;">${priorityIcon} Priority: ${(task.priority || "medium").toUpperCase()}</small>
           </li>
         `;
       })
       .join("");
 
     await resend.sendEmail(ctx, {
-      from: "TodoChat Daily <digest@todochat.com>",
+      from: "ChatDo Daily <digest@chatdo.upcraftcrew.com>",
       to: args.memberEmail,
       subject: `📋 Daily Summary - ${args.memberTasks.length} pending tasks`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #2563eb;">📋 Daily Summary - TodoChat</h2>
-          <p>Hello ${args.memberName}!</p>
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+          <div style="text-align: center; margin-bottom: 40px;">
+            <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(58, 71, 213, 0.3);">
+              <span style="color: white; font-size: 36px; font-weight: bold;">📋</span>
+            </div>
+            <h1 style="color: #1a202c; margin: 0; font-size: 28px; font-weight: 700;">Daily Summary</h1>
+            <p style="color: #718096; margin: 15px 0 0 0; font-size: 16px;">Hello ${args.memberName}!</p>
+          </div>
           
-          <div style="margin: 20px 0;">
-            <h3 style="color: #dc2626;">🔴 Pending Tasks (${args.memberTasks.length})</h3>
-            <ul style="list-style: none; padding: 0;">
+          <div style="margin: 30px 0;">
+            <h3 style="color: #dc2626; font-size: 20px; font-weight: 700; margin: 0 0 20px 0;">🔴 Pending Tasks (${args.memberTasks.length})</h3>
+            <ul style="list-style: none; padding: 0; margin: 0;">
               ${tasksList}
             </ul>
           </div>
@@ -301,24 +342,27 @@ export const sendDailyDigest = internalMutation({
           ${
             args.completedTasksCount > 0
               ? `
-            <div style="margin: 20px 0; padding: 15px; background-color: #f0fdf4; border-radius: 8px;">
-              <h3 style="color: #16a34a; margin: 0 0 10px 0;">✅ Completed Today (${args.completedTasksCount})</h3>
-              <p style="color: #6b7280; margin: 0;">Congratulations on your progress! 🎉</p>
+            <div style="margin: 30px 0; padding: 25px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-radius: 16px; border-left: 5px solid #10b981; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.1);">
+              <h3 style="color: #065f46; margin: 0 0 10px 0; font-size: 18px; font-weight: 700;">✅ Completed Today (${args.completedTasksCount})</h3>
+              <p style="color: #047857; margin: 0; font-size: 15px;">Congratulations on your progress! 🎉</p>
             </div>
           `
               : ""
           }
 
-          <div style="margin: 20px 0; padding: 20px; background-color: #f3f4f6; border-radius: 8px; text-align: center;">
+          <div style="text-align: center; margin: 50px 0;">
             <a href="${appUrl}" 
-               style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-              Open TodoChat
+               style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(58, 71, 213, 0.4);">
+              Open ChatDo
             </a>
           </div>
 
-          <p style="color: #6b7280; font-size: 12px; text-align: center; margin-top: 20px;">
-            This summary is sent automatically every day. To change your preferences, access TodoChat settings.
-          </p>
+          <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e2e8f0;">
+            <div style="margin-bottom: 15px;">
+              <span style="color: #3A47D5; font-size: 24px; font-weight: 700;">ChatDo</span>
+            </div>
+            <p style="color: #718096; font-size: 13px; margin: 0;">This summary is sent automatically every day. To change your preferences, access ChatDo settings.</p>
+          </div>
         </div>
       `,
     });
@@ -340,25 +384,37 @@ export const sendTaskCompletionEmail = internalMutation({
     // Send to all team members
     for (const email of args.teamMemberEmails) {
       await resend.sendEmail(ctx, {
-        from: "TodoChat <noreply@todochat.com>",
+        from: "ChatDo <noreply@chatdo.upcraftcrew.com>",
         to: email,
         subject: `✅ Task Completed: ${args.taskTitle}`,
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #16a34a;">✅ Task Completed</h2>
+          <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+            <div style="text-align: center; margin-bottom: 40px;">
+              <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);">
+                <span style="color: white; font-size: 36px; font-weight: bold;">✅</span>
+              </div>
+              <h1 style="color: #1a202c; margin: 0; font-size: 28px; font-weight: 700;">Task Completed</h1>
+            </div>
             
-            <div style="margin: 20px 0; padding: 20px; background-color: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 8px;">
-              <h3 style="margin: 0 0 10px 0; color: #15803d;">${args.taskTitle}</h3>
-              <p style="margin: 10px 0 0 0; color: #16a34a; font-size: 14px;">
+            <div style="margin: 30px 0; padding: 25px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-left: 5px solid #10b981; border-radius: 16px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.1);">
+              <h3 style="margin: 0 0 15px 0; color: #065f46; font-size: 18px; font-weight: 700;">${args.taskTitle}</h3>
+              <p style="margin: 0; color: #047857; font-size: 15px; font-weight: 600;">
                 ✨ Completed by: ${args.completedBy}
               </p>
             </div>
 
-            <div style="margin: 20px 0; padding: 20px; background-color: #f3f4f6; border-radius: 8px; text-align: center;">
+            <div style="text-align: center; margin: 50px 0;">
               <a href="${appUrl}/tasks/${args.taskId}" 
-                 style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                 style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; box-shadow: 0 8px 30px rgba(58, 71, 213, 0.4);">
                 View Details
               </a>
+            </div>
+
+            <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e2e8f0;">
+              <div style="margin-bottom: 15px;">
+                <span style="color: #3A47D5; font-size: 24px; font-weight: 700;">ChatDo</span>
+              </div>
+              <p style="color: #718096; font-size: 13px; margin: 0;">Great job on completing this task! Keep up the momentum.</p>
             </div>
           </div>
         `,
@@ -393,7 +449,13 @@ export const sendTaskReminderBatch = internalMutation({
           const priorityColor = {
             high: "#dc2626",
             medium: "#f59e0b",
-            low: "#16a34a",
+            low: "#10b981",
+          }[task.priority || "medium"];
+
+          const priorityIcon = {
+            high: "🔴",
+            medium: "🟡",
+            low: "🟢",
           }[task.priority || "medium"];
 
           const dueDateText = task.dueDate
@@ -401,56 +463,59 @@ export const sendTaskReminderBatch = internalMutation({
             : null;
 
           return `
-          <div style="margin: 10px 0; padding: 15px; background-color: #fef2f2; border-left: 4px solid ${priorityColor}; border-radius: 4px;">
-            <strong style="color: #1e293b;">${task.title}</strong>
-            ${task.description ? `<div style="color: #64748b; font-size: 14px; margin: 5px 0;">${task.description}</div>` : ""}
-            ${dueDateText ? `<div style="color: #dc2626; font-size: 12px; margin: 5px 0; font-weight: bold;">📅 Was due: ${dueDateText}</div>` : ""}
-            <div style="color: #6b7280; font-size: 11px;">Priority: ${(task.priority || "medium").toUpperCase()}</div>
+          <div style="margin: 15px 0; padding: 20px; background: linear-gradient(145deg, #ffffff 0%, #fef2f2 100%); border-left: 4px solid ${priorityColor}; border-radius: 12px; box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);">
+            <strong style="color: #2d3748; font-size: 16px; display: block; margin-bottom: 8px;">${task.title}</strong>
+            ${task.description ? `<div style="color: #4a5568; font-size: 14px; margin: 8px 0; line-height: 1.5;">${task.description}</div>` : ""}
+            ${dueDateText ? `<div style="color: #dc2626; font-size: 13px; margin: 8px 0; font-weight: 600; background-color: #fef2f2; padding: 6px 10px; border-radius: 6px; display: inline-block;">📅 Was due: ${dueDateText}</div>` : ""}
+            <div style="color: #718096; font-size: 12px; margin-top: 8px;">${priorityIcon} Priority: ${(task.priority || "medium").toUpperCase()}</div>
           </div>
         `;
         })
         .join("");
 
       const html = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
           <div style="text-align: center; margin-bottom: 40px;">
-            <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+            <div style="background: linear-gradient(135deg, #f59e0b 0%, #dc2626 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3);">
               <span style="color: white; font-size: 36px; font-weight: bold;">⏰</span>
             </div>
-            <h1 style="color: #1e293b; margin: 0; font-size: 28px; font-weight: bold;">Task Reminders</h1>
-            <p style="color: #64748b; margin: 10px 0 0 0; font-size: 16px;">Hello ${args.assigneeName}!</p>
+            <h1 style="color: #1a202c; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Task Reminders</h1>
+            <p style="color: #718096; margin: 15px 0 0 0; font-size: 18px; font-weight: 400;">Hello ${args.assigneeName}!</p>
           </div>
           
           ${
             args.customMessage
               ? `
-            <div style="background-color: #f8fafc; padding: 25px; border-radius: 12px; border-left: 4px solid #7c3aed; margin: 30px 0;">
-              <p style="margin: 0; color: #64748b; font-size: 14px; line-height: 1.6;">${args.customMessage}</p>
+            <div style="background: linear-gradient(145deg, #f7fafc 0%, #edf2f7 100%); padding: 25px; border-radius: 16px; border-left: 5px solid #3A47D5; margin: 30px 0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+              <p style="margin: 0; color: #4a5568; font-size: 15px; line-height: 1.7;">${args.customMessage}</p>
             </div>
           `
               : ""
           }
 
-          <div style="background-color: #fef3c7; padding: 25px; border-radius: 12px; border-left: 4px solid #f59e0b; margin: 30px 0;">
-            <h3 style="color: #dc2626; margin: 0 0 15px 0;">🚨 Overdue Tasks (${args.tasks.length})</h3>
-            <p style="margin: 0 0 15px 0; color: #92400e; font-size: 14px;">The following tasks are past their due date and need your attention:</p>
+          <div style="background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%); padding: 30px; border-radius: 16px; border-left: 5px solid #f59e0b; margin: 30px 0; box-shadow: 0 6px 25px rgba(245, 158, 11, 0.15);">
+            <h3 style="color: #dc2626; margin: 0 0 20px 0; font-size: 22px; font-weight: 700;">🚨 Overdue Tasks (${args.tasks.length})</h3>
+            <p style="margin: 0 0 20px 0; color: #92400e; font-size: 15px; line-height: 1.6;">The following tasks are past their due date and need your attention:</p>
             ${tasksList}
           </div>
 
-          <div style="text-align: center; margin: 40px 0;">
-            <a href="${appUrl}/tasks" style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 30px; display: inline-block; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);">
+          <div style="text-align: center; margin: 50px 0;">
+            <a href="${appUrl}/tasks" style="background: linear-gradient(135deg, #f59e0b 0%, #dc2626 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(220, 38, 38, 0.4);">
               View All Tasks
             </a>
           </div>
 
-          <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-            <p style="color: #64748b; font-size: 12px; margin: 0;">Complete your overdue tasks to stay on track with your team's goals.</p>
+          <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e2e8f0;">
+            <div style="margin-bottom: 15px;">
+              <span style="color: #3A47D5; font-size: 24px; font-weight: 700;">ChatDo</span>
+            </div>
+            <p style="color: #718096; font-size: 13px; margin: 0; line-height: 1.5;">Complete your overdue tasks to stay on track with your team's goals.</p>
           </div>
         </div>
       `;
 
       await resend.sendEmail(ctx, {
-        from: "TodoChat <noreply@chatdo.upcraftcrew.com>",
+        from: "ChatDo <noreply@chatdo.upcraftcrew.com>",
         to: args.to,
         subject,
         html,
@@ -490,38 +555,41 @@ export const sendAnnouncementEmail = internalMutation({
 
     try {
       const html = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
           <div style="text-align: center; margin-bottom: 40px;">
-            <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+            <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(58, 71, 213, 0.3);">
               <span style="color: white; font-size: 36px; font-weight: bold;">📢</span>
             </div>
-            <h1 style="color: #1e293b; margin: 0; font-size: 28px; font-weight: bold;">Team Announcement</h1>
-            <p style="color: #64748b; margin: 10px 0 0 0; font-size: 16px;">Hello ${args.recipientName}!</p>
+            <h1 style="color: #1a202c; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Team Announcement</h1>
+            <p style="color: #718096; margin: 15px 0 0 0; font-size: 18px; font-weight: 400;">Hello ${args.recipientName}!</p>
           </div>
           
-          <div style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); padding: 25px; border-radius: 16px; margin: 30px 0; text-align: center;">
-            <h2 style="color: white; margin: 0; font-size: 20px; font-weight: bold;">${args.subject}</h2>
-            <p style="color: white; margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">From ${args.fromName} • ${args.teamName}</p>
+          <div style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); padding: 30px; border-radius: 20px; margin: 30px 0; text-align: center; box-shadow: 0 10px 40px rgba(58, 71, 213, 0.2);">
+            <h2 style="color: white; margin: 0; font-size: 24px; font-weight: 700; margin-bottom: 8px;">${args.subject}</h2>
+            <p style="color: white; margin: 0; font-size: 16px; opacity: 0.9;">From ${args.fromName} • ${args.teamName}</p>
           </div>
 
-          <div style="background-color: #f8fafc; padding: 25px; border-radius: 12px; border-left: 4px solid #7c3aed; margin: 30px 0;">
-            <div style="color: #1e293b; font-size: 16px; line-height: 1.6; white-space: pre-wrap;">${args.message}</div>
+          <div style="background: linear-gradient(145deg, #f7fafc 0%, #edf2f7 100%); padding: 30px; border-radius: 16px; border-left: 5px solid #3A47D5; margin: 30px 0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+            <div style="color: #2d3748; font-size: 16px; line-height: 1.7; white-space: pre-wrap;">${args.message}</div>
           </div>
 
-          <div style="text-align: center; margin: 40px 0;">
-            <a href="${appUrl}/team" style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 30px; display: inline-block; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);">
+          <div style="text-align: center; margin: 50px 0;">
+            <a href="${appUrl}/team" style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(58, 71, 213, 0.4);">
               View Team
             </a>
           </div>
 
-          <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-            <p style="color: #64748b; font-size: 12px; margin: 0;">This announcement was sent by ${args.fromName} to the ${args.teamName} team.</p>
+          <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e2e8f0;">
+            <div style="margin-bottom: 15px;">
+              <span style="color: #3A47D5; font-size: 24px; font-weight: 700;">ChatDo</span>
+            </div>
+            <p style="color: #718096; font-size: 13px; margin: 0;">This announcement was sent by ${args.fromName} to the ${args.teamName} team.</p>
           </div>
         </div>
       `;
 
       await resend.sendEmail(ctx, {
-        from: "TodoChat <noreply@chatdo.upcraftcrew.com>",
+        from: "ChatDo <noreply@chatdo.upcraftcrew.com>",
         to: args.to,
         subject: emailSubject,
         html,
@@ -559,16 +627,16 @@ export const sendTaskNudgeEmail = internalMutation({
     taskId: v.optional(v.id("tasks")),
   },
   handler: async (ctx, args) => {
-    const subject = `📋 ${args.fromName} is calling you about a task on TodoChat`;
+    const subject = `📋 ${args.fromName} is calling you about a task on ChatDo`;
 
     try {
       const taskSection =
         args.taskTitle && args.taskId
           ? `
-        <div style="background-color: #fef3c7; padding: 20px; border-radius: 12px; border-left: 4px solid #f59e0b; margin: 20px 0;">
-          <h3 style="margin: 0 0 10px 0; color: #92400e; font-size: 16px;">📋 Related Task:</h3>
-          <p style="margin: 0; color: #92400e; font-weight: bold; font-size: 14px;">${args.taskTitle}</p>
-          <a href="${appUrl}/tasks/${args.taskId}" style="color: #f59e0b; text-decoration: none; font-size: 12px; margin-top: 10px; display: inline-block;">
+        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%); padding: 25px; border-radius: 16px; border-left: 5px solid #f59e0b; margin: 25px 0; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);">
+          <h3 style="margin: 0 0 12px 0; color: #92400e; font-size: 18px; font-weight: 700;">📋 Related Task:</h3>
+          <p style="margin: 0; color: #92400e; font-weight: 600; font-size: 16px;">${args.taskTitle}</p>
+          <a href="${appUrl}/tasks/${args.taskId}" style="color: #f59e0b; text-decoration: none; font-size: 14px; margin-top: 12px; display: inline-block; font-weight: 600;">
             View Task Details →
           </a>
         </div>
@@ -576,39 +644,39 @@ export const sendTaskNudgeEmail = internalMutation({
           : "";
 
       const html = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
           <div style="text-align: center; margin-bottom: 40px;">
-            <div style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+            <div style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);">
               <span style="color: white; font-size: 36px; font-weight: bold;">📋</span>
             </div>
-            <h1 style="color: #1e293b; margin: 0; font-size: 28px; font-weight: bold;">Task Reminder!</h1>
-            <p style="color: #64748b; margin: 10px 0 0 0; font-size: 16px;">${args.fromName} nudged you about a task</p>
+            <h1 style="color: #1a202c; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Task Reminder!</h1>
+            <p style="color: #718096; margin: 15px 0 0 0; font-size: 18px; font-weight: 400;">${args.fromName} nudged you about a task</p>
           </div>
           
-          <div style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); padding: 25px; border-radius: 16px; margin: 30px 0; text-align: center;">
-            <p style="color: white; margin: 0; font-size: 18px; line-height: 1.5;">
-              <strong>${args.fromName}</strong> is calling your attention to a task
+          <div style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); padding: 30px; border-radius: 20px; margin: 30px 0; text-align: center; box-shadow: 0 10px 40px rgba(239, 68, 68, 0.2);">
+            <p style="color: white; margin: 0; font-size: 20px; line-height: 1.6; font-weight: 500;">
+              <strong style="font-weight: 700;">${args.fromName}</strong> is calling your attention to a task
             </p>
           </div>
 
           ${taskSection}
 
-          <div style="background-color: #f8fafc; padding: 25px; border-radius: 12px; border-left: 4px solid #f59e0b; margin: 30px 0;">
-            <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 16px;">Message:</h3>
-            <p style="margin: 0; color: #64748b; font-style: italic; font-size: 14px; padding: 10px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <div style="background: linear-gradient(145deg, #f7fafc 0%, #edf2f7 100%); padding: 30px; border-radius: 16px; border-left: 5px solid #f59e0b; margin: 30px 0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+            <h3 style="margin: 0 0 15px 0; color: #2d3748; font-size: 18px; font-weight: 600;">💬 Message:</h3>
+            <p style="margin: 0; color: #4a5568; font-style: italic; font-size: 16px; padding: 20px; background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; line-height: 1.6; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);">
               "${args.messageContent.length > 100 ? args.messageContent.substring(0, 100) + "..." : args.messageContent}"
             </p>
-            ${args.teamName ? `<p style="margin: 10px 0 0 0; color: #f59e0b; font-size: 12px;">In: ${args.teamName}</p>` : ""}
+            ${args.teamName ? `<p style="margin: 15px 0 0 0; color: #f59e0b; font-size: 14px; font-weight: 600;">📁 In: ${args.teamName}</p>` : ""}
           </div>
 
-          <div style="text-align: center; margin: 40px 0;">
-            <a href="${appUrl}/chat" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 30px; display: inline-block; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+          <div style="text-align: center; margin: 50px 0; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="${appUrl}/chat" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 6px 25px rgba(245, 158, 11, 0.4);">
               View Message
             </a>
             ${
               args.taskId
                 ? `
-              <a href="${appUrl}/tasks/${args.taskId}" style="background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 30px; display: inline-block; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); margin-left: 10px;">
+              <a href="${appUrl}/tasks/${args.taskId}" style="background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 6px 25px rgba(58, 71, 213, 0.4);">
                 View Task
               </a>
             `
@@ -616,14 +684,17 @@ export const sendTaskNudgeEmail = internalMutation({
             }
           </div>
 
-          <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-            <p style="color: #64748b; font-size: 12px; margin: 0;">You received this email because someone nudged you about a task on TodoChat.</p>
+          <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e2e8f0;">
+            <div style="margin-bottom: 15px;">
+              <span style="color: #3A47D5; font-size: 24px; font-weight: 700;">ChatDo</span>
+            </div>
+            <p style="color: #718096; font-size: 13px; margin: 0;">You received this email because someone nudged you about a task on ChatDo.</p>
           </div>
         </div>
       `;
 
       await resend.sendEmail(ctx, {
-        from: "TodoChat <onboarding@chatdo.upcraftcrew.com>",
+        from: "ChatDo <onboarding@chatdo.upcraftcrew.com>",
         to: args.to,
         subject,
         html,
@@ -673,7 +744,7 @@ export const sendOverdueTaskReminder = internalMutation({
     teamName: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const subject = `⏰ You have ${args.tasks.length} overdue task${args.tasks.length > 1 ? "s" : ""} on TodoChat`;
+    const subject = `⏰ You have ${args.tasks.length} overdue task${args.tasks.length > 1 ? "s" : ""} on ChatDo`;
 
     try {
       const tasksList = args.tasks
@@ -692,13 +763,13 @@ export const sendOverdueTaskReminder = internalMutation({
                 : "🟢 Low";
 
           return `
-          <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid ${priorityColor}; margin: 10px 0;">
-            <h4 style="margin: 0 0 5px 0; color: #1e293b; font-size: 14px;">${task.title}</h4>
-            <p style="margin: 0 0 5px 0; color: #64748b; font-size: 12px;">${task.description}</p>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="color: ${priorityColor}; font-size: 11px; font-weight: bold;">${priorityText}</span>
-              <span style="color: #ef4444; font-size: 11px; font-weight: bold;">
-                Due: ${new Date(task.dueDate).toLocaleDateString("en-US")}
+          <div style="background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%); padding: 20px; border-radius: 12px; border-left: 4px solid ${priorityColor}; margin: 15px 0; box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);">
+            <h4 style="margin: 0 0 8px 0; color: #2d3748; font-size: 16px; font-weight: 600;">${task.title}</h4>
+            <p style="margin: 0 0 12px 0; color: #4a5568; font-size: 14px; line-height: 1.5;">${task.description}</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <span style="color: ${priorityColor}; font-size: 12px; font-weight: 700; background-color: rgba(${priorityColor === "#ef4444" ? "239, 68, 68" : priorityColor === "#f59e0b" ? "245, 158, 11" : "16, 185, 129"}, 0.1); padding: 4px 8px; border-radius: 6px;">${priorityText}</span>
+              <span style="color: #ef4444; font-size: 12px; font-weight: 600; background-color: #fef2f2; padding: 4px 8px; border-radius: 6px;">
+                📅 Due: ${new Date(task.dueDate).toLocaleDateString("en-US")}
               </span>
             </div>
           </div>
@@ -707,41 +778,44 @@ export const sendOverdueTaskReminder = internalMutation({
         .join("");
 
       const html = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
           <div style="text-align: center; margin-bottom: 40px;">
-            <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+            <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3);">
               <span style="color: white; font-size: 36px; font-weight: bold;">⏰</span>
             </div>
-            <h1 style="color: #1e293b; margin: 0; font-size: 28px; font-weight: bold;">Overdue Tasks Alert!</h1>
-            <p style="color: #64748b; margin: 10px 0 0 0; font-size: 16px;">Hello ${args.toName}, you have ${args.tasks.length} overdue task${args.tasks.length > 1 ? "s" : ""}</p>
+            <h1 style="color: #1a202c; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Overdue Tasks Alert!</h1>
+            <p style="color: #718096; margin: 15px 0 0 0; font-size: 18px; font-weight: 400;">Hello ${args.toName}, you have ${args.tasks.length} overdue task${args.tasks.length > 1 ? "s" : ""}</p>
           </div>
           
-          <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 25px; border-radius: 16px; margin: 30px 0; text-align: center;">
-            <p style="color: white; margin: 0; font-size: 18px; line-height: 1.5;">
-              <strong>${args.tasks.length} task${args.tasks.length > 1 ? "s" : ""} past due date</strong>
+          <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 30px; border-radius: 20px; margin: 30px 0; text-align: center; box-shadow: 0 10px 40px rgba(220, 38, 38, 0.2);">
+            <p style="color: white; margin: 0; font-size: 20px; line-height: 1.6; font-weight: 600;">
+              <strong style="font-weight: 700;">${args.tasks.length} task${args.tasks.length > 1 ? "s" : ""} past due date</strong>
             </p>
-            ${args.teamName ? `<p style="color: white; margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">In: ${args.teamName}</p>` : ""}
+            ${args.teamName ? `<p style="color: white; margin: 12px 0 0 0; font-size: 16px; opacity: 0.9;">In: ${args.teamName}</p>` : ""}
           </div>
 
           <div style="margin: 30px 0;">
-            <h3 style="margin: 0 0 15px 0; color: #1e293b; font-size: 18px;">Overdue Tasks:</h3>
+            <h3 style="margin: 0 0 20px 0; color: #2d3748; font-size: 22px; font-weight: 700;">📋 Overdue Tasks:</h3>
             ${tasksList}
           </div>
 
-          <div style="text-align: center; margin: 40px 0;">
-            <a href="${appUrl}/tasks" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 30px; display: inline-block; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);">
+          <div style="text-align: center; margin: 50px 0;">
+            <a href="${appUrl}/tasks" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 30px rgba(220, 38, 38, 0.4);">
               View All Tasks
             </a>
           </div>
 
-          <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-            <p style="color: #64748b; font-size: 12px; margin: 0;">Please complete these tasks to stay on track with your team's goals.</p>
+          <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e2e8f0;">
+            <div style="margin-bottom: 15px;">
+              <span style="color: #3A47D5; font-size: 24px; font-weight: 700;">ChatDo</span>
+            </div>
+            <p style="color: #718096; font-size: 13px; margin: 0; line-height: 1.5;">Please complete these tasks to stay on track with your team's goals.</p>
           </div>
         </div>
       `;
 
       await resend.sendEmail(ctx, {
-        from: "TodoChat <onboarding@chatdo.upcraftcrew.com>",
+        from: "ChatDo <onboarding@chatdo.upcraftcrew.com>",
         to: args.to,
         subject,
         html,
