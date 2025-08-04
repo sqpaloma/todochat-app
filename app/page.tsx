@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { gradients } from "@/lib/design-tokens";
-import { SocialShare } from "@/components/social/social-share";
+
 import { DemoVideo } from "@/components/demo/demo-video";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
@@ -321,13 +321,6 @@ export default function App() {
             >
               Let's get started! ✨
             </Button>
-          </div>
-        </div>
-
-        {/* Social Sharing */}
-        <div className="px-4 pb-8 sm:pb-12">
-          <div className="max-w-md mx-auto">
-            <SocialShare />
           </div>
         </div>
       </div>

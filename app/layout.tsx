@@ -17,6 +17,7 @@ import {
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
 import { MobileMenuButton } from "@/components/mobile-menu-button";
+import { Footer } from "@/components/footer";
 import { useAppContext } from "@/contexts/app-context";
 import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -65,9 +66,10 @@ function ConditionalAuthHeader() {
 // Home Layout Component
 function HomeLayoutContent({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       {/* Content Area - Full width, full height */}
-      <main className="min-h-screen">{children}</main>
+      <main className="flex-1">{children}</main>
+      <Footer />
     </div>
   );
 }
@@ -162,10 +164,11 @@ function LayoutContent({ children }: { children: ReactNode }) {
 
   // Default layout with conditional auth header
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <ConditionalAuthHeader />
-      {children}
-    </>
+      <main className="flex-1">{children}</main>
+      <Footer />
+    </div>
   );
 }
 
