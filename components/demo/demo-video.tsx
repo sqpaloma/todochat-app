@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Play,
   Pause,
@@ -19,39 +19,35 @@ interface DemoVideoProps {
 export function DemoVideo({ className }: DemoVideoProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const demoSteps = [
     {
-      title: "Chat em Tempo Real",
-      description: "Converse com sua equipe instantaneamente",
+      title: "Talk",
+      description: "Talk to your team instantly",
       icon: MessageCircle,
       color: "text-blue-500",
       bg: "bg-blue-100",
       animation: "animate-pulse",
+      timestamp: 0, // Start of video
     },
     {
-      title: "Transformar em Tarefa",
-      description: "Clique e transforme conversas em ações",
+      title: "Taskify",
+      description: "Transform your conversations into tasks",
       icon: CheckCircle,
       color: "text-green-500",
       bg: "bg-green-100",
       animation: "animate-bounce",
+      timestamp: 10, // 10 seconds in
     },
     {
-      title: "Notificações Inteligentes",
-      description: "Receba emails automáticos sobre atualizações",
+      title: "Team Up",
+      description: "Send notifications to your team",
       icon: Send,
       color: "text-purple-500",
       bg: "bg-purple-100",
       animation: "animate-ping",
-    },
-    {
-      title: "Gestão de Equipe",
-      description: "Organize e acompanhe o progresso",
-      icon: Users,
-      color: "text-orange-500",
-      bg: "bg-orange-100",
-      animation: "animate-pulse",
+      timestamp: 30, // 30 seconds in
     },
   ];
 
@@ -64,8 +60,17 @@ export function DemoVideo({ className }: DemoVideoProps) {
     }
   }, [isPlaying, demoSteps.length]);
 
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
+  const handleStepClick = (index: number) => {
+    setCurrentStep(index);
+    setIsPlaying(false);
+
+    // Seek to timestamp in YouTube video
+    const step = demoSteps[index];
+    const iframe = iframeRef.current;
+    if (iframe && iframe.contentWindow) {
+      const newUrl = `https://www.youtube.com/embed/_6dtNz10cGg?autoplay=1&controls=1&rel=0&modestbranding=1&start=${step.timestamp}`;
+      iframe.src = newUrl;
+    }
   };
 
   const currentDemo = demoSteps[currentStep];
@@ -75,96 +80,35 @@ export function DemoVideo({ className }: DemoVideoProps) {
     <div
       className={`relative bg-gradient-to-br from-blue-600 to-purple-600 rounded-3xl p-2 shadow-2xl ${className}`}
     >
-      <div className="bg-white rounded-3xl p-8">
-        <div className="aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl relative overflow-hidden">
-          {/* Video Content */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center">
-              <div className="w-32 h-32 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
-                <Icon
-                  className={`w-16 h-16 ${currentDemo.color.replace("text-", "text-white")}`}
-                />
-              </div>
-              <h3 className="text-3xl font-semibold text-gray-900 mb-4">
-                {currentDemo.title}
-              </h3>
-              <p className="text-gray-600 text-lg max-w-md mx-auto">
-                {currentDemo.description}
-              </p>
-            </div>
-          </div>
-
-          {/* Animated Elements */}
-          <div className="absolute top-6 left-6">
-            <div
-              className={`w-16 h-16 ${currentDemo.bg} rounded-xl flex items-center justify-center ${currentDemo.animation}`}
-            >
-              <MessageCircle className="w-8 h-8 text-blue-500" />
-            </div>
-          </div>
-
-          <div className="absolute top-6 right-6">
-            <div
-              className={`w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center ${currentDemo.animation}`}
-              style={{ animationDelay: "0.5s" }}
-            >
-              <CheckCircle className="w-8 h-8 text-green-500" />
-            </div>
-          </div>
-
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
-            <div
-              className={`w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center ${currentDemo.animation}`}
-              style={{ animationDelay: "1s" }}
-            >
-              <Send className="w-8 h-8 text-purple-500" />
-            </div>
-          </div>
-
-          {/* Floating Elements */}
-          <div className="absolute top-1/4 right-12 animate-float">
-            <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-              <Zap className="w-6 h-6 text-yellow-600" />
-            </div>
-          </div>
-
-          <div
-            className="absolute bottom-1/4 left-12 animate-float"
-            style={{ animationDelay: "1s" }}
-          >
-            <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-pink-600" />
-            </div>
-          </div>
-
-          {/* Play Button Overlay */}
-          <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-300">
-            <button
-              onClick={handlePlayPause}
-              className="w-20 h-20 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300"
-            >
-              {isPlaying ? (
-                <Pause className="w-10 h-10 text-gray-700 ml-1" />
-              ) : (
-                <Play className="w-10 h-10 text-gray-700 ml-1" />
-              )}
-            </button>
+      <div className="bg-white rounded-3xl p-4">
+        <div className="aspect-[16/10] bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl relative overflow-hidden">
+          {/* YouTube Video Embed */}
+          <div className="absolute inset-0">
+            <iframe
+              ref={iframeRef}
+              src="https://www.youtube.com/embed/_6dtNz10cGg?autoplay=0&controls=1&rel=0&modestbranding=1"
+              title="TodoChat Demo Video"
+              className="w-full h-full rounded-2xl"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
           </div>
         </div>
 
         {/* Progress Bar */}
-        <div className="mt-4">
-          <div className="flex justify-between items-center mb-2">
+        <div className="mt-3">
+          <div className="flex justify-between items-center mb-1">
             <span className="text-sm font-medium text-gray-700">
-              {currentDemo.title}
+              {currentDemo.description}
             </span>
             <span className="text-xs text-gray-500">
               {currentStep + 1} / {demoSteps.length}
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-gray-200 rounded-full h-1.5">
             <div
-              className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-blue-500 to-purple-500 h-1.5 rounded-full transition-all duration-500"
               style={{
                 width: `${((currentStep + 1) / demoSteps.length) * 100}%`,
               }}
@@ -172,8 +116,8 @@ export function DemoVideo({ className }: DemoVideoProps) {
           </div>
         </div>
 
-        {/* Feature Icons */}
-        <div className="mt-6 grid grid-cols-4 gap-3">
+        {/* Feature Icons with Timestamps */}
+        <div className="mt-3 grid grid-cols-3 gap-2">
           {demoSteps.map((step, index) => {
             const StepIcon = step.icon;
             return (
@@ -184,19 +128,14 @@ export function DemoVideo({ className }: DemoVideoProps) {
                     ? "scale-110"
                     : "opacity-60 hover:opacity-100"
                 }`}
-                onClick={() => {
-                  setCurrentStep(index);
-                  setIsPlaying(false);
-                }}
+                onClick={() => handleStepClick(index)}
               >
                 <div
-                  className={`w-12 h-12 ${step.bg} rounded-xl flex items-center justify-center mx-auto mb-2`}
+                  className={`w-10 h-10 ${step.bg} rounded-lg flex items-center justify-center mx-auto mb-1`}
                 >
-                  <StepIcon className={`w-6 h-6 ${step.color}`} />
+                  <StepIcon className={`w-5 h-5 ${step.color}`} />
                 </div>
-                <p className="text-sm text-gray-600 truncate">
-                  {step.title.split(" ")[0]}
-                </p>
+                <p className="text-xs text-gray-600 truncate">{step.title}</p>
               </div>
             );
           })}
