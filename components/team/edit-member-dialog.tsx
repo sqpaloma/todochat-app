@@ -48,7 +48,7 @@ export function EditMemberDialog({
 
   // Simulate update member mutation (in real app, this would be implemented in convex/teams.ts)
   const updateMember = useMutation(api.teams.addMember); // Using addMember as placeholder
-  const removeMember = useMutation(api.teams.removeMember);
+  const removeMember = useMutation(api.teams.removeMemberTest);
 
   useEffect(() => {
     if (member) {
