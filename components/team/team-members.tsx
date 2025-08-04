@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { PresenceIndicator } from "@/components/ui/presence-indicator";
+
 import { Users } from "lucide-react";
-import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
+import { useTeamMembersWithPresence } from "../../hooks/use-team-members-with-presence";
 
 interface TeamMembersProps {
   teamId: string;

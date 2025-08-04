@@ -3,14 +3,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Trophy, 
-  Twitter, 
-  X,
-  Sparkles,
-  Target
-} from "lucide-react";
-import { gradientClasses } from '@/lib/gradient-classes';
+import { Trophy, X, Sparkles, Target } from "lucide-react";
+import { gradientClasses } from "@/lib/gradient-classes";
 
 interface TaskCompletionShareProps {
   taskTitle: string;
@@ -18,10 +12,10 @@ interface TaskCompletionShareProps {
   onClose: () => void;
 }
 
-export function TaskCompletionShare({ 
-  taskTitle, 
-  isVisible, 
-  onClose 
+export function TaskCompletionShare({
+  taskTitle,
+  isVisible,
+  onClose,
 }: TaskCompletionShareProps) {
   const [show, setShow] = useState(false);
 
@@ -42,8 +36,8 @@ export function TaskCompletionShare({
   const shareText = `🎉 Just completed "${taskTitle}" using Chat Do ✨ - the most fun way to stay productive! Transform your conversations into organized tasks. #ChatDo #Productivity #TaskComplete #TeamWork`;
 
   const handleShare = () => {
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
-    window.open(twitterUrl, '_blank', 'width=600,height=400');
+    const twitterUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+    window.open(twitterUrl, "_blank", "width=600,height=400");
   };
 
   const handleClose = () => {
@@ -57,12 +51,18 @@ export function TaskCompletionShare({
         <CardContent className="p-4">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center">
-              <div className={`w-8 h-8 ${gradientClasses.primaryBr} rounded-lg flex items-center justify-center mr-3`}>
+              <div
+                className={`w-8 h-8 ${gradientClasses.primaryBr} rounded-lg flex items-center justify-center mr-3`}
+              >
                 <Trophy className="w-4 h-4 text-white" />
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-green-800 text-sm">Task Complete! 🎉</h4>
-                <p className="text-green-600 text-xs">Great job finishing that task!</p>
+                <h4 className="font-bold text-green-800 text-sm">
+                  Task Complete! 🎉
+                </h4>
+                <p className="text-green-600 text-xs">
+                  Great job finishing that task!
+                </p>
               </div>
             </div>
             <Button
@@ -91,8 +91,8 @@ export function TaskCompletionShare({
             onClick={handleShare}
             className="w-full bg-[#1DA1F2] hover:bg-[#1a91da] text-white text-sm"
           >
-            <Twitter className="w-4 h-4 mr-2" />
-            Share on Twitter
+            <X className="w-4 h-4 mr-2" />
+            Share on X
             <Sparkles className="w-4 h-4 ml-2" />
           </Button>
         </CardContent>

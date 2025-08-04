@@ -4,17 +4,15 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Twitter, 
-  Facebook, 
-  Linkedin, 
-  Share2, 
-  Copy, 
+import {
+  X,
+  Facebook,
+  Linkedin,
+  Copy,
   Check,
   Heart,
-  Sparkles 
+  Sparkles,
 } from "lucide-react";
-import { gradientClasses } from '@/lib/gradient-classes';
 
 interface SocialShareProps {
   title?: string;
@@ -23,22 +21,22 @@ interface SocialShareProps {
   hashtags?: string[];
 }
 
-export function SocialShare({ 
+export function SocialShare({
   title = "I'm using Chat Do ✨ - The most fun way to turn conversations into tasks!",
   description = "Transform your team conversations into organized tasks with this amazing productivity tool. #productivity #teamwork #chatdo",
   url = "https://chatdo.app",
-  hashtags = ["ChatDo", "Productivity", "TeamWork", "Convex", "Resend"]
+  hashtags = ["ChatDo", "Productivity", "TeamWork", "Convex", "Resend"],
 }: SocialShareProps) {
   const [copied, setCopied] = useState(false);
 
   const shareText = `${title}\n\n${description}`;
-  const hashtagsString = hashtags.map(tag => `#${tag}`).join(" ");
+  const hashtagsString = hashtags.map((tag) => `#${tag}`).join(" ");
   const fullText = `${shareText}\n\n${hashtagsString}\n\n${url}`;
 
   const shareLinks = {
-    twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(fullText)}`,
+    x: `https://x.com/intent/tweet?text=${encodeURIComponent(fullText)}`,
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(shareText)}`,
-    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&summary=${encodeURIComponent(description)}`
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&summary=${encodeURIComponent(description)}`,
   };
 
   const handleCopyLink = async () => {
@@ -47,12 +45,12 @@ export function SocialShare({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error("Failed to copy:", err);
     }
   };
 
   const handleShare = (platform: keyof typeof shareLinks) => {
-    window.open(shareLinks[platform], '_blank', 'width=600,height=400');
+    window.open(shareLinks[platform], "_blank", "width=600,height=400");
   };
 
   return (
@@ -76,21 +74,20 @@ export function SocialShare({
           {/* Social Media Buttons */}
           <div className="flex flex-col sm:flex-row gap-3">
             <Button
-              onClick={() => handleShare('twitter')}
+              onClick={() => handleShare("x")}
               className="flex-1 bg-[#1DA1F2] hover:bg-[#1a91da] text-white"
             >
-              <Twitter className="w-4 h-4 mr-2" />
-              Twitter
+              <X className="w-4 h-4 mr-2" />X
             </Button>
             <Button
-              onClick={() => handleShare('facebook')}
+              onClick={() => handleShare("facebook")}
               className="flex-1 bg-[#1877F2] hover:bg-[#166fe5] text-white"
             >
               <Facebook className="w-4 h-4 mr-2" />
               Facebook
             </Button>
             <Button
-              onClick={() => handleShare('linkedin')}
+              onClick={() => handleShare("linkedin")}
               className="flex-1 bg-[#0A66C2] hover:bg-[#095bb5] text-white"
             >
               <Linkedin className="w-4 h-4 mr-2" />
@@ -124,8 +121,12 @@ export function SocialShare({
               <p className="font-semibold">{title}</p>
               <p>{description}</p>
               <div className="flex flex-wrap gap-1">
-                {hashtags.map(tag => (
-                  <Badge key={tag} variant="secondary" className="text-xs bg-purple-100 text-purple-700">
+                {hashtags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="text-xs bg-purple-100 text-purple-700"
+                  >
                     #{tag}
                   </Badge>
                 ))}

@@ -4,7 +4,7 @@ import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { Sparkles, MessageSquare, CheckSquare, Users } from "lucide-react";
-import { gradientClasses } from '@/lib/gradient-classes';
+import { gradientClasses } from "@/lib/gradient-classes";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -39,7 +39,9 @@ export function AuthGuard({
           <div className="w-full max-w-md mx-4">
             <div className="bg-white/90 backdrop-blur-md border border-white/40 rounded-3xl p-8 shadow-2xl">
               <div className="text-center mb-8">
-                <div className={`w-12 h-12 ${gradientClasses.primaryBr} rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg`}>
+                <div
+                  className={`w-12 h-12 ${gradientClasses.primaryBr} rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg`}
+                >
                   <Sparkles className="w-6 h-6 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">

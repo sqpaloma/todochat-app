@@ -8,13 +8,11 @@ import { Users } from "lucide-react";
 interface TeamMembersGridProps {
   members: TeamMemberType[];
   onEditMember: (member: TeamMemberType) => void;
-  onViewProfile: (member: TeamMemberType) => void;
 }
 
 export function TeamMembersGrid({
   members,
   onEditMember,
-  onViewProfile,
 }: TeamMembersGridProps) {
   if (members.length === 0) {
     return (
@@ -40,7 +38,6 @@ export function TeamMembersGrid({
           key={member._id}
           member={member}
           onEdit={() => onEditMember(member)}
-          onViewProfile={() => onViewProfile(member)}
         />
       ))}
     </div>

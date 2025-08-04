@@ -2,9 +2,9 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+
 import { Button } from "@/components/ui/button";
-import { PresenceIndicator } from "@/components/ui/presence-indicator";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +17,6 @@ import {
   MapPin,
   Calendar,
   MoreVertical,
-  UserCheck,
   Edit,
 } from "lucide-react";
 import type { TeamMember as TeamMemberType } from "@/types/team";
@@ -26,10 +25,9 @@ import { formatJoinDate, getInitials } from "@/utils/team-utils";
 interface TeamMemberProps {
   member: TeamMemberType;
   onEdit?: (member: TeamMemberType) => void;
-  onViewProfile?: (member: TeamMemberType) => void;
 }
 
-export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
+export function TeamMember({ member, onEdit }: TeamMemberProps) {
   return (
     <Card
       className="group border-purple-200 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105 bg-white rounded-2xl overflow-hidden"
@@ -71,12 +69,6 @@ export function TeamMember({ member, onEdit, onViewProfile }: TeamMemberProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {onViewProfile && (
-                <DropdownMenuItem onClick={() => onViewProfile(member)}>
-                  <UserCheck className="mr-2 h-4 w-4" />
-                  View Profile
-                </DropdownMenuItem>
-              )}
               {onEdit && (
                 <DropdownMenuItem onClick={() => onEdit(member)}>
                   <Edit className="mr-2 h-4 w-4" />
