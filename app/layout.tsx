@@ -14,13 +14,10 @@ import {
   UserButton,
   useAuth,
 } from "@clerk/nextjs";
-import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
 import { MobileMenuButton } from "@/components/mobile-menu-button";
 import { Footer } from "@/components/footer";
 import { useAppContext } from "@/contexts/app-context";
-import { Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 // Layout hook using AppContext
 export function useLayout() {

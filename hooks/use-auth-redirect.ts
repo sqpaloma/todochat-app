@@ -2,7 +2,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export function useAuthRedirect(targetPath: string = "/tasks") {
+export function useAuthRedirect(targetPath: string = "/chat") {
   const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
 
