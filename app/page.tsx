@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { gradients } from "@/lib/design-tokens";
 
 import { DemoVideo } from "@/components/demo/demo-video";
 import Link from "next/link";
