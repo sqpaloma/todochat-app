@@ -19,8 +19,11 @@ import { gradients } from "@/lib/design-tokens";
 import { SocialShare } from "@/components/social/social-share";
 import { DemoVideo } from "@/components/demo/demo-video";
 import Link from "next/link";
+import { useAuth } from "@clerk/nextjs";
 
 export default function App() {
+  const { isSignedIn, isLoaded } = useAuth();
+
   const quickActions = [
     {
       icon: CheckSquare,
@@ -184,12 +187,31 @@ export default function App() {
                       </div>
                     </div>
 
-                    <Link href={action.href}>
-                      <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl sm:rounded-2xl font-semibold py-2.5 sm:py-3 text-sm sm:text-base transition-all duration-300 group-hover:shadow-lg">
-                        Acessar
-                        <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                      </Button>
-                    </Link>
+                    {action.title === "Chat" ? (
+                      isLoaded && isSignedIn ? (
+                        <Link href={action.href}>
+                          <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl sm:rounded-2xl font-semibold py-2.5 sm:py-3 text-sm sm:text-base transition-all duration-300 group-hover:shadow-lg">
+                            Acessar
+                            <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Button
+                          onClick={() => (window.location.href = "/login")}
+                          className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl sm:rounded-2xl font-semibold py-2.5 sm:py-3 text-sm sm:text-base transition-all duration-300 group-hover:shadow-lg"
+                        >
+                          Acessar
+                          <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                        </Button>
+                      )
+                    ) : (
+                      <Link href={action.href}>
+                        <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl sm:rounded-2xl font-semibold py-2.5 sm:py-3 text-sm sm:text-base transition-all duration-300 group-hover:shadow-lg">
+                          Acessar
+                          <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                        </Button>
+                      </Link>
+                    )}
                   </CardContent>
                 </Card>
               );

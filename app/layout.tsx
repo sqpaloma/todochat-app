@@ -162,12 +162,17 @@ function LayoutContent({ children }: { children: ReactNode }) {
 
   // Determine which layout to use based on pathname
   const isHomePage = pathname === "/";
+  const isLoginPage = pathname === "/login";
   const isSidebarPage = ["/chat", "/tasks", "/team"].some((page) =>
     pathname.startsWith(page)
   );
 
   if (isHomePage) {
     return <HomeLayoutContent>{children}</HomeLayoutContent>;
+  }
+
+  if (isLoginPage) {
+    return <>{children}</>;
   }
 
   if (isSidebarPage) {
