@@ -21,13 +21,12 @@ export default function ChatPage() {
     selectedFile,
     isUploading,
     selectedDirectContact,
-    showContactSelector,
     isTaskMode,
     taskAssigneeId,
     selectedTeam,
 
     // Actions
-    setActiveTab,
+
     setNewMessage,
     setSelectedFile,
     setSelectedDirectContact,

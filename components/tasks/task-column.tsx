@@ -3,35 +3,14 @@
 import { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { Task } from "./task";
-import { Id } from "@/convex/_generated/dataModel";
 import { ChevronDown, ChevronUp } from "lucide-react";
-
-interface TaskType {
-  _id: Id<"tasks">;
-  title: string;
-  description: string;
-  status: "todo" | "in-progress" | "done";
-  assigneeId: string;
-  assigneeName: string;
-  createdBy: string;
-  createdAt: number;
-  dueDate?: number;
-  originalMessage?: string;
-  teamId: string;
-  priority: "low" | "medium" | "high";
-}
-
-interface TeamMember {
-  _id: string;
-  name: string;
-  email: string;
-}
+import { Task as TaskType, TaskStatus, TeamMember } from "@/types/tasks";
 
 interface TaskColumnProps {
   title: string;
   count: number;
   tasks: TaskType[];
-  status: "todo" | "in-progress" | "done";
+  status: TaskStatus;
   teamMembers: TeamMember[];
 }
 
