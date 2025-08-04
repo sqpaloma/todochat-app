@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useTeamPresence } from "@/hooks/use-team-presence";
+import { useTeamPresence } from "../hooks/use-team-presence";
 import { ChatTab, MessageType } from "@/types/chat";
 import { getDisplayName } from "@/utils/user";
 import { useEffect, useRef } from "react";
