@@ -19,12 +19,6 @@ import { Sidebar } from "@/components/sidebar";
 import { MobileMenuButton } from "@/components/mobile-menu-button";
 import { useAppContext } from "@/contexts/app-context";
 
-export const metadata = {
-  title: "Chat Do ✨ - Transform conversations into incredible results",
-  description:
-    "The most fun tool to transform your conversations into organized tasks. Your team will love gamified productivity!",
-};
-
 // Layout hook using AppContext
 export function useLayout() {
   const { state, setSidebarOpen, toggleSidebar } = useAppContext();

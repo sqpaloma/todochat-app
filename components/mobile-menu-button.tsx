@@ -1,7 +1,7 @@
 "use client";
 
 import { Menu } from "lucide-react";
-import { useLayout } from "@/app/layout-wrapper";
+import { useLayout } from "@/app/layout";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 
