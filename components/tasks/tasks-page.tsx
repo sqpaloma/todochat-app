@@ -4,9 +4,8 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { gradientClasses } from '@/lib/gradient-classes';
-import { TaskCompletionShare } from '@/components/social/task-completion-share';
-import { useModalManager } from '@/hooks/use-modal-manager';
+import { gradientClasses } from "@/lib/gradient-classes";
+
 import {
   DndContext,
   DragEndEvent,
@@ -23,7 +22,7 @@ import { CreateManualTaskDialog } from "./create-manual-task-dialog";
 import { Task } from "./task";
 import { Button } from "@/components/ui/button";
 import { Plus, Calendar } from "lucide-react";
-import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
+import { useTeamPresence } from "@/hooks/use-team-presence";
 
 interface TaskType {
   _id: Id<"tasks">;
@@ -42,16 +41,15 @@ interface TaskType {
 
 export function TasksPage() {
   const [selectedTeam] = useState("team-1");
-  const { modals, openModal, closeModal } = useModalManager();
+  const [showAddTaskDialog, setShowAddTaskDialog] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
-  const [completedTask, setCompletedTask] = useState<{title: string, show: boolean}>({title: "", show: false});
 
   const tasks = useQuery(api.tasks.getTasks, { teamId: selectedTeam });
   const deleteTask = useMutation(api.tasks.deleteTask);
 
-  // Use the new presence-enabled hook
-  const { members: teamMembers } = useTeamMembersWithPresence(selectedTeam);
+  // Use team presence hook
+  const { members: teamMembers } = useTeamPresence(selectedTeam, null);
 
   const updateTaskStatus = useMutation(api.tasks.updateTaskStatus);
 
@@ -109,11 +107,6 @@ export function TasksPage() {
 
     try {
       await updateTaskStatus({ taskId: task._id, status: newStatus });
-      
-      // Trigger social share notification when task is completed
-      if (newStatus === "done" && task.status !== "done") {
-        setCompletedTask({ title: task.title, show: true });
-      }
     } catch (error) {
       console.error("Error updating task status:", error);
     }
@@ -145,7 +138,7 @@ export function TasksPage() {
               {/* Right side - Action Buttons */}
               <div className="flex flex-col lg:flex-row gap-3">
                 <Button
-                  onClick={() => openModal('add')}
+                  onClick={() => setShowAddTaskDialog(true)}
                   className={`${gradientClasses.primaryButton} text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200`}
                 >
                   <Plus className="w-4 h-4 mr-2" />
@@ -236,8 +229,8 @@ export function TasksPage() {
         </div>
 
         <CreateManualTaskDialog
-          open={modals.add.isOpen}
-          onOpenChange={(open) => !open && closeModal('add')}
+          open={showAddTaskDialog}
+          onOpenChange={setShowAddTaskDialog}
           teamMembers={teamMembers || []}
           teamId={selectedTeam}
         />
@@ -263,13 +256,6 @@ export function TasksPage() {
           </div>
         ) : null}
       </DragOverlay>
-
-      {/* Social Share for Task Completion */}
-      <TaskCompletionShare
-        taskTitle={completedTask.title}
-        isVisible={completedTask.show}
-        onClose={() => setCompletedTask({ title: "", show: false })}
-      />
     </DndContext>
   );
 }

@@ -10,10 +10,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Plus, Search, Filter } from "lucide-react";
 import { AddMemberDialog } from "./add-member-dialog";
-import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
+import { useTeamPresence } from "@/hooks/use-team-presence";
 import { Input } from "@/components/ui/input";
-import { gradientClasses } from '@/lib/gradient-classes';
-import { useModalManager } from '@/hooks/use-modal-manager';
+import { gradientClasses } from "@/lib/gradient-classes";
+import { useModalManager } from "@/hooks/use-modal-manager";
 
 interface TeamMemberType {
   _id: string;
@@ -25,11 +25,15 @@ interface TeamMemberType {
 
 export function TeamPageComponent() {
   const [selectedTeam] = useState("team-1");
-  const { modals, openModal, closeModal } = useModalManager();
+  const { showAddMemberDialog, openAddMemberDialog, closeAddMemberDialog } =
+    useModalManager();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { members: teamMembers, stats } =
-    useTeamMembersWithPresence(selectedTeam);
+  const { members: teamMembers, onlineCount } = useTeamPresence(
+    selectedTeam,
+    null
+  );
+  const stats = { total: teamMembers.length, online: onlineCount };
 
   const filteredMembers = teamMembers.filter(
     (member) =>
@@ -53,7 +57,7 @@ export function TeamPageComponent() {
             </div>
 
             <Button
-              onClick={() => openModal('add')}
+              onClick={openAddMemberDialog}
               className={`${gradientClasses.primaryButton} text-white rounded-xl font-semibold px-4 sm:px-6 py-2 sm:py-3 w-full sm:w-auto`}
             >
               <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
@@ -106,7 +110,9 @@ export function TeamPageComponent() {
                       >
                         <div className="flex items-center space-x-4">
                           <div className="relative">
-                            <div className={`w-10 h-10 ${gradientClasses.primaryBr} rounded-full flex items-center justify-center text-white font-semibold`}>
+                            <div
+                              className={`w-10 h-10 ${gradientClasses.primaryBr} rounded-full flex items-center justify-center text-white font-semibold`}
+                            >
                               {member.name
                                 .split(" ")
                                 .map((n) => n[0])
@@ -141,7 +147,7 @@ export function TeamPageComponent() {
                         </p>
                         {!searchTerm && (
                           <Button
-                            onClick={() => setShowAddMemberDialog(true)}
+                            onClick={openAddMemberDialog}
                             variant="outline"
                             size="sm"
                           >
@@ -165,8 +171,8 @@ export function TeamPageComponent() {
       </div>
 
       <AddMemberDialog
-        open={modals.add.isOpen}
-        onOpenChange={(open) => !open && closeModal('add')}
+        open={showAddMemberDialog}
+        onOpenChange={(open) => !open && closeAddMemberDialog()}
         teamId={selectedTeam}
       />
     </div>

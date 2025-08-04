@@ -1,3 +1,6 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
+
 interface UserAvatarProps {
   name: string;
   imageUrl?: string;
@@ -5,44 +8,33 @@ interface UserAvatarProps {
   className?: string;
 }
 
-export function UserAvatar({ 
-  name, 
-  imageUrl, 
+export function UserAvatar({
+  name,
+  imageUrl,
   size = "md",
-  className = "" 
+  className,
 }: UserAvatarProps) {
-  const sizes = {
+  const sizeClasses = {
     sm: "w-6 h-6 text-xs",
-    md: "w-8 h-8 text-xs", 
-    lg: "w-10 h-10 text-sm"
+    md: "w-8 h-8 text-sm",
+    lg: "w-10 h-10 text-base",
   };
 
-  const initials = name
-    .split(" ")
-    .map(n => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-
-  if (imageUrl) {
-    return (
-      <img
-        src={imageUrl}
-        alt={name}
-        className={`${sizes[size]} rounded-full ${className}`}
-      />
-    );
-  }
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   return (
-    <div className={`
-      ${sizes[size]} 
-      bg-gradient-to-br from-gray-400 to-gray-600 
-      rounded-full flex items-center justify-center 
-      text-white font-semibold
-      ${className}
-    `}>
-      {initials}
-    </div>
+    <Avatar className={cn(sizeClasses[size], className)}>
+      {imageUrl ? <AvatarImage src={imageUrl} alt={name} /> : null}
+      <AvatarFallback className="bg-blue-500 text-white">
+        {getInitials(name)}
+      </AvatarFallback>
+    </Avatar>
   );
 }

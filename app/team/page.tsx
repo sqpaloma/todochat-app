@@ -1,16 +1,15 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { AddMemberDialog } from "@/components/team/add-member-dialog";
 import { EditMemberDialog } from "@/components/team/edit-member-dialog";
 import { MemberDetailsDialog } from "@/components/team/member-details-dialog";
-import { gradientClasses } from '@/lib/gradient-classes';
-import { useModalManager } from '@/hooks/use-modal-manager';
+import { gradients } from "@/lib/design-tokens";
 
 import { TeamFilters } from "@/components/team/team-filters";
 import { TeamMembersGrid } from "@/components/team/team-members-grid";
 import { Button } from "@/components/ui/button";
-import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
+import { useTeamPresence } from "@/hooks/use-team-presence";
 import { useTeamFilters } from "@/hooks/use-team-filters";
 import { AuthGuard } from "@/components/auth/auth-guard";
 import ErrorBoundary from "@/components/team/error-boundary";
@@ -19,31 +18,41 @@ import type { TeamMember as TeamMemberType } from "@/types/team";
 
 function TeamPageContent() {
   const [selectedTeam] = useState("team-1");
-  const { modals, openModal, closeModal } = useModalManager<TeamMemberType>();
 
-  // Use the new presence-enabled hook
-  const {
-    members: teamMembers,
-    stats,
-    isLoading,
-  } = useTeamMembersWithPresence(selectedTeam);
+  // Simple modal states
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<TeamMemberType | null>(
+    null
+  );
+
+  // Use simplified team hook
+  const { members: teamMembers, onlineCount } = useTeamPresence(
+    selectedTeam,
+    null
+  );
+  const stats = { total: teamMembers.length, online: onlineCount };
+  const isLoading = false;
 
   // Use the new filters hook
   const { filters, filteredMembers, updateFilters, clearFilters } =
     useTeamFilters(teamMembers);
 
-  // Memoized event handlers
-  const handleEditMember = useCallback((member: TeamMemberType) => {
-    openModal('edit', member);
-  }, [openModal]);
+  // Simple event handlers
+  const handleEditMember = (member: TeamMemberType) => {
+    setSelectedMember(member);
+    setShowEditDialog(true);
+  };
 
-  const handleViewProfile = useCallback((member: TeamMemberType) => {
-    openModal('details', member);
-  }, [openModal]);
+  const handleViewProfile = (member: TeamMemberType) => {
+    setSelectedMember(member);
+    setShowDetailsDialog(true);
+  };
 
-  const handleAddMember = useCallback(() => {
-    openModal('add');
-  }, [openModal]);
+  const handleAddMember = () => {
+    setShowAddDialog(true);
+  };
 
   if (isLoading) {
     return (
@@ -67,7 +76,7 @@ function TeamPageContent() {
         </div>
         <Button
           onClick={handleAddMember}
-          className={`${gradientClasses.primaryButton} text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200`}
+          className={`${gradients.primaryButton} text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200`}
           aria-label="Add new team member"
         >
           <Plus className="w-4 h-4 mr-2" />
@@ -91,22 +100,28 @@ function TeamPageContent() {
 
       {/* Dialogs */}
       <AddMemberDialog
-        open={modals.add.isOpen}
-        onOpenChange={(open) => !open && closeModal('add')}
+        open={showAddDialog}
+        onOpenChange={setShowAddDialog}
         teamId={selectedTeam}
       />
 
       <EditMemberDialog
-        open={modals.edit.isOpen}
-        onOpenChange={(open) => !open && closeModal('edit')}
-        member={modals.edit.data || null}
+        open={showEditDialog}
+        onOpenChange={(open) => {
+          setShowEditDialog(open);
+          if (!open) setSelectedMember(null);
+        }}
+        member={selectedMember}
         teamId={selectedTeam}
       />
 
       <MemberDetailsDialog
-        open={modals.details.isOpen}
-        onOpenChange={(open) => !open && closeModal('details')}
-        member={modals.details.data || null}
+        open={showDetailsDialog}
+        onOpenChange={(open) => {
+          setShowDetailsDialog(open);
+          if (!open) setSelectedMember(null);
+        }}
+        member={selectedMember}
       />
     </div>
   );

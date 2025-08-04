@@ -16,7 +16,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { gradientClasses } from '@/lib/gradient-classes';
+import { gradients } from '@/lib/design-tokens';
 import { SocialShare } from '@/components/social/social-share';
 
 export function HomePage() {
@@ -112,7 +112,7 @@ export function HomePage() {
           <div className="flex justify-center px-4">
             <Button
               onClick={() => (window.location.href = "/tasks")}
-              className={`w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 ${gradientClasses.primaryButton} text-white rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105`}
+              className={`w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 ${gradients.primaryButton} text-white rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105`}
             >
               Start the Fun
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
@@ -167,7 +167,7 @@ export function HomePage() {
             </p>
             <Button
               onClick={() => (window.location.href = "/tasks")}
-              className={`w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 ${gradientClasses.primaryButton} text-white rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105`}
+              className={`w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 ${gradients.primaryButton} text-white rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105`}
             >
               Let's get started! ✨
             </Button>

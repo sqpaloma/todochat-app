@@ -1,78 +1,44 @@
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useQuery, useMutation } from "convex/react";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
-export function useTeamPresence(roomId: string, currentUser: any) {
-  // Buscar informações dos usuários
-  const users = useQuery(api.users.debugUsers);
+/**
+ * Hook for managing team presence and member data
+ * Returns team members with online status and online count
+ */
+export function useTeamPresence(teamId: string, currentUser: any) {
+  // Get team members
+  const teamMembers = useQuery(api.users.debugUsers);
 
-  // Buscar lista de usuários online na sala
+  // Get online users for the team
   const onlineUsers = useQuery(api.presence.list, {
-    roomToken: roomId,
+    roomToken: teamId,
   });
 
-  // Enviar heartbeat para manter o presence ativo
-  const heartbeat = useMutation(api.presence.heartbeat);
+  // Calculate online count and combine member data with presence
+  const { members, onlineCount } = useMemo(() => {
+    if (!teamMembers) {
+      return { members: [], onlineCount: 0 };
+    }
 
-  useEffect(() => {
-    if (!currentUser?._id || !roomId) return;
+    const onlineUserIds = new Set(onlineUsers?.map((u) => u.userId) || []);
+    const onlineCount = onlineUserIds.size;
 
-    // Enviar heartbeat inicial
-    const sendHeartbeat = async () => {
-      try {
-        await heartbeat({
-          roomId,
-          userId: currentUser._id,
-          sessionId: `session-${currentUser._id}-${Date.now()}`,
-          interval: 30000,
-        });
-      } catch (error) {
-        console.error("Failed to send heartbeat:", error);
-      }
-    };
+    const members = teamMembers.map((member) => ({
+      ...member,
+      name:
+        `${member.firstName || ""} ${member.lastName || ""}`.trim() ||
+        member.email,
+      joinDate: member._creationTime,
+      isOnline: onlineUserIds.has(member._id),
+    }));
 
-    sendHeartbeat();
-
-    // Enviar heartbeat a cada 30 segundos
-    const interval = setInterval(sendHeartbeat, 30000);
-
-    return () => clearInterval(interval);
-  }, [currentUser?._id, roomId, heartbeat]);
-
-  // Criar lista de membros com presence real
-  const teamMembersWithPresence = useMemo(() => {
-    if (!users || !onlineUsers) return [];
-
-    // Criar um mapa dos usuários online
-    const onlineUserIds = new Set(onlineUsers.map((user: any) => user.userId));
-
-    return users.map((user: any) => {
-      const isOnline =
-        onlineUserIds.has(user._id) || user._id === currentUser?._id;
-
-      const member = {
-        _id: user._id,
-        name:
-          `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-          user.email?.split("@")[0] ||
-          "Anonymous",
-        email: user.email || "",
-        status: isOnline ? "online" : "offline",
-      };
-
-      return member;
-    });
-  }, [users, onlineUsers, currentUser?._id]);
-
-  // Contar usuários online reais
-  const onlineCount = teamMembersWithPresence.filter(
-    (m) => m.status === "online"
-  ).length;
+    return { members, onlineCount };
+  }, [teamMembers, onlineUsers]);
 
   return {
-    members: teamMembersWithPresence,
+    members,
     onlineCount,
-    isPresenceReady: onlineUsers !== undefined,
-    hasPresenceError: false,
+    isLoading: teamMembers === undefined,
   };
 }

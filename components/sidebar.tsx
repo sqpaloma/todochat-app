@@ -17,9 +17,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { GradientIcon } from "@/components/ui/gradient-icon";
-import { GradientButton } from "@/components/ui/gradient-button";
-import { UserAvatar } from "@/components/ui/user-avatar";
+import { gradients } from "@/lib/design-tokens";
 
 import {
   SignedIn,
@@ -31,16 +29,16 @@ import {
 } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useTeamMembersWithPresence } from "@/hooks/use-team-members-with-presence";
+import { useTeamPresence } from "@/hooks/use-team-presence";
 import { useResponsiveSSR } from "@/hooks/use-responsive-ssr";
 import { NavigationItem } from "./sidebar/navigation-item";
 import { MemberActionsMenu } from "./sidebar/member-actions-menu";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
@@ -52,8 +50,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   // Use responsive hook
   const { isMobile } = useResponsiveSSR();
 
-  // Use the new presence-enabled hook
-  const { members: teamMembers } = useTeamMembersWithPresence("team-1");
+  // Use team presence hook
+  const { members: teamMembers } = useTeamPresence("team-1", null);
 
   // Fetch real tasks count
   const tasks = useQuery(api.tasks.getTasks, { teamId: "team-1" }) || [];
@@ -166,7 +164,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               href="/"
               className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
             >
-              <GradientIcon icon={Sparkles} size="lg" />
+              <div
+                className={`w-12 h-12 ${gradients.primaryBr} rounded-xl flex items-center justify-center`}
+              >
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
               <div>
                 <h2 className="font-bold text-lg gradient-text">✨ Chat do</h2>
                 <p className="text-xs text-gray-500">Workspace</p>
@@ -177,7 +179,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               href="/"
               className="hidden lg:flex hover:opacity-80 transition-opacity"
             >
-              <GradientIcon icon={Sparkles} size="sm" />
+              <div
+                className={`w-8 h-8 ${gradients.primaryBr} rounded-lg flex items-center justify-center`}
+              >
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
             </Link>
           )}
 
@@ -218,7 +224,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               onClick={toggleTeamDropdown}
             >
               <div className="flex items-center space-x-3">
-                <GradientIcon icon={Users} size="sm" variant="secondary" />
+                <div
+                  className={`w-8 h-8 ${gradients.secondary} rounded-lg flex items-center justify-center`}
+                >
+                  <Users className="w-4 h-4 text-white" />
+                </div>
                 <div className="text-left">
                   <p className="text-sm font-semibold text-gray-900">
                     {activeTeam}
@@ -240,7 +250,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <div key={member._id} className="relative">
                     <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 group">
                       <div className="flex items-center space-x-3">
-                        <UserAvatar 
+                        <UserAvatar
                           name={member.name}
                           imageUrl={member.imageUrl}
                           size="md"
@@ -308,9 +318,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   </Button>
                 </SignInButton>
                 <SignUpButton>
-                  <GradientButton size="sm" className="w-full text-xs">
+                  <Button
+                    size="sm"
+                    className={`w-full text-xs ${gradients.primaryButton} text-white border-0`}
+                  >
                     Register
-                  </GradientButton>
+                  </Button>
                 </SignUpButton>
               </div>
             ) : (
@@ -321,9 +334,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   </Button>
                 </SignInButton>
                 <SignUpButton>
-                  <GradientButton className="w-full">
+                  <Button
+                    className={`w-full ${gradients.primaryButton} text-white border-0`}
+                  >
                     Create Account
-                  </GradientButton>
+                  </Button>
                 </SignUpButton>
               </div>
             )}
