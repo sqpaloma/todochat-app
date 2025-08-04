@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, Paperclip, Smile, Calendar, User } from "lucide-react";
 import { ChatTab } from "@/types/chat";
-import { gradientClasses } from '@/lib/gradient-classes';
+import { gradientClasses } from "@/lib/gradient-classes";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -73,9 +73,7 @@ export function ChatInput({
           onCheckedChange={onTaskModeChange}
           className="data-[state=checked]:bg-purple-500"
         />
-        <span className="text-sm font-medium text-gray-700">
-          Marcar como Tarefa
-        </span>
+        <span className="text-sm font-medium text-gray-700">Mark as Task</span>
       </div>
 
       {/* Task Assignment Fields - Only show in group chat when task mode is on */}
@@ -85,14 +83,14 @@ export function ChatInput({
           <div className="flex items-center space-x-3">
             <User className="w-4 h-4 text-purple-600" />
             <span className="text-sm font-medium text-gray-700">
-              Designar para:
+              Assign to:
             </span>
             <Select
               value={taskAssigneeId || ""}
               onValueChange={(value) => onTaskAssigneeChange(value || null)}
             >
               <SelectTrigger className="w-48">
-                <SelectValue placeholder="Selecionar membro" />
+                <SelectValue placeholder="Select member" />
               </SelectTrigger>
               <SelectContent>
                 {teamMembers.map((member) => (
@@ -176,7 +174,9 @@ export function ChatInput({
         <div className="bg-purple-50 border-t border-purple-200 px-4 py-3 mt-3">
           <div className="flex items-center justify-between p-3 bg-white/80 backdrop-blur-sm rounded-lg border border-purple-200 shadow-sm">
             <div className="flex items-center space-x-3">
-              <div className={`w-8 h-8 ${gradientClasses.primary} rounded-lg flex items-center justify-center`}>
+              <div
+                className={`w-8 h-8 ${gradientClasses.primary} rounded-lg flex items-center justify-center`}
+              >
                 <Paperclip className="w-4 h-4 text-white" />
               </div>
               <div>

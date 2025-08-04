@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { gradientClasses } from '@/lib/gradient-classes';
+import { gradientClasses } from "@/lib/gradient-classes";
 import {
   Dialog,
   DialogContent,
@@ -154,16 +154,17 @@ export function AcceptTaskDialog({
   };
 
   const dueDateOptions = [
-    { value: "today", label: "Hoje" },
-    { value: "tomorrow", label: "Amanhã" },
-    { value: "2weeks", label: "2 Semanas" },
-    { value: "1month", label: "1 Mês" },
+    { value: "today", label: "Today" },
+    { value: "tomorrow", label: "Tomorrow" },
+    { value: "1week", label: "1 Week" },
+    { value: "2weeks", label: "2 Weeks" },
+    { value: "1month", label: "1 Month" },
   ];
 
   const priorityLabels = {
-    low: "Baixa",
-    medium: "Média",
-    high: "Alta",
+    low: "Low",
+    medium: "Medium",
+    high: "High",
   };
 
   if (!message) return null;
@@ -174,25 +175,25 @@ export function AcceptTaskDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Calendar className="w-5 h-5 text-purple-500" />
-            <span>Aceitar Tarefa</span>
+            <span>Accept Task</span>
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
           {/* Task Content */}
           <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
-            <p className="text-sm text-purple-700 mb-1">Tarefa:</p>
+            <p className="text-sm text-purple-700 mb-1">Task:</p>
             <p className="text-sm font-medium text-purple-900">
               "{message.content}"
             </p>
             <p className="text-xs text-purple-600 mt-1">
-              Por {message.authorName}
+              By {message.authorName}
             </p>
           </div>
 
           {/* Due Date Selection */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">Data de Entrega *</Label>
+            <Label className="text-base font-medium">Due Date *</Label>
             <div className="flex flex-wrap gap-2">
               {dueDateOptions.map((option) => (
                 <Button
@@ -264,7 +265,7 @@ export function AcceptTaskDialog({
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              Cancelar
+              Cancel
             </Button>
             <Button
               type="button"
@@ -272,7 +273,7 @@ export function AcceptTaskDialog({
               disabled={isLoading || !dueDateOption}
               className={`${gradientClasses.primaryButton} text-white`}
             >
-              {isLoading ? "Aceitando..." : "Aceitar Tarefa"}
+              {isLoading ? "Accepting..." : "Accept Task"}
             </Button>
           </div>
         </div>

@@ -146,7 +146,7 @@ export function ContactSelector({
                             </>
                           ) : (
                             <>
-                              <ChevronDown className="w-3 h-3 mr-1" />+
+                              <ChevronDown className="w-3 h-3 mr-1" />
                               {directContacts.length - 1}
                             </>
                           )}
@@ -226,7 +226,7 @@ export function ContactSelector({
                             </>
                           ) : (
                             <>
-                              <ChevronDown className="w-3 h-3 mr-1" />+
+                              <ChevronDown className="w-3 h-3 mr-1" />
                               {availableMembers.length - 1}
                             </>
                           )}

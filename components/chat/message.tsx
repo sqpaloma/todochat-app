@@ -186,14 +186,14 @@ export function Message({
       });
     } catch (error) {
       console.error("Error responding to task:", error);
-      alert("Erro ao responder à tarefa. Tente novamente.");
+      alert("Error responding to task. Please try again.");
     } finally {
       setIsResponding(false);
     }
   };
 
   const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleString("pt-BR", {
+    return new Date(timestamp).toLocaleString("en-US", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -203,7 +203,7 @@ export function Message({
   };
 
   const formatDueDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleDateString("pt-BR", {
+    return new Date(timestamp).toLocaleDateString("en-US", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -291,7 +291,7 @@ export function Message({
                     onClick={onCreateTask}
                     className="p-2 h-auto hover:bg-muted rounded-lg"
                   >
-                    <Plus className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">Task</span>
                   </Button>
                 </div>
 
@@ -391,19 +391,19 @@ export function Message({
                       {message.taskStatus === "pending" && (
                         <>
                           <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-                          <span className="text-xs opacity-80">Pendente</span>
+                          <span className="text-xs opacity-80">Pending</span>
                         </>
                       )}
                       {message.taskStatus === "accepted" && (
                         <>
                           <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                          <span className="text-xs opacity-80">Aceita</span>
+                          <span className="text-xs opacity-80">Accepted</span>
                         </>
                       )}
                       {message.taskStatus === "rejected" && (
                         <>
                           <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                          <span className="text-xs opacity-80">Rejeitada</span>
+                          <span className="text-xs opacity-80">Rejected</span>
                         </>
                       )}
                     </div>
@@ -494,14 +494,6 @@ export function Message({
                   <Zap
                     className={`w-4 h-4 ${isNudging ? "text-muted-foreground" : "text-primary"}`}
                   />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onCreateTask}
-                  className="p-2 h-auto hover:bg-muted rounded-lg"
-                >
-                  <Plus className="w-4 h-4 text-muted-foreground" />
                 </Button>
               </div>
 
@@ -606,19 +598,19 @@ export function Message({
                     {message.taskStatus === "pending" && (
                       <>
                         <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-                        <span className="text-xs text-gray-600">Pendente</span>
+                        <span className="text-xs text-gray-600">Pending</span>
                       </>
                     )}
                     {message.taskStatus === "accepted" && (
                       <>
                         <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                        <span className="text-xs text-gray-600">Aceita</span>
+                        <span className="text-xs text-gray-600">Accepted</span>
                       </>
                     )}
                     {message.taskStatus === "rejected" && (
                       <>
                         <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                        <span className="text-xs text-gray-600">Rejeitada</span>
+                        <span className="text-xs text-gray-600">Rejected</span>
                       </>
                     )}
                   </div>
@@ -636,7 +628,7 @@ export function Message({
                         className="bg-transparent border border-primary/20 hover:bg-primary/5 text-primary px-2 py-1 text-xs rounded-full"
                       >
                         <Check className="w-3 h-3 mr-1" />
-                        Aceitar
+                        Accept
                       </Button>
                       <Button
                         size="sm"
@@ -645,7 +637,7 @@ export function Message({
                         className="bg-transparent border border-destructive/20 hover:bg-destructive/5 text-destructive px-2 py-1 text-xs rounded-full"
                       >
                         <X className="w-3 h-3 mr-1" />
-                        Recusar
+                        Decline
                       </Button>
                     </div>
                   )}

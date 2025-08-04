@@ -6,7 +6,7 @@ import { ChatInput } from "@/components/chat/chat-input";
 import { MessagesList } from "@/components/chat/messages-list";
 import { ContactSelector } from "@/components/chat/contact-selector";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { CreateTaskDialog } from "@/components/chat/create-task-dialog";
+
 import { formatFileSize } from "@/utils/file";
 import { AuthGuard } from "@/components/auth/auth-guard";
 import { useRef } from "react";
@@ -16,14 +16,12 @@ export default function ChatPage() {
     // State
     activeTab,
     newMessage,
-    selectedMessage,
-    showTaskDialog,
+
     selectedFile,
     isUploading,
     selectedDirectContact,
     isTaskMode,
     taskAssigneeId,
-    selectedTeam,
 
     // Actions
 
@@ -31,7 +29,7 @@ export default function ChatPage() {
     setSelectedFile,
     setSelectedDirectContact,
     setShowContactSelector,
-    setShowTaskDialog,
+
     setIsTaskMode,
     setTaskAssigneeId,
 
@@ -131,15 +129,6 @@ export default function ChatPage() {
           </div>
         </div>
       </div>
-
-      {/* Modals */}
-      <CreateTaskDialog
-        open={showTaskDialog}
-        onOpenChange={setShowTaskDialog}
-        message={selectedMessage}
-        teamMembers={teamMembers || []}
-        teamId={selectedTeam}
-      />
     </AuthGuard>
   );
 }

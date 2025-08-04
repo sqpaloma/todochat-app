@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { gradients } from "@/lib/design-tokens";
 import { SocialShare } from "@/components/social/social-share";
+import { DemoVideo } from "@/components/demo/demo-video";
 import Link from "next/link";
 
 export default function App() {
@@ -82,48 +83,67 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-        {/* Hero Section */}
-        <div className="text-center mb-12 sm:mb-16 lg:mb-20 pt-8 sm:pt-12 lg:pt-0">
-          <div className="inline-flex items-center px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-full text-xs sm:text-sm font-semibold mb-6 sm:mb-8 border border-purple-200">
-            <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-            About Chat Do
-            <Heart className="w-3 h-3 sm:w-4 sm:h-4 ml-2 text-pink-500" />
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+        {/* Hero Section with Video Side by Side */}
+        <div className="mb-16 lg:mb-24 pt-8 sm:pt-12 lg:pt-0">
+          <div className="w-full max-w-none">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-16 items-center">
+              {/* Text Content */}
+              <div className="text-center xl:text-left px-8 lg:px-16 xl:px-24">
+                <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 rounded-full text-base font-semibold mb-12 border border-blue-200">
+                  <Sparkles className="w-5 h-5 mr-3" />
+                  About Chat Do
+                  <Heart className="w-5 h-5 ml-3 text-pink-500" />
+                </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 sm:mb-8 leading-tight px-4">
-            Where conversations become
-            <br className="hidden sm:block" />
-            <span className="block sm:inline">
-              <span className="gradient-text">incredible results</span>
-              <div className="inline-block ml-2 sm:ml-4 float-animation">
-                <Star className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-yellow-400 fill-current" />
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-12 leading-tight">
+                  Pass tasks to others
+                  <br className="hidden sm:block" />
+                  <span className="block sm:inline">
+                    <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      and let email handle the rest
+                    </span>
+                    <div className="inline-block ml-6 float-animation">
+                      <Star className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-yellow-400 fill-current" />
+                    </div>
+                  </span>
+                </h1>
+
+                <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-16 leading-relaxed font-medium">
+                  <strong className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    Chat Do
+                  </strong>{" "}
+                  sends tasks through messages at school, college, or work, and
+                  email will keep nudging until the task is done! 🚀
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-6 justify-center xl:justify-start">
+                  <Button
+                    onClick={() => (window.location.href = "/tasks")}
+                    className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    Start building
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </div>
               </div>
-            </span>
-          </h1>
 
-          <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto mb-8 sm:mb-12 leading-relaxed font-medium px-4">
-            <strong className="gradient-text">Chat Do</strong> is the most fun
-            tool to transform your conversations into organized tasks. Your team
-            will love gamified productivity! 🚀
-          </p>
-
-          <div className="flex justify-center px-4">
-            <Button
-              onClick={() => (window.location.href = "/tasks")}
-              className={`w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 ${gradients.primaryButton} text-white rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105`}
-            >
-              Start the Fun
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
-            </Button>
+              {/* Video Demo */}
+              <div className="px-8 lg:px-16 xl:px-24">
+                <DemoVideo />
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Quick Actions */}
         <div className="mb-12 sm:mb-16 lg:mb-20">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-3 sm:mb-4 px-4">
-            Explore the <span className="gradient-text">features</span>
+            Explore the{" "}
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              features
+            </span>
           </h2>
           <p className="text-center text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto font-medium px-4">
             Quickly access everything you need to keep your team productive and
@@ -185,7 +205,9 @@ export default function App() {
         <div className="mb-12 sm:mb-16 lg:mb-20">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-3 sm:mb-4 px-4">
             Features that will{" "}
-            <span className="gradient-text">surprise you</span>
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              surprise you
+            </span>
           </h2>
           <p className="text-center text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto font-medium px-4">
             Features designed to make teamwork more efficient and fun
@@ -224,7 +246,10 @@ export default function App() {
           <div className="bg-white/50 backdrop-blur-sm border border-white/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 shadow-xl">
             <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
               Ready to start the{" "}
-              <span className="gradient-text">revolution</span>?
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                revolution
+              </span>
+              ?
             </h3>
             <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto">
               Join thousands of teams who have already discovered the joy of
@@ -232,7 +257,7 @@ export default function App() {
             </p>
             <Button
               onClick={() => (window.location.href = "/tasks")}
-              className={`w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 ${gradients.primaryButton} text-white rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105`}
+              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               Let's get started! ✨
             </Button>
