@@ -8,13 +8,15 @@ import {
   CheckSquare,
   Users,
   LogOut,
-  BarChart3,
   ChevronDown,
   Sparkles,
   X,
   ChevronLeft,
   ChevronRight,
   MoreHorizontal,
+  Plus,
+  Send,
+  Edit,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { gradients } from "@/lib/design-tokens";
@@ -31,8 +33,6 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useTeamPresence } from "@/hooks/use-team-presence";
 import { useResponsiveSSR } from "@/hooks/use-responsive-ssr";
-import { NavigationItem } from "./sidebar/navigation-item";
-import { MemberActionsMenu } from "./sidebar/member-actions-menu";
 import { UserAvatar } from "@/components/ui/user-avatar";
 
 interface SidebarProps {
@@ -40,6 +40,108 @@ interface SidebarProps {
   onClose: () => void;
 }
 
+// NavigationItem component integrated
+interface NavigationItemProps {
+  name: string;
+  href: string;
+  icon: any;
+  active: boolean;
+  gradient: string;
+  badge?: string;
+  indicator?: boolean;
+  isCollapsed: boolean;
+}
+
+function NavigationItem({
+  name,
+  href,
+  icon: IconComponent,
+  active,
+  gradient,
+  badge,
+  indicator,
+  isCollapsed,
+}: NavigationItemProps) {
+  return (
+    <Link href={href}>
+      <div
+        className={`flex items-center rounded-xl transition-all duration-200 group relative ${
+          isCollapsed ? "justify-center p-3" : "space-x-3 px-3 py-2.5"
+        } ${
+          active
+            ? `bg-gradient-to-r ${gradient} text-white shadow-lg`
+            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+        }`}
+        title={isCollapsed ? name : ""}
+      >
+        <IconComponent
+          className={`w-5 h-5 ${
+            active ? "text-white" : "text-gray-400"
+          } group-hover:scale-110 transition-transform duration-200`}
+        />
+        {!isCollapsed && (
+          <>
+            <span className="font-medium">{name}</span>
+            {badge && (
+              <span
+                className={`ml-auto px-2 py-0.5 text-xs font-bold rounded-full ${
+                  active
+                    ? "bg-white/20 text-white"
+                    : "bg-blue-100 text-blue-600"
+                }`}
+              >
+                {badge}
+              </span>
+            )}
+            {indicator && (
+              <div className="ml-auto w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            )}
+          </>
+        )}
+        {/* Collapsed indicators */}
+        {isCollapsed && badge && (
+          <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center">
+            {badge}
+          </div>
+        )}
+        {isCollapsed && indicator && (
+          <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse" />
+        )}
+      </div>
+    </Link>
+  );
+}
+
+// MemberActionsMenu component integrated
+interface MemberActionsMenuProps {
+  memberName: string;
+  onAction: (action: string, memberName: string) => void;
+}
+
+function MemberActionsMenu({ memberName, onAction }: MemberActionsMenuProps) {
+  const actions = [
+    { key: "Add Task", label: "Add Task", icon: Plus },
+    { key: "Send Message", label: "Send Message", icon: Send },
+    { key: "Edit", label: "Edit", icon: Edit },
+  ];
+
+  return (
+    <div className="absolute right-0 top-full mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+      {actions.map(({ key, label, icon: Icon }) => (
+        <button
+          key={key}
+          className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
+          onClick={() => onAction(key, memberName)}
+        >
+          <Icon className="w-4 h-4" />
+          <span>{label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// Main Sidebar component
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [activeTeam] = useState("My Team");
@@ -128,13 +230,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       icon: Users,
       active: pathname === "/team",
       gradient: "from-orange-500 to-red-500",
-    },
-    {
-      name: "Analytics",
-      href: "/analytics",
-      icon: BarChart3,
-      active: pathname === "/analytics",
-      gradient: "from-purple-500 to-pink-500",
     },
   ];
 
