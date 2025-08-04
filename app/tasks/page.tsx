@@ -7,8 +7,7 @@ import { TaskHeader } from "@/components/tasks/task-header";
 import { TaskBoard } from "@/components/tasks/task-board";
 import { TaskCalendar } from "@/components/tasks/task-calendar";
 import { TaskDragOverlay } from "@/components/tasks/task-drag-overlay";
-import { TaskFilters } from "@/components/tasks/task-filters";
-import { TaskStats } from "@/components/tasks/task-stats";
+
 import { CreateManualTaskDialog } from "@/components/tasks/create-manual-task-dialog";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { AuthGuard } from "@/components/auth/auth-guard";
@@ -79,17 +78,6 @@ function TasksPageContent() {
               </div>
             </div>
           )}
-
-          {/* Task Stats */}
-          <TaskStats stats={taskStats} />
-
-          {/* Task Filters */}
-          <TaskFilters
-            filters={filters}
-            onFiltersChange={updateFilters}
-            onClearFilters={clearFilters}
-            teamMembers={teamMembers}
-          />
 
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 h-full">
             {/* Task Board */}

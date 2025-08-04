@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { gradientClasses } from '@/lib/gradient-classes';
+import { gradientClasses } from "@/lib/gradient-classes";
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -29,27 +28,18 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { CalendarIcon, Edit } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 
 interface TeamMember {
   _id: string;
   name: string;
-  email: string;
 }
 
 interface TaskType {
   _id: Id<"tasks">;
   title: string;
-  description: string;
-  status: "todo" | "in-progress" | "done";
   assigneeId: string;
-  assigneeName: string;
-  createdBy: string;
-  createdAt: number;
   dueDate?: number;
-  originalMessage?: string;
-  teamId: string;
   priority: "low" | "medium" | "high";
 }
 
@@ -67,19 +57,15 @@ export function EditTaskDialog({
   teamMembers,
 }: EditTaskDialogProps) {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [assigneeId, setAssigneeId] = useState("");
   const [dueDate, setDueDate] = useState<Date>();
   const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
-  const [isLoading, setIsLoading] = useState(false);
 
   const updateTask = useMutation(api.tasks.updateTask);
 
-  // Initialize form when task changes
   useEffect(() => {
     if (task) {
       setTitle(task.title);
-      setDescription(task.description);
       setAssigneeId(task.assigneeId);
       setDueDate(task.dueDate ? new Date(task.dueDate) : undefined);
       setPriority(task.priority);
@@ -88,96 +74,81 @@ export function EditTaskDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!task || !title.trim() || !assigneeId || !dueDate) return;
+    if (!task || !title.trim() || !assigneeId || !dueDate || !priority) return;
 
-    setIsLoading(true);
+    const assignee = teamMembers.find((member) => member._id === assigneeId);
 
-    try {
-      const assignee = teamMembers.find((member) => member._id === assigneeId);
+    await updateTask({
+      taskId: task._id,
+      title: title.trim(),
+      description: "", // Mantém descrição original
+      assigneeId,
+      assigneeName: assignee?.name || "",
+      assigneeEmail: "",
+      dueDate: dueDate?.getTime(),
+      priority,
+    });
 
-      await updateTask({
-        taskId: task._id,
-        title: title.trim(),
-        description: description.trim(),
-        assigneeId,
-        assigneeName: assignee?.name || "",
-        assigneeEmail: assignee?.email || "",
-        dueDate: dueDate?.getTime(),
-        priority,
-      });
-
-      onOpenChange(false);
-    } catch (error) {
-      console.error("Error updating task:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const priorityColors = {
-    low: "text-green-600 bg-green-50",
-    medium: "text-yellow-600 bg-yellow-50",
-    high: "text-red-600 bg-red-50",
-  };
-
-  const priorityLabels = {
-    low: "Low",
-    medium: "Medium",
-    high: "High",
+    onOpenChange(false);
   };
 
   if (!task) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] border-purple-200">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle className="flex items-center space-x-2">
-            <Edit className="w-5 h-5 text-purple-500" />
-            <span>Edit Task</span>
-          </DialogTitle>
+          <DialogTitle>Edit Task</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="title">Task Title *</Label>
+            <Label>Title *</Label>
             <Input
-              id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Ex: Review commercial proposal..."
               required
-              className="border-purple-200 focus:border-purple-500 focus:ring-purple-500"
             />
           </div>
 
           <div>
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe task details, objectives and acceptance criteria..."
-              rows={4}
-              className="border-purple-200 focus:border-purple-500 focus:ring-purple-500"
-            />
+            <Label>Assignee *</Label>
+            <Select value={assigneeId} onValueChange={setAssigneeId} required>
+              <SelectTrigger>
+                <SelectValue placeholder="Select assignee" />
+              </SelectTrigger>
+              <SelectContent>
+                {teamMembers.map((member) => (
+                  <SelectItem key={member._id} value={member._id}>
+                    {member.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Assignee *</Label>
-              <Select value={assigneeId} onValueChange={setAssigneeId} required>
-                <SelectTrigger className="border-purple-200 focus:border-purple-500 focus:ring-purple-500">
-                  <SelectValue placeholder="Select a team member" />
-                </SelectTrigger>
-                <SelectContent>
-                  {teamMembers.map((member) => (
-                    <SelectItem key={member._id} value={member._id}>
-                      {member.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label>Due Date *</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-left font-normal"
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dueDate ? format(dueDate, "PPP") : "Select date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={dueDate}
+                    onSelect={setDueDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div>
@@ -189,8 +160,8 @@ export function EditTaskDialog({
                 }
                 required
               >
-                <SelectTrigger className="border-purple-200 focus:border-purple-500 focus:ring-purple-500">
-                  <SelectValue />
+                <SelectTrigger>
+                  <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="low">Low</SelectItem>
@@ -201,33 +172,7 @@ export function EditTaskDialog({
             </div>
           </div>
 
-          <div>
-            <Label>Due Date *</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start text-left font-normal bg-transparent border-purple-200 focus:border-purple-500 focus:ring-purple-500"
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dueDate
-                    ? format(dueDate, "PPP", { locale: ptBR })
-                    : "Select date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={dueDate}
-                  onSelect={setDueDate}
-                  initialFocus
-                  disabled={(date) => date < new Date()}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div className="flex justify-end space-x-2 pt-4">
+          <div className="flex justify-end space-x-2">
             <Button
               type="button"
               variant="outline"
@@ -237,10 +182,10 @@ export function EditTaskDialog({
             </Button>
             <Button
               type="submit"
-              disabled={isLoading || !title.trim() || !assigneeId || !dueDate}
-              className={`${gradientClasses.primaryButton} text-white`}
+              disabled={!title.trim() || !assigneeId || !dueDate || !priority}
+              className={`${gradientClasses.primaryButton} text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200`}
             >
-              {isLoading ? "Updating..." : "Update Task"}
+              Save
             </Button>
           </div>
         </form>
